@@ -1,0 +1,3 @@
+[submodule "lib/node-ethereum"]
+	path = lib/node-ethereum
+	url = https://github.com/projectdnet/node-ethereum.git

@@ -1,0 +1,93 @@
+doctype html
+html
+  head
+    title Ethos Swarm
+    link(rel="stylesheet", href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css")
+    style(rel="stylesheet", type="text/css").
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background-color: rgb( 255, 255, 113 );
+        color: rgb( 87, 64, 22 );
+      }
+
+      body {
+        max-width: 45em;
+        margin: 0 auto;
+        padding: 2em;
+      }
+
+      h1 {
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+      }
+
+      table {
+        margin-top: 4em;
+          border-collapse: collapse;
+      }
+
+      table, th, td {
+          border: 1px solid black;
+          padding: 0.4em;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+
+      .actions .magnet {
+        color: red;
+        margin-right: 0.6em;
+      }
+
+  body
+    h1 Swarm
+    p.subtitle Pre-release stand-in for Ethereum Swarm.
+      
+    - if (hash)
+      table
+        tr
+          th Title
+          th Hash
+          th Progress
+          th Status
+          th Actions
+        tr
+          td.title #{title}
+          td.hash #{hash}
+          td.progress
+            progress(max="100",value="10") Test
+          td.status Not Implemented
+          td.actions
+            a(href="magnet:?xt=urn:btih:#{hash}")
+              i.magnet.fa.fa-magnet
+              | Magnet Link
+    
+    - if (torrents)
+      table
+        tr
+          th Title
+          th Hash
+          th Progress
+          th Status
+          th Actions
+        - for (var item in torrents)
+          - var hash = torrents[item].infoHash.toString( 'binary' )
+          tr
+            td.title #{ torrents[item].name }
+            td.hash #{ hash }
+            td.progress
+              progress(max="100",value="10") Test
+            td.status #{ torrents[item].status }
+            td.actions
+              a(href="magnet:?xt=urn:btih:#{ hash }")
+                i.magnet.fa.fa-magnet
+                | Magnet Link
+    

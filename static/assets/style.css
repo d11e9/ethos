@@ -1,0 +1,58 @@
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #FAFBFF;
+}
+
+a {
+    color: #3fa9f5;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+
+#ethos-logo {
+    width: 7em;
+    display: block;
+    margin: 2em auto;
+}
+
+#dapps {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+#dapps li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 7em;
+    display: inline-block;
+}
+#dapps li a {
+    display: block;
+    padding: 1em;
+    text-align: center;
+    color: #D6CEEE;
+    font-weight: normal;
+}
+#dapps li a:hover {
+    color: #3fa9f5;
+}
+#dapps li a i {
+    display: block;
+    font-size: 2em;
+    padding-bottom: 0.4em;
+}
+
+#menu {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+}
+
+#menu .inner { display: none; }
