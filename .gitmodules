@@ -1,3 +1,7 @@
 [submodule "lib/node-ethereum"]
 	path = lib/node-ethereum
 	url = https://github.com/projectdnet/node-ethereum.git
+
+[submodule "dapps"]
+	path = dapps
+	url = https://github.com/d11e9/dapps-bin.git

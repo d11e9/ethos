@@ -3,28 +3,35 @@ console.log "Ethos inject.coffee: ok"
 jquery = require 'jquery'
 url = require 'url'
 
-window.eth =
-	client: 'ethos'
+
 
 if global?.require
 	rpc = require 'node-json-rpc'
 	client = new rpc.Client
-		port: 7000
+		port: 7001
 		host: '127.0.0.1'
 		path: '/'
 		strict: false
 
-	rpcLog = (type,args) ->
+	rpc = (method,args) ->
 		args = args[0] if args.length
 		client.call
 			jsonrpc: '2.0'
-			method: type
+			method: method
 			params: args
 
 	window?.winston =
-		error: -> rpcLog 'logError', arguments
-		warn: -> rpcLog 'logWarn', arguments
-		info: -> rpcLog 'logInfo', arguments
+		error: -> rpc 'logError', arguments
+		warn: -> rpc 'logWarn', arguments
+		info: -> rpc 'logInfo', arguments
+
+	window.eth =
+		client: 'ethos'
+		keys: ['asdasda']
+		getBalance: -> 0
+		stateAt: -> 1
+		transact: -> null
+		fromAscii: (x) -> x.toString()
 
 parseEthQuery = (href) ->
 	query = url.parse( href, true ).query
@@ -36,20 +43,23 @@ parseEthQuery = (href) ->
 	query
 
 jquery ->
-	console.log 'jquery ready.'
-	jquery( 'body' ).on 'click', '[href]', (ev) ->
-		console.log 'href click'
+	try
+		console.log 'jquery ready.'
+		jquery( 'body' ).on 'click', '[href]', (ev) ->
+			console.log 'href click'
 
-		href = jquery( this ).attr 'href'
-		ethIntent = href.match /^:eth\?(.*)/
-		query = parseEthQuery href
+			href = jquery( this ).attr 'href'
+			ethIntent = href.match /^:eth\?(.*)/
+			query = parseEthQuery href
 
-		console.log this
+			console.log this
 
-		if ethIntent
-			follow = !window.confirm "Open link in ÐApp: #{ query.dapp }"
-			if follow
+			if ethIntent
+				follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
+				window.location = "/#{query.dapp}" if follow
 				ev.preventDefault()
 				false
+	catch err
+		window.winston.error err
 
 console.log "Ethos inject end: ok."

@@ -2,3 +2,4 @@ node_modules
 build/Ethos
 cache
 npm-debug.log
+*.log

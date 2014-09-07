@@ -3,10 +3,10 @@ html
 	head
 		title &Xi;thos
 		script( src="" )
-		link( rel="stylesheet", href="/static/assets/style.css" )
+		link( rel="stylesheet", href="/ethos/static/assets/style.css" )
 		link( rel="stylesheet", href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" )
 	body
-		img#ethos-logo( title="Ethos, made for Ethereum", src="/static/assets/ethos-logo.png" )
+		img#ethos-logo( title="Ethos, made for Ethereum", src="/ethos/static/assets/ethos-logo.png" )
 
 		#menu
 			a( href="#" )
@@ -18,9 +18,13 @@ html
 					a About
 
 		ul#dapps
-			- for (var i = 0; i < dapps.length; ++i) {
+			- for (var i in dapps) {
 				li
 					a( href=":eth?dapp=#{dapps[i].name}" )
 						i( class="fa fa-#{dapps[i].icon}")
 						span= dapps[i].name
 			- }
+			li
+				a( href="#add" )
+					i( class="fa fa-plus")
+					span Add ÐApp

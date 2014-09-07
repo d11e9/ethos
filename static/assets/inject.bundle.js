@@ -1,16 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
-var client, jquery, parseEthQuery, rpc, rpcLog, url;
+var client, jquery, parseEthQuery, rpc, url;
 
 console.log("Ethos inject.coffee: ok");
 
 jquery = require('jquery');
 
 url = require('url');
-
-window.eth = {
-  client: 'ethos'
-};
 
 if (typeof global !== "undefined" && global !== null ? global.require : void 0) {
   rpc = require('node-json-rpc');
@@ -20,29 +16,45 @@ if (typeof global !== "undefined" && global !== null ? global.require : void 0) 
     path: '/',
     strict: false
   });
-  rpcLog = function(type, args) {
+  rpc = function(method, args) {
     if (args.length) {
       args = args[0];
     }
     return client.call({
       jsonrpc: '2.0',
-      method: type,
+      method: method,
       params: args
     });
   };
   if (typeof window !== "undefined" && window !== null) {
     window.winston = {
       error: function() {
-        return rpcLog('logError', arguments);
+        return rpc('logError', arguments);
       },
       warn: function() {
-        return rpcLog('logWarn', arguments);
+        return rpc('logWarn', arguments);
       },
       info: function() {
-        return rpcLog('logInfo', arguments);
+        return rpc('logInfo', arguments);
       }
     };
   }
+  window.eth = {
+    client: 'ethos',
+    keys: ['asdasda'],
+    getBalance: function() {
+      return 0;
+    },
+    stateAt: function() {
+      return 1;
+    },
+    transact: function() {
+      return null;
+    },
+    fromAscii: function(x) {
+      return x.toString();
+    }
+  };
 }
 
 parseEthQuery = function(href) {
@@ -55,22 +67,29 @@ parseEthQuery = function(href) {
 };
 
 jquery(function() {
-  console.log('jquery ready.');
-  return jquery('body').on('click', '[href]', function(ev) {
-    var ethIntent, follow, href, query;
-    console.log('href click');
-    href = jquery(this).attr('href');
-    ethIntent = href.match(/^:eth\?(.*)/);
-    query = parseEthQuery(href);
-    console.log(this);
-    if (ethIntent) {
-      follow = !window.confirm("Open link in ÐApp: " + query.dapp);
-      if (follow) {
+  var err;
+  try {
+    console.log('jquery ready.');
+    return jquery('body').on('click', '[href]', function(ev) {
+      var ethIntent, follow, href, query;
+      console.log('href click');
+      href = jquery(this).attr('href');
+      ethIntent = href.match(/^:eth\?(.*)/);
+      query = parseEthQuery(href);
+      console.log(this);
+      if (ethIntent) {
+        follow = window.confirm("Open link in ÐApp: " + query.dapp);
+        if (follow) {
+          window.location = "/" + query.dapp;
+        }
         ev.preventDefault();
         return false;
       }
-    }
-  });
+    });
+  } catch (_error) {
+    err = _error;
+    return window.winston.error(err);
+  }
 });
 
 console.log("Ethos inject end: ok.");
