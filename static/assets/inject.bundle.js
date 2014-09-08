@@ -57,19 +57,39 @@ window.eth = {
   client: 'ethos',
   keys: ['asdasda'],
   ready: function(cb) {
-    return window.onload = cb;
+    console.log('eth ready');
+    return window.onload = function() {
+      var err;
+      try {
+        return cb.call(window);
+      } catch (_error) {
+        err = _error;
+        return console.error(err);
+      }
+    };
   },
   getBalance: function() {
+    console.log('eth getBalance');
     return 0;
   },
   stateAt: function() {
+    console.log('eth stateAt');
     return 1;
   },
   transact: function() {
+    console.log('eth transact');
     return null;
   },
+  watch: function() {
+    return console.log('eth watch');
+  },
   fromAscii: function(x) {
+    console.log('eth fromAscii');
     return x.toString();
+  },
+  secretToAddress: function() {
+    console.log('eth secretToAddress');
+    return '1sasasdasdafasd';
   }
 };
 
@@ -83,16 +103,15 @@ parseEthQuery = function(href) {
 };
 
 jquery(function() {
-  var err;
+  var err, _ref;
   try {
-    console.log('jquery ready.');
+    console.log('Ethos attaching URI Intent handlers.');
     return jquery('body').on('click', '[href]', function(ev) {
       var ethIntent, follow, href, query;
-      console.log('href click');
       href = jquery(this).attr('href');
+      console.log('href click: ' + href);
       ethIntent = href.match(/^:eth\?(.*)/);
       query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
-      console.log(this);
       if (ethIntent) {
         follow = window.confirm("Open link in ÐApp: " + query.dapp);
         if (follow) {
@@ -104,7 +123,7 @@ jquery(function() {
     });
   } catch (_error) {
     err = _error;
-    return window.winston.error(err);
+    return (_ref = window.winston) != null ? _ref.error(err) : void 0;
   }
 });
 

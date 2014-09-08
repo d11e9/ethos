@@ -38,11 +38,30 @@ window?.winston =
 window.eth =
 	client: 'ethos'
 	keys: ['asdasda']
-	ready: (cb) -> window.onload = cb
-	getBalance: -> 0
-	stateAt: -> 1
-	transact: -> null
-	fromAscii: (x) -> x.toString()
+	ready: (cb) ->
+		console.log 'eth ready'
+		window.onload = ->
+			try
+				cb.call( window )
+			catch err
+				console.error( err )
+	getBalance: ->
+		console.log 'eth getBalance'
+		0
+	stateAt: -> 
+		console.log 'eth stateAt'
+		1
+	transact: -> 
+		console.log 'eth transact'
+		null
+	watch: ->
+		console.log 'eth watch'
+	fromAscii: (x) -> 
+		console.log 'eth fromAscii'
+		x.toString()
+	secretToAddress: ->
+		console.log 'eth secretToAddress'
+		'1sasasdasdafasd'
 
 parseEthQuery = (href) ->
 	query = url.parse( href, true ).query
@@ -55,15 +74,12 @@ parseEthQuery = (href) ->
 
 jquery ->
 	try
-		console.log 'jquery ready.'
+		console.log 'Ethos attaching URI Intent handlers.'
 		jquery( 'body' ).on 'click', '[href]', (ev) ->
-			console.log 'href click'
-
 			href = jquery( this ).attr 'href'
+			console.log 'href click: ' + href
 			ethIntent = href.match /^:eth\?(.*)/
 			query = parseEthQuery?( href )
-
-			console.log this
 
 			if ethIntent
 				follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
@@ -71,6 +87,6 @@ jquery ->
 				ev.preventDefault()
 				false
 	catch err
-		window.winston.error err
+		window.winston?.error err
 
 console.log "Ethos inject end: ok."

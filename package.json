@@ -1,6 +1,6 @@
 {
   "name": "Ethos",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Ethereum Browser",
   "main": "app://ethos/static/bootstrap.html",
   "node-main": "./lib/server.js",
