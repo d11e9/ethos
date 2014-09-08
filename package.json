@@ -24,8 +24,7 @@
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
     "build-dev": "npm run compile && nwbuild -r .",
     "dev": "nwbuild -r .",
-    "compile": "npm run compile-inject && npm run compile-server",
-    "compile-server": "browserify -t coffeeify -e ./lib/server.coffee > ./static/assets/server.bundle.js",
+    "compile": "npm run compile-inject",
     "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./static/assets/inject.bundle.js"
   },
   "repository": {

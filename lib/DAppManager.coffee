@@ -43,4 +43,39 @@ class DAppManager
 			return false if file[0] is '.'
 			fs.statSync( "#{@rootDir}/#{file}" ).isDirectory()
 
+	isAsset: (req) -> req.url.match( /\./ )?
+
+	middleware: (app, winston) =>
+		@app = app
+		@winston = winston
+
+		app.use( /^\/(.*)/i, @renderDApp )
+
+		(req,res,next) =>
+			dappName = app.currentDApp;
+			@winston.info 'URL: ' + req.url 
+			@winston.info 'is asset: ' + @isAsset( req )
+			# Assets will have extentions and no slashes
+			if @isAsset( req ) and dappName isnt 'ethos'
+				@winston.info( 'Serve dapp asset:' )
+				res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
+			else
+				next()
+
+	renderDApp: (req,res,next) =>
+		if @isAsset( req )
+			@winston.info( 'DApp asset.' + req.url )
+		else
+			url = req.params[0]
+			dappName = url.split('/')[0]
+			dapp = @dapps[ dappName ]
+			@winston.info( 'Loading DApp: ' + dappName + ' is asset: ' + @isAsset( req ) )
+
+			unless dapp
+				next()
+			else
+				@app.currentDApp = dappName
+				dapp.root = "#{ dappName }/#{ dapp.html }"
+				res.sendFile( dapp.root, { root: './dapps' } )
+
 module.exports = DAppManager

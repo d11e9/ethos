@@ -8,7 +8,6 @@ path = require( 'path' )
 winston = require( 'winston' )
 _ = require( 'underscore' )
 
-console.log( '<<<<<<<<', __dirname )
 EthosRPC = require( './EthosRPC.coffee')
 DAppManager = require( './DAppManager.coffee' )
 
@@ -57,28 +56,20 @@ app.currentDApp = 'ethos'
 manager = new DAppManager
   rootDir: path.join( __dirname, '../dapps' )
 
+app.use manager.middleware( app, winston )
+
 winston.info 'DApps: ', Object.keys manager.dapps
 
 process.on 'uncaughtException', (err) -> 
   console.log( err )
   winston.error( err )
 
-isAsset = (req) -> req.url.match( /\./ )?
-
-app.use (req,res,next) ->
-  dappName = app.currentDApp;
-  winston.info 'URL: ' + req.url 
-  winston.info 'is asset: ' + isAsset( req )
-  # Assets will have extentions and no slashes
-  if isAsset( req ) and dappName isnt 'ethos'
-    winston.info( 'Serve dapp asset:' )
-    res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
-  else
-    next()
 
 app.get '/', (req,res) -> 
   winston.info "Redirecting to Ethos DApp."
   res.redirect '/ethos'
+
+app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root: './static' );
 
 app.get '/ethos/', (req, res) ->
   app.currentDApp = 'ethos'
@@ -87,22 +78,6 @@ app.get '/ethos/', (req, res) ->
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'});
 
-
-app.get /^\/(.*)/i, (req,res) ->
-  if isAsset( req )
-    winston.info( 'DApp asset.' )
-  else
-    url = req.params[0]
-    dappName = url.split('/')[0]
-    dapp = manager.dapps[ dappName ]
-    app.currentDApp = dappName
-
-    unless dapp
-      res.status( 404 )
-        .send( "404: DApp (#{ dappName }) Not Found." )
-    else
-      dapp.root = "#{ dappName }/#{ dapp.html }"
-      res.sendFile( dapp.root, { root: './dapps' } )
 
 # URL Resolution
 # require( './URLProxy')( app, server )
