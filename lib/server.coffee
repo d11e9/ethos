@@ -16,8 +16,7 @@ app = express()
 app.set( 'views', __dirname + '/../views' )
 app.set( 'view engine', 'jade' )
 
-server = http.createServer( app )
-server.listen( PORT )
+app.listen( PORT )
 
 winston.add( winston.transports.File, { 
   filename: 'ethos.log',
@@ -58,17 +57,24 @@ rpcServer.start (err) ->
 manager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
 winston.info 'DApps: ', Object.keys manager.dapps
 
+# Intercepts all requests and checks if it needs to load a DApp.
+# If a DApp is loaded then assets are served from that DApps root folder.
 app.use( manager.middleware( app, winston ) )
 
+# Ethos specific routes
+# Redirect to ethos namespace
 app.get '/', (req,res) -> 
   winston.info "Redirecting to Ethos DApp."
   res.redirect '/ethos'
 
+# Serve favicon
 app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root: './static' )
 
+# Render Ethos index view
 app.get '/ethos/', (req, res) ->
-  app.currentDApp = 'ethos'
+  manager.currentDApp = 'ethos'
   res.render( 'index', { dapps: manager.dapps } )
 
+# Serve other ethos assets
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'})

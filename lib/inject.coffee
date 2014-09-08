@@ -30,10 +30,14 @@ rpc = (method,args) ->
 		method: method
 		params: args
 
+client.call( { jsonrpc: '2.0', method: 'ping', params: [] }, (resp) -> console.log(arguments) )
+
 window?.winston =
-	error: -> rpc 'logError', arguments
-	warn: -> rpc 'logWarn', arguments
-	info: -> rpc 'logInfo', arguments
+	error: -> rpc( 'logError', arguments )
+	warn: -> rpc( 'logWarn', arguments )
+	info: -> rpc( 'logInfo', arguments )
+
+console.log "Ethos inject winston RPC check: ", Object.keys( window.winston )
 
 window.eth =
 	client: 'ethos'

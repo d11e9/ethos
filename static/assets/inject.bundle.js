@@ -39,6 +39,14 @@ rpc = function(method, args) {
   });
 };
 
+client.call({
+  jsonrpc: '2.0',
+  method: 'ping',
+  params: []
+}, function(resp) {
+  return console.log(arguments);
+});
+
 if (typeof window !== "undefined" && window !== null) {
   window.winston = {
     error: function() {
@@ -52,6 +60,8 @@ if (typeof window !== "undefined" && window !== null) {
     }
   };
 }
+
+console.log("Ethos inject winston RPC check: ", Object.keys(window.winston));
 
 window.eth = {
   client: 'ethos',
