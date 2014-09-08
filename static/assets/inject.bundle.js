@@ -43,8 +43,12 @@ client.call({
   jsonrpc: '2.0',
   method: 'ping',
   params: []
-}, function(resp) {
-  return console.log(arguments);
+}, function(err, resp) {
+  if (!err && (resp != null ? resp.result : void 0)) {
+    return console.log("RPC Ping completed: " + resp.result + ".");
+  } else {
+    return console.error("RPC Ping Failed.", err);
+  }
 });
 
 if (typeof window !== "undefined" && window !== null) {

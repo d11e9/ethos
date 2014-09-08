@@ -30,7 +30,11 @@ rpc = (method,args) ->
 		method: method
 		params: args
 
-client.call( { jsonrpc: '2.0', method: 'ping', params: [] }, (resp) -> console.log(arguments) )
+client.call { jsonrpc: '2.0', method: 'ping', params: [] }, (err, resp) -> 
+	if !err and resp?.result
+		console.log( "RPC Ping completed: #{ resp.result }." )
+	else
+		console.error( "RPC Ping Failed.", err )
 
 window?.winston =
 	error: -> rpc( 'logError', arguments )

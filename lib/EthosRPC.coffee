@@ -1,35 +1,36 @@
 rpc = require('node-json-rpc')
 
-class EthosRPC
-  constructor: ({port, host, path}) ->
-    @server = new rpc.Server
-      port: port
-      host: host
-      path: path
-      strict: false
+module.exports = (winston) ->
 
-    @server.addMethod 'ping', (para,callback) ->
-      winston.info( 'RPC Ping')
-      callback( null, 'pong')
+  class EthosRPC
+    constructor: ({port, host, path}) ->
+      @server = new rpc.Server
+        port: port
+        host: host
+        path: path
+        strict: false
 
-    @server.addMethod 'logInfo', (para, callback) ->
-      winston.info( para )
-      callback( null, 'ok' )
+      @server.addMethod 'ping', (para,callback) ->
+        winston.info( 'RPC Ping')
+        callback( null, 'pong')
 
-    @server.addMethod 'logWarn', (para, callback) ->
-      winston.warn( para )
-      callback( null, 'ok' )
+      @server.addMethod 'logInfo', (para, callback) ->
+        winston.info( para )
+        callback( null, 'ok' )
 
-    @server.addMethod 'logError', (para, callback) ->
-      winston.error( para )
-      callback( null, 'ok' )
+      @server.addMethod 'logWarn', (para, callback) ->
+        winston.warn( para )
+        callback( null, 'ok' )
 
-    @server.addMethod 'getKeys', (para, callback) ->
-      winston.info( 'RPC getKeys' )
-      error = { code: -32602, message: "Invalid params" }
-      callback(error, ['123132123','123123124'])
+      @server.addMethod 'logError', (para, callback) ->
+        winston.error( para )
+        callback( null, 'ok' )
 
-  start: (callback) ->
-    @server.start( callback )
+      @server.addMethod 'getKeys', (para, callback) ->
+        winston.info( 'RPC getKeys' )
+        error = { code: -32602, message: "Invalid params" }
+        callback(error, ['123132123','123123124'])
 
-module.exports = EthosRPC
+    start: (callback) ->
+      @server.start( callback )
+

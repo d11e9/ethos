@@ -8,7 +8,7 @@ path = require( 'path' )
 winston = require( 'winston' )
 _ = require( 'underscore' )
 
-EthosRPC = require( './EthosRPC.coffee')
+EthosRPC = require( './EthosRPC.coffee')(winston)
 DAppManager = require( './DAppManager.coffee' )
 
 PORT = 8080
