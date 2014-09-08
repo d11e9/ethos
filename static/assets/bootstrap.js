@@ -11,7 +11,7 @@ if (process.platform == 'darwin') {
 
 win.ethos = {test: true};
 
-win.window.location.href = 'http://eth:8080/ethos'
+win.window.location.href = 'http://eth:8080/'
 
 win.window.onerror = function(){
 	var new_win = gui.Window.get(

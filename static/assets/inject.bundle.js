@@ -1,5 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
 var client, jquery, parseEthQuery, rpc, url;
 
 console.log("Ethos inject.coffee: ok");
@@ -8,54 +7,56 @@ jquery = require('jquery');
 
 url = require('url');
 
-if (typeof global !== "undefined" && global !== null ? global.require : void 0) {
-  rpc = require('node-json-rpc');
-  client = new rpc.Client({
-    port: 7000,
-    host: '127.0.0.1',
-    path: '/',
-    strict: false
-  });
-  rpc = function(method, args) {
-    if (args.length) {
-      args = args[0];
-    }
-    return client.call({
-      jsonrpc: '2.0',
-      method: method,
-      params: args
-    });
-  };
-  if (typeof window !== "undefined" && window !== null) {
-    window.winston = {
-      error: function() {
-        return rpc('logError', arguments);
-      },
-      warn: function() {
-        return rpc('logWarn', arguments);
-      },
-      info: function() {
-        return rpc('logInfo', arguments);
-      }
-    };
+rpc = require('node-json-rpc');
+
+client = new rpc.Client({
+  port: 7001,
+  host: '127.0.0.1',
+  path: '/',
+  strict: false
+});
+
+rpc = function(method, args) {
+  if (args.length) {
+    args = args[0];
   }
-  window.eth = {
-    client: 'ethos',
-    keys: ['asdasda'],
-    getBalance: function() {
-      return 0;
+  return client.call({
+    jsonrpc: '2.0',
+    method: method,
+    params: args
+  });
+};
+
+if (typeof window !== "undefined" && window !== null) {
+  window.winston = {
+    error: function() {
+      return rpc('logError', arguments);
     },
-    stateAt: function() {
-      return 1;
+    warn: function() {
+      return rpc('logWarn', arguments);
     },
-    transact: function() {
-      return null;
-    },
-    fromAscii: function(x) {
-      return x.toString();
+    info: function() {
+      return rpc('logInfo', arguments);
     }
   };
 }
+
+window.eth = {
+  client: 'ethos',
+  keys: ['asdasda'],
+  getBalance: function() {
+    return 0;
+  },
+  stateAt: function() {
+    return 1;
+  },
+  transact: function() {
+    return null;
+  },
+  fromAscii: function(x) {
+    return x.toString();
+  }
+};
 
 parseEthQuery = function(href) {
   var query;
@@ -96,7 +97,6 @@ console.log("Ethos inject end: ok.");
 
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"jquery":34,"node-json-rpc":35,"url":31}],2:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
@@ -1796,8 +1796,15 @@ http.request = function (params, cb) {
     if (!params.host && params.hostname) {
         params.host = params.hostname;
     }
-    
-    if (!params.scheme) params.scheme = window.location.protocol.split(':')[0];
+
+    if (!params.protocol) {
+        if (params.scheme) {
+            params.protocol = params.scheme + ':';
+        } else {
+            params.protocol = window.location.protocol;
+        }
+    }
+
     if (!params.host) {
         params.host = window.location.hostname || window.location.host;
     }
@@ -1807,7 +1814,7 @@ http.request = function (params, cb) {
         }
         params.host = params.host.split(':')[0];
     }
-    if (!params.port) params.port = params.scheme == 'https' ? 443 : 80;
+    if (!params.port) params.port = params.protocol == 'https:' ? 443 : 80;
     
     var req = new Request(new xhrHttp, params);
     if (cb) req.on('response', cb);
@@ -1930,7 +1937,7 @@ var Request = module.exports = function (xhr, params) {
     self.xhr = xhr;
     self.body = [];
     
-    self.uri = (params.scheme || 'http') + '://'
+    self.uri = (params.protocol || 'http:') + '//'
         + params.host
         + (params.port ? ':' + params.port : '')
         + (params.path || '/')

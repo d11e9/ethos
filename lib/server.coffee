@@ -1,3 +1,5 @@
+
+
 express = require( 'express' )
 http = require( 'http' )
 request = require( 'request' )
@@ -36,46 +38,66 @@ rpcServer.start (err) ->
 
 # Ethereum Network
 # FIXME: Does not currently compile on windows
-try
+# try
 
-  nodeEthereum = require( './node-ethereum' )
-  ethApp = new nodeEthereum()
+#   nodeEthereum = require( './node-ethereum' )
+#   ethApp = new nodeEthereum()
   
-  ethApp.start ->
-    winston.info( 'node-ethereum running...' )
+#   ethApp.start ->
+#     winston.info( 'node-ethereum running...' )
 
-catch err
-  winston.error "Error loading node-ethereum", err
+# catch err
+#   winston.error "Error loading node-ethereum", err
 
-winston.info "Loaded ethereum-node."
+# winston.info "Loaded ethereum-node."
 
+app.currentDApp = null
 
 manager = new DAppManager
   rootDir: path.join( __dirname, '../dapps' )
 
 winston.info 'DApps: ', Object.keys manager.dapps
 
+
+isAsset = (req) -> req.url.match( /\./ )?
+
+app.use (req,res,next) ->
+
+  dappName = app.currentDApp;
+  winston.info 'URL: ' + req.url 
+  winston.info 'is asset: ' + isAsset( req )
+  # Assets will have extentions and no slashes
+  if isAsset( req ) and dappName isnt 'ethos'
+    winston.info( 'Serve dapp asset:' )
+    res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
+  else
+    next()
+
 app.get '/', (req,res) -> 
   winston.info "Redirecting to Ethos DApp."
   res.redirect '/ethos'
 
 app.get '/ethos/', (req, res) ->
+  app.currentDApp = 'ethos'
   res.render( 'index', { dapps: manager.dapps } );
 
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'});
 
-app.get /^\/(.*)/i, (req,res) ->
-  url = req.params[0]
-  dappName = url.split('/')[0]
-  dapp = manager.dapps[ dappName ]
 
-  unless dapp
-    res.status( 404 )
-      .send( "404: DApp (#{ dappName }) Not Found." )
-  else
-    dapp.root = "#{ dappName }/#{ dapp.html }"
-    res.sendFile( dapp.root, { root: './dapps' } )
+app.get /^\/(.*)/i, (req,res) ->
+  unless isAsset( req )
+    url = req.params[0]
+    dappName = url.split('/')[0]
+    dapp = manager.dapps[ dappName ]
+    app.currentDApp = dappName
+
+    unless dapp
+      res.status( 404 )
+        .send( "404: DApp (#{ dappName }) Not Found." )
+    else
+      dapp.root = "#{ dappName }/#{ dapp.html }"
+      res.sendFile( dapp.root, { root: './dapps' } )
 
 # URL Resolution
 # require( './URLProxy')( app, server )

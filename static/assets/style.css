@@ -39,6 +39,7 @@ a {
     text-align: center;
     color: #D6CEEE;
     font-weight: normal;
+    text-transform: capitalize;
 }
 #dapps li a:hover {
     color: #3fa9f5;

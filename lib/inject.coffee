@@ -2,36 +2,33 @@ console.log "Ethos inject.coffee: ok"
 
 jquery = require 'jquery'
 url = require 'url'
+rpc = require 'node-json-rpc'
 
+client = new rpc.Client
+	port: 7001
+	host: '127.0.0.1'
+	path: '/'
+	strict: false
 
+rpc = (method,args) ->
+	args = args[0] if args.length
+	client.call
+		jsonrpc: '2.0'
+		method: method
+		params: args
 
-if global?.require
-	rpc = require 'node-json-rpc'
-	client = new rpc.Client
-		port: 7001
-		host: '127.0.0.1'
-		path: '/'
-		strict: false
+window?.winston =
+	error: -> rpc 'logError', arguments
+	warn: -> rpc 'logWarn', arguments
+	info: -> rpc 'logInfo', arguments
 
-	rpc = (method,args) ->
-		args = args[0] if args.length
-		client.call
-			jsonrpc: '2.0'
-			method: method
-			params: args
-
-	window?.winston =
-		error: -> rpc 'logError', arguments
-		warn: -> rpc 'logWarn', arguments
-		info: -> rpc 'logInfo', arguments
-
-	window.eth =
-		client: 'ethos'
-		keys: ['asdasda']
-		getBalance: -> 0
-		stateAt: -> 1
-		transact: -> null
-		fromAscii: (x) -> x.toString()
+window.eth =
+	client: 'ethos'
+	keys: ['asdasda']
+	getBalance: -> 0
+	stateAt: -> 1
+	transact: -> null
+	fromAscii: (x) -> x.toString()
 
 parseEthQuery = (href) ->
 	query = url.parse( href, true ).query
