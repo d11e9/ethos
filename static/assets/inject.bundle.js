@@ -3,7 +3,19 @@ var client, jquery, parseEthQuery, rpc, url;
 
 console.log("Ethos inject.coffee: ok");
 
-jquery = require('jquery');
+window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
+  return alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber, +' Column: ' + column + ' StackTrace: ' + errorObj);
+};
+
+document.addEventListener('keyup', function(e) {
+  if (e.keyCode === 'O'.charCodeAt(0) && e.ctrlKey) {
+    return console.log('open');
+  } else if (e.keyCode === 'S'.charCodeAt(0) && e.ctrlKey) {
+    return console.log('save');
+  }
+});
+
+window.jquery = jquery = require('jquery');
 
 url = require('url');
 
@@ -76,7 +88,7 @@ jquery(function() {
       console.log('href click');
       href = jquery(this).attr('href');
       ethIntent = href.match(/^:eth\?(.*)/);
-      query = parseEthQuery(href);
+      query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
       console.log(this);
       if (ethIntent) {
         follow = window.confirm("Open link in ÐApp: " + query.dapp);

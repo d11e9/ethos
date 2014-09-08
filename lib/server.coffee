@@ -51,18 +51,20 @@ rpcServer.start (err) ->
 
 # winston.info "Loaded ethereum-node."
 
-app.currentDApp = null
+app.currentDApp = 'ethos'
 
 manager = new DAppManager
   rootDir: path.join( __dirname, '../dapps' )
 
 winston.info 'DApps: ', Object.keys manager.dapps
 
+process.on 'uncaughtException', (err) -> 
+  console.log( err )
+  winston.error( err )
 
 isAsset = (req) -> req.url.match( /\./ )?
 
 app.use (req,res,next) ->
-
   dappName = app.currentDApp;
   winston.info 'URL: ' + req.url 
   winston.info 'is asset: ' + isAsset( req )
@@ -79,14 +81,16 @@ app.get '/', (req,res) ->
 
 app.get '/ethos/', (req, res) ->
   app.currentDApp = 'ethos'
-  res.render( 'index', { dapps: manager.dapps } );
+  res.render( 'index', { dapps: manager.dapps } )
 
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'});
 
 
 app.get /^\/(.*)/i, (req,res) ->
-  unless isAsset( req )
+  if isAsset( req )
+    winston.info( 'DApp asset.' )
+  else
     url = req.params[0]
     dappName = url.split('/')[0]
     dapp = manager.dapps[ dappName ]

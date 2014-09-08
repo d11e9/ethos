@@ -1,8 +1,21 @@
 console.log "Ethos inject.coffee: ok"
 
-jquery = require 'jquery'
+window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
+    alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
+    + ' Column: ' + column + ' StackTrace: ' +  errorObj)
+
+
+document.addEventListener 'keyup', (e) ->
+  if (e.keyCode == 'O'.charCodeAt(0) and e.ctrlKey)
+    console.log('open')
+  else if (e.keyCode == 'S'.charCodeAt(0) and e.ctrlKey)
+    console.log('save')
+
+
+window.jquery = jquery = require 'jquery'
 url = require 'url'
 rpc = require 'node-json-rpc'
+
 
 client = new rpc.Client
 	port: 7001
@@ -47,7 +60,7 @@ jquery ->
 
 			href = jquery( this ).attr 'href'
 			ethIntent = href.match /^:eth\?(.*)/
-			query = parseEthQuery href
+			query = parseEthQuery?( href )
 
 			console.log this
 

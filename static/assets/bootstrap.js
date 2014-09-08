@@ -1,20 +1,32 @@
+console.log( 'Bootstraping Ethos from app://<root>/bootstrap.html' )
+console.log( "This: ", this );
+console.log( "[Window, Global]:", [typeof window !== 'undefined', typeof global !== 'undefined'] );
 
-var gui = require('nw.gui');
-var app = gui.App;
-var win = gui.Window.get();
-var mb = new gui.Menu({type:"menubar"});
-
-if (process.platform == 'darwin') {
-	mb.createMacBuiltin("Ethos");
-	win.menu = mb;
+if (typeof require !== 'undefined') {
+	console.log( 'Require: ', typeof require )
 }
 
-win.ethos = {test: true};
 
-win.window.location.href = 'http://eth:8080/'
 
-win.window.onerror = function(){
-	var new_win = gui.Window.get(
-	  window.open('https://example.com')
-	);
+if (typeof global !== 'undefined') {
+	try {
+		var gui = require('nw.gui');
+	} catch (err) {
+		console.log( "Error: ", err );
+	}
+	var app = gui.App;
+	var win = gui.Window.get();
+	var mb = new gui.Menu({type:"menubar"});
+
+	if (process.platform == 'darwin') {
+		mb.createMacBuiltin("Ethos");
+		win.menu = mb;
+	}
+
+	win.ethos = {test: true};
+
+	win.window.location.href = 'http://eth:8080/'
+
+
+	win.onerror = function(){ alert('err') }
 }

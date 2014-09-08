@@ -1,4 +1,9 @@
 
+# TODO: FIXME: 
+# Fix BUILD http://blog.nerdyweekly.com/posts/setting-up-your-development-environment-for-a-node-webkit-project/
+# TODO: FIXME:
+
+
 console.log ('Building Ethos...')
 console.log( 'Working dir: ', __dirname )
 
