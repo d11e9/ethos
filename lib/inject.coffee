@@ -1,4 +1,4 @@
-console.log "Ethos inject.coffee: ok"
+console.log "Ethos inject.coffee: ok", window
 
 window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
     alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
@@ -38,6 +38,7 @@ window?.winston =
 window.eth =
 	client: 'ethos'
 	keys: ['asdasda']
+	ready: (cb) -> window.onload = cb
 	getBalance: -> 0
 	stateAt: -> 1
 	transact: -> null

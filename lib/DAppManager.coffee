@@ -14,6 +14,7 @@ class DAppManager
 	constructor: ({@rootDir}) ->
 		@dirs = @getDirs()
 		@dapps = @getDApps()
+		@currentDApp = 'ethos'
 
 	getDApps: ->
 		dapps = {}
@@ -52,7 +53,7 @@ class DAppManager
 		app.use( /^\/(.*)/i, @renderDApp )
 
 		(req,res,next) =>
-			dappName = app.currentDApp;
+			dappName = @currentDApp;
 			@winston.info 'URL: ' + req.url 
 			@winston.info 'is asset: ' + @isAsset( req )
 			# Assets will have extentions and no slashes
@@ -72,9 +73,10 @@ class DAppManager
 			@winston.info( 'Loading DApp: ' + dappName + ' is asset: ' + @isAsset( req ) )
 
 			unless dapp
+				#if no compatible dapp is availbe then defer to main router.
 				next()
 			else
-				@app.currentDApp = dappName
+				@currentDApp = dappName
 				dapp.root = "#{ dappName }/#{ dapp.html }"
 				res.sendFile( dapp.root, { root: './dapps' } )
 

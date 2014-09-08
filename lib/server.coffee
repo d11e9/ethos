@@ -51,14 +51,11 @@ rpcServer.start (err) ->
 
 # winston.info "Loaded ethereum-node."
 
-app.currentDApp = 'ethos'
-
-manager = new DAppManager
-  rootDir: path.join( __dirname, '../dapps' )
-
-app.use manager.middleware( app, winston )
-
+manager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
 winston.info 'DApps: ', Object.keys manager.dapps
+
+app.use( manager.middleware( app, winston ) )
+
 
 process.on 'uncaughtException', (err) -> 
   console.log( err )
