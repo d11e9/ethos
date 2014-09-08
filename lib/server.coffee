@@ -24,6 +24,10 @@ winston.add( winston.transports.File, {
   handleExceptions: true
 })
 
+process.on 'uncaughtException', (err) -> 
+  console.log( err )
+  winston.error( err )
+
 winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 
 rpcServer = new EthosRPC
@@ -56,26 +60,15 @@ winston.info 'DApps: ', Object.keys manager.dapps
 
 app.use( manager.middleware( app, winston ) )
 
-
-process.on 'uncaughtException', (err) -> 
-  console.log( err )
-  winston.error( err )
-
-
 app.get '/', (req,res) -> 
   winston.info "Redirecting to Ethos DApp."
   res.redirect '/ethos'
 
-app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root: './static' );
+app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root: './static' )
 
 app.get '/ethos/', (req, res) ->
   app.currentDApp = 'ethos'
   res.render( 'index', { dapps: manager.dapps } )
 
 app.get '/ethos/static/*', (req, res) ->
-  res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'});
-
-
-# URL Resolution
-# require( './URLProxy')( app, server )
-
+  res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'})
