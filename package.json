@@ -2,9 +2,9 @@
   "name": "Ethos",
   "version": "0.0.3",
   "description": "Ethereum Browser",
-  "main": "http://eth:8080/ethos/static/bootstrap.html",
+  "main": "app://ethos/static/bootstrap.html",
   "node-main": "./lib/server.js",
-  "node-remote": "http://eth",
+  "node-remote": "http://eth;app://",
   "chromium-args": "--disable-web-security",
   "window": {
     "show": true,
@@ -23,7 +23,10 @@
     "server": "npm run compile && coffee ./lib/server.coffee",
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
     "build-dev": "npm run compile && nwbuild -r .",
-    "compile": "browserify -t coffeeify -e ./lib/inject.coffee > ./static/assets/inject.bundle.js"
+    "dev": "nwbuild -r .",
+    "compile": "npm run compile-inject && npm run compile-server",
+    "compile-server": "browserify -t coffeeify -e ./lib/server.coffee > ./static/assets/server.bundle.js",
+    "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./static/assets/inject.bundle.js"
   },
   "repository": {
     "type": "git",

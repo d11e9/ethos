@@ -8,8 +8,9 @@ path = require( 'path' )
 winston = require( 'winston' )
 _ = require( 'underscore' )
 
-EthosRPC = require( './EthosRPC')
-DAppManager = require( './DAppManager' )
+console.log( '<<<<<<<<', __dirname )
+EthosRPC = require( './EthosRPC.coffee')
+DAppManager = require( './DAppManager.coffee' )
 
 PORT = 8080
 app = express()

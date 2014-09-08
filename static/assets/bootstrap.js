@@ -30,3 +30,5 @@ if (typeof global !== 'undefined') {
 
 	win.onerror = function(){ alert('err') }
 }
+
+console.log( 'Ethos Bootstrap end: ok.' )
