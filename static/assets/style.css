@@ -13,17 +13,76 @@ a {
     text-decoration: none;
 }
 
+.key-combo {
+    font-weight: bold;
+}
 
 #ethos-logo {
-    width: 7em;
     display: block;
     margin: 2em auto;
+    opacity: 0;
+    width: 1em;
+    margin-top: 8em;
+    transition: opacity 2s ease-in-out, width 2s ease-in-out, margin-top 2s ease-in-out;
+}
+
+body.loaded #ethos-logo {
+    opacity: 1;
+    width: 7em;
+    margin-top: 2em;
+}
+
+body.quick-load #ethos-logo {
+    transition: none;
+}
+
+.subtitle {
+    text-align: center;
+    text-align: center;
+    font-size: 0.8em;
+    color: rgba(0,0,0,0.4);
+    padding: 0.5em;
+    border: 1px solid #ACAAE9;
+    display: block;
+    width: 13em;
+    margin: 1em auto;
+    margin-bottom: 3em;
+    border-radius: 0.7em;
+    background-color: white;
+    opacity: 0;
+    transition: opacity 10s ease-in-out;
+}
+
+body.loaded .subtitle {
+    opacity: 1;
+}
+
+body.quick-load .subtitle {
+    transition: none;
+}
+
+.key-combo {
+    color: #ACAAE9;
+    font-family: monospace;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 0.4em;
 }
 
 #dapps {
     margin: 0;
     padding: 0;
     text-align: center;
+    opacity: 0;
+    transition: opacity 6s ease-in-out;
+}
+
+body.loaded #dapps {
+    opacity: 1;
+}
+
+body.quick-load #dapps {
+    transition: none;
 }
 
 #dapps li {

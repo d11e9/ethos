@@ -12,6 +12,8 @@ EthosRPC = require( './EthosRPC.coffee')(winston)
 DAppManager = require( './DAppManager.coffee' )
 
 PORT = 8080
+RPC_PORT = 7001
+
 app = express()
 app.set( 'views', __dirname + '/../views' )
 app.set( 'view engine', 'jade' )
@@ -29,14 +31,7 @@ process.on 'uncaughtException', (err) ->
 
 winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 
-rpcServer = new EthosRPC
-  port: 7001
-  host: 'eth'
-  path: '/'
 
-rpcServer.start (err) ->
-  throw err if err
-  winston.info('Ethos RPC Server running on port 7001')
 
 
 # Ethereum Network
@@ -54,12 +49,24 @@ rpcServer.start (err) ->
 
 # winston.info "Loaded ethereum-node."
 
-manager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
-winston.info 'DApps: ', Object.keys manager.dapps
+# DApp Manager
+dappManager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
+winston.info 'DApps: ', Object.keys dappManager.dapps
+
+# RPC
+rpcServer = new EthosRPC
+  port: RPC_PORT
+  host: 'eth'
+  path: '/'
+  dappManager: dappManager
+
+rpcServer.start (err) ->
+  throw err if err
+  winston.info( "Ethos RPC Server running on port #{ RPC_PORT }")
 
 # Intercepts all requests and checks if it needs to load a DApp.
 # If a DApp is loaded then assets are served from that DApps root folder.
-app.use( manager.middleware( app, winston ) )
+app.use( dappManager.middleware( app, winston ) )
 
 # Ethos specific routes
 # Redirect to ethos namespace
@@ -72,8 +79,8 @@ app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root:
 
 # Render Ethos index view
 app.get '/ethos/', (req, res) ->
-  manager.currentDApp = 'ethos'
-  res.render( 'index', { dapps: manager.dapps } )
+  dappManager.currentDApp = 'ethos'
+  res.render( 'index', { dapps: dappManager.dapps } )
 
 # Serve other ethos assets
 app.get '/ethos/static/*', (req, res) ->

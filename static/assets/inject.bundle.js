@@ -14,6 +14,9 @@
       return console.log('open');
     } else if (e.keyCode === 'S'.charCodeAt(0) && e.ctrlKey) {
       return console.log('save');
+    } else if (e.keyCode === 'H'.charCodeAt(0) && e.ctrlKey) {
+      console.log('home');
+      return window.location.href = 'http://eth:8080/ethos#home';
     }
   });
   window.jquery = jquery = require('jquery');
@@ -25,7 +28,10 @@
     path: '/',
     strict: false
   });
-  rpc = function(method, args) {
+  rpc = function(method, args, cb) {
+    if (!args) {
+      args = [];
+    }
     if (args.length) {
       args = args[0];
     }
@@ -33,7 +39,7 @@
       jsonrpc: '2.0',
       method: method,
       params: args
-    });
+    }, cb);
   };
   client.call({
     jsonrpc: '2.0',
@@ -64,15 +70,17 @@
     keys: ['asdasda'],
     ready: function(cb) {
       console.log('eth ready');
-      return window.onload = function() {
+      window.onload = function() {
         var err;
+        console.log('window onload');
         try {
           return cb.call(window);
         } catch (_error) {
           err = _error;
-          return console.error(err);
+          return console.error('onload cb error', err);
         }
       };
+      return this;
     },
     getBalance: function() {
       console.log('eth getBalance');
@@ -96,6 +104,36 @@
     secretToAddress: function() {
       console.log('eth secretToAddress');
       return '1sasasdasdafasd';
+    },
+    getKey: function(callback) {
+      return client.call({
+        jsonrpc: '2.0',
+        method: 'getKey',
+        params: []
+      }, function(err, resp) {
+        if (!err && (resp != null ? resp.result : void 0)) {
+          console.log("RPC getKey completed: " + resp.result + ".");
+          return callback != null ? callback.call(window, null, resp.result) : void 0;
+        } else {
+          console.error("RPC getKey Failed.", err);
+          return callback != null ? callback.call(window, err, null) : void 0;
+        }
+      });
+    },
+    dapps: function(callback) {
+      return client.call({
+        jsonrpc: '2.0',
+        method: 'dapps',
+        params: []
+      }, function(err, resp) {
+        if (!err && (resp != null ? resp.result : void 0)) {
+          console.log("RPC Dapps completed: " + resp.result + ".");
+          return callback != null ? callback.call(window, null, resp.result) : void 0;
+        } else {
+          console.error("RPC Dapps Failed.", err);
+          return callback != null ? callback.call(window, err, null) : void 0;
+        }
+      });
     }
   };
   parseEthQuery = function(href) {
@@ -106,23 +144,37 @@
     }
     return query;
   };
+  window.eth.ready(function() {
+    return console.log('Ethos eth Ready.');
+  });
   jquery(function() {
     var err, _ref;
     try {
       console.log('Ethos attaching URI Intent handlers.');
       return jquery('body').on('click', '[href]', function(ev) {
-        var ethIntent, follow, href, query;
+        var ethIntent, href, query;
         href = jquery(this).attr('href');
         console.log('href click: ' + href);
         ethIntent = href.match(/^:eth\?(.*)/);
         query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
         if (ethIntent) {
-          follow = window.confirm("Open link in ÐApp: " + query.dapp);
-          if (follow) {
-            window.location = "/" + query.dapp;
-          }
           ev.preventDefault();
+          eth.dapps(function(err, dapps) {
+            var follow;
+            if (dapps.indexOf(query.dapp) >= 0) {
+              console.log('Dapp Installed open');
+              window.location = "/" + query.dapp;
+            } else {
+              follow = window.confirm("Open link in ÐApp: " + query.dapp);
+              if (follow) {
+                window.location = "/" + query.dapp;
+              }
+            }
+            return console.log('clicked: ', query, ' have: ', dapps);
+          });
           return false;
+        } else {
+          return true;
         }
       });
     } catch (_error) {

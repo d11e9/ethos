@@ -12,8 +12,8 @@
     "frame": true,
     "icon": "./static/assets/ethos-logo.png",
     "position": "center",
-    "width": 500,
-    "height": 500,
+    "width": 600,
+    "height": 600,
     "min_width": 300,
     "min_height": 200
   },

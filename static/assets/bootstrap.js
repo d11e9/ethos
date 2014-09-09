@@ -18,6 +18,11 @@ if (typeof global !== 'undefined') {
 	var win = gui.Window.get();
 	var mb = new gui.Menu({type:"menubar"});
 
+	// document.addEventListener( 'keyup', function (e) {
+	// 	if (e.keyCode == 'O'.charCodeAt(0) and e.ctrlKey) console.log('open')
+	// 	else if (e.keyCode == 'S'.charCodeAt(0) and e.ctrlKey) console.log('save')
+	// });
+
 	if (process.platform == 'darwin') {
 		mb.createMacBuiltin("Ethos");
 		win.menu = mb;

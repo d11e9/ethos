@@ -3,11 +3,13 @@ fs = require 'fs'
 path = require 'path'
 _ = require 'underscore'
 
-iconMappings =
+dappConfig =
+	ethos: { name: 'ethos', icon: 'cubes', key: '1Eth05PrivKey'}
 	namereg: { name: 'namereg', icon: 'university' }
 	coin: { name: 'coin', icon: 'database' }
 	coins: { name: 'coins', icon: 'database' }
 	exchange: { name: 'exchange', icon: 'university' }
+	example: { name: 'example', icon: 'share', key: '1Ex4mp13PrivKey' }
 	default: { name: 'ÐApp', icon: 'cube' }
 
 class DAppManager 
@@ -15,6 +17,7 @@ class DAppManager
 		@dirs = @getDirs()
 		@dapps = @getDApps()
 		@currentDApp = 'ethos'
+		@dappConfig = dappConfig
 
 	getDApps: ->
 		dapps = {}
@@ -24,10 +27,10 @@ class DAppManager
 		_.map withHtml, (name) =>
 			#console.log( 'NAME: ', name)
 			html = @getHtml( name )
-			base = if iconMappings[name]
-				iconMappings[name]
+			base = if dappConfig[name]
+				dappConfig[name]
 			else
-				{ name: name, icon: iconMappings.default.icon }
+				{ name: name, icon: dappConfig.default.icon }
 			base.html = html[0]
 			dapps[name] = base
 		dapps
@@ -70,7 +73,7 @@ class DAppManager
 			url = req.params[0]
 			dappName = url.split('/')[0]
 			dapp = @dapps[ dappName ]
-			@winston.info( 'Loading DApp: ' + dappName + ' is asset: ' + @isAsset( req ) )
+			@winston.info( 'Loading ÐApp: ' + dappName + ' is asset: ' + @isAsset( req ) )
 
 			unless dapp
 				#if no compatible dapp is availbe then defer to main router.

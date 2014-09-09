@@ -13,6 +13,9 @@ do ->
 			console.log('open')
 		else if (e.keyCode == 'S'.charCodeAt(0) and e.ctrlKey) 
 			console.log('save')
+		else if (e.keyCode == 'H'.charCodeAt(0) and e.ctrlKey) 
+			console.log('home')
+			window.location.href = 'http://eth:8080/ethos#home'
 
 
 	window.jquery = jquery = require 'jquery'
@@ -26,12 +29,10 @@ do ->
 		path: '/'
 		strict: false
 
-	rpc = (method,args) ->
+	rpc = (method, args, cb) ->
+		args = [] unless args
 		args = args[0] if args.length
-		client.call
-			jsonrpc: '2.0'
-			method: method
-			params: args
+		client.call( { jsonrpc: '2.0', method: method, params: args }, cb )
 
 	client.call { jsonrpc: '2.0', method: 'ping', params: [] }, (err, resp) -> 
 		if !err and resp?.result
@@ -50,10 +51,12 @@ do ->
 		ready: (cb) ->
 			console.log 'eth ready'
 			window.onload = ->
+				console.log 'window onload'
 				try
 					cb.call( window )
 				catch err
-					console.error( err )
+					console.error( 'onload cb error', err )
+			this
 		getBalance: ->
 			console.log 'eth getBalance'
 			0
@@ -72,6 +75,24 @@ do ->
 			console.log 'eth secretToAddress'
 			'1sasasdasdafasd'
 
+		getKey: (callback) ->
+			client.call { jsonrpc: '2.0', method: 'getKey', params: [] }, (err, resp) -> 
+				if !err and resp?.result
+					console.log( "RPC getKey completed: #{ resp.result }." )
+					callback?.call( window, null, resp.result )
+				else
+					console.error( "RPC getKey Failed.", err )
+					callback?.call( window, err, null )
+
+		dapps: (callback) ->
+			client.call { jsonrpc: '2.0', method: 'dapps', params: [] }, (err, resp) -> 
+				if !err and resp?.result
+					console.log( "RPC Dapps completed: #{ resp.result }." )
+					callback?.call( window, null, resp.result )
+				else
+					console.error( "RPC Dapps Failed.", err )
+					callback?.call( window, err, null )
+
 	parseEthQuery = (href) ->
 		query = url.parse( href, true ).query
 		unless query.dapp
@@ -80,6 +101,9 @@ do ->
 			else if query.ammount
 				'walleth'
 		query
+
+	window.eth.ready ->
+		console.log 'Ethos eth Ready.'
 
 	jquery ->
 		try
@@ -91,10 +115,20 @@ do ->
 				query = parseEthQuery?( href )
 
 				if ethIntent
-					follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
-					window.location = "/#{query.dapp}" if follow
 					ev.preventDefault()
+
+					eth.dapps (err, dapps) ->
+						if dapps.indexOf( query.dapp ) >= 0
+							console.log('Dapp Installed open' )
+							window.location = "/#{query.dapp}"
+						else
+							follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
+							window.location = "/#{query.dapp}" if follow
+						console.log( 'clicked: ', query, ' have: ', dapps)
 					false
+				else
+					true
+
 		catch err
 			window.winston?.error err
 

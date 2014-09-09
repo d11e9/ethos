@@ -3,7 +3,8 @@ rpc = require('node-json-rpc')
 module.exports = (winston) ->
 
   class EthosRPC
-    constructor: ({port, host, path}) ->
+    constructor: ({port, host, path, dappManager }) ->
+      @dappManager = dappManager
       @server = new rpc.Server
         port: port
         host: host
@@ -25,6 +26,19 @@ module.exports = (winston) ->
       @server.addMethod 'logError', (para, callback) ->
         winston.error( para )
         callback( null, 'ok' )
+
+      @server.addMethod 'getKey', (para,callback) =>
+        winston.info( @dappManager.currentDApp + " ÐApp requested KEY." )
+        if @dappManager.currentDApp is 'ethos'
+          key = @dappManager.dappConfig[ @dappManager.currentDApp ]?.key
+        else
+          key = @dappManager.dapps[ dappManager.currentDApp ]?.key
+        winston.info( "ÐApp #{ @dappManager.currentDApp } KEY is: " + key )
+        callback( null, key )
+
+      @server.addMethod 'dapps', (para, callback) =>
+        winston.info( 'RPC dapps requested.' )
+        callback( null, Object.keys( @dappManager.dapps ) )
 
       @server.addMethod 'getKeys', (para, callback) ->
         winston.info( 'RPC getKeys' )
