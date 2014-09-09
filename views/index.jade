@@ -13,6 +13,8 @@ html
 
 		p.subtitle <span class="key-combo">Ctrl+H</span> to come home.
 
+		input#search( type="search" )
+
 		#menu
 			a( href="#" )
 				i.fa.fa-bars
@@ -45,4 +47,8 @@ html
 				eth.getKey( function(err,key){
 					console.log( 'Ethos get Key: ', key, ' Error:', err)
 				})
+
+				var searchInput = document.getElementById( 'search' )
+				searchInput.onkeyup = function(){ console.log( 'search: ', searchInput.value )}
+
 			}

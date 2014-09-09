@@ -36,28 +36,37 @@ body.quick-load #ethos-logo {
     transition: none;
 }
 
-.subtitle {
+.subtitle, input#search {
     text-align: center;
     text-align: center;
     font-size: 0.8em;
     color: rgba(0,0,0,0.4);
     padding: 0.5em;
-    border: 1px solid #ACAAE9;
     display: block;
     width: 13em;
     margin: 1em auto;
     margin-bottom: 3em;
-    border-radius: 0.7em;
-    background-color: white;
     opacity: 0;
     transition: opacity 10s ease-in-out;
 }
 
-body.loaded .subtitle {
+input#search {
+    opacity: 0;
+    border-radius: 0.7em;
+    border: 1px solid #ACAAE9;
+    background-color: white;
+    transition: opacity 2s ease-in-out;
+    font-size: 1.2em;
+    text-align: left;
+}
+
+body.loaded .subtitle,
+body.loaded input#search {
     opacity: 1;
 }
 
-body.quick-load .subtitle {
+body.quick-load .subtitle,
+body.quyck-load input#search {
     transition: none;
 }
 
