@@ -1,9 +1,9 @@
-Ethos
+Ξthos
 =====
 
 An Ethereum Browser
 
-![Ethos](https://raw.githubusercontent.com/projectdnet/ethos/master/static/assets/imgs/v0.0.3-screenshot.png "Ethos an Ethereum Browser")
+![Ethos](https://raw.githubusercontent.com/projectdnet/ethos/master/static/assets/imgs/v0.0.4-screenshot.png "Ethos an Ethereum Browser")
 
 
 Still under development. Binaries for the various platforms (when appropriate) will be available at [https://github.com/projectdnet/ethos/releases](https://github.com/projectdnet/ethos/releases).
@@ -36,6 +36,10 @@ To run the development build of Ethos to the following
 ##Server
 
 The webkit instance also instantiates a nodejs server which is used for serving Ethos interface pages, like the homescreen etc. 
+
+##ÐApps
+
+Ethos is itself a ÐApp served by the server above, which allows you in add ÐApps of your own or from other source, like the internet. The Ethos browser comes with a few stalwarts, defaults, and examples. Which can be found in the `./dapps` folder.
 
 ###DNS
 

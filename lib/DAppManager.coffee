@@ -61,14 +61,14 @@ class DAppManager
 			@winston.info 'is asset: ' + @isAsset( req )
 			# Assets will have extentions and no slashes
 			if @isAsset( req ) and dappName isnt 'ethos'
-				@winston.info( 'Serve dapp asset:' )
+				@winston.info( 'Serve ÐApp asset:' )
 				res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
 			else
 				next()
 
 	renderDApp: (req,res,next) =>
 		if @isAsset( req )
-			@winston.info( 'DApp asset.' + req.url )
+			@winston.info( 'ÐApp asset.' + req.url )
 		else
 			url = req.params[0]
 			dappName = url.split('/')[0]
