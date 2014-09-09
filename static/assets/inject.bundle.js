@@ -1,147 +1,137 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var client, jquery, parseEthQuery, rpc, url;
-
-console.log("Ethos inject.coffee: ok", window);
-
-window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
-  return alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber, +' Column: ' + column + ' StackTrace: ' + errorObj);
-};
-
-document.addEventListener('keyup', function(e) {
-  if (e.keyCode === 'O'.charCodeAt(0) && e.ctrlKey) {
-    return console.log('open');
-  } else if (e.keyCode === 'S'.charCodeAt(0) && e.ctrlKey) {
-    return console.log('save');
+(function() {
+  var client, jquery, parseEthQuery, rpc, url;
+  if (window.EthosInjectSkip) {
+    return;
   }
-});
-
-window.jquery = jquery = require('jquery');
-
-url = require('url');
-
-rpc = require('node-json-rpc');
-
-client = new rpc.Client({
-  port: 7001,
-  host: '127.0.0.1',
-  path: '/',
-  strict: false
-});
-
-rpc = function(method, args) {
-  if (args.length) {
-    args = args[0];
-  }
-  return client.call({
-    jsonrpc: '2.0',
-    method: method,
-    params: args
-  });
-};
-
-client.call({
-  jsonrpc: '2.0',
-  method: 'ping',
-  params: []
-}, function(err, resp) {
-  if (!err && (resp != null ? resp.result : void 0)) {
-    return console.log("RPC Ping completed: " + resp.result + ".");
-  } else {
-    return console.error("RPC Ping Failed.", err);
-  }
-});
-
-if (typeof window !== "undefined" && window !== null) {
-  window.winston = {
-    error: function() {
-      return rpc('logError', arguments);
-    },
-    warn: function() {
-      return rpc('logWarn', arguments);
-    },
-    info: function() {
-      return rpc('logInfo', arguments);
-    }
+  console.log("Ethos inject.coffee: ok", window);
+  window.EthosInjectSkip = true;
+  window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
+    return alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber, +' Column: ' + column + ' StackTrace: ' + errorObj);
   };
-}
-
-console.log("Ethos inject winston RPC check: ", Object.keys(window.winston));
-
-window.eth = {
-  client: 'ethos',
-  keys: ['asdasda'],
-  ready: function(cb) {
-    console.log('eth ready');
-    return window.onload = function() {
-      var err;
-      try {
-        return cb.call(window);
-      } catch (_error) {
-        err = _error;
-        return console.error(err);
+  document.addEventListener('keyup', function(e) {
+    if (e.keyCode === 'O'.charCodeAt(0) && e.ctrlKey) {
+      return console.log('open');
+    } else if (e.keyCode === 'S'.charCodeAt(0) && e.ctrlKey) {
+      return console.log('save');
+    }
+  });
+  window.jquery = jquery = require('jquery');
+  url = require('url');
+  rpc = require('node-json-rpc');
+  client = new rpc.Client({
+    port: 7001,
+    host: '127.0.0.1',
+    path: '/',
+    strict: false
+  });
+  rpc = function(method, args) {
+    if (args.length) {
+      args = args[0];
+    }
+    return client.call({
+      jsonrpc: '2.0',
+      method: method,
+      params: args
+    });
+  };
+  client.call({
+    jsonrpc: '2.0',
+    method: 'ping',
+    params: []
+  }, function(err, resp) {
+    if (!err && (resp != null ? resp.result : void 0)) {
+      return console.log("RPC Ping completed: " + resp.result + ".");
+    } else {
+      return console.error("RPC Ping Failed.", err);
+    }
+  });
+  if (typeof window !== "undefined" && window !== null) {
+    window.winston = {
+      error: function() {
+        return rpc('logError', arguments);
+      },
+      warn: function() {
+        return rpc('logWarn', arguments);
+      },
+      info: function() {
+        return rpc('logInfo', arguments);
       }
     };
-  },
-  getBalance: function() {
-    console.log('eth getBalance');
-    return 0;
-  },
-  stateAt: function() {
-    console.log('eth stateAt');
-    return 1;
-  },
-  transact: function() {
-    console.log('eth transact');
-    return null;
-  },
-  watch: function() {
-    return console.log('eth watch');
-  },
-  fromAscii: function(x) {
-    console.log('eth fromAscii');
-    return x.toString();
-  },
-  secretToAddress: function() {
-    console.log('eth secretToAddress');
-    return '1sasasdasdafasd';
   }
-};
-
-parseEthQuery = function(href) {
-  var query;
-  query = url.parse(href, true).query;
-  if (!query.dapp) {
-    query.dapp = query.address ? 'etherchain' : query.ammount ? 'walleth' : void 0;
-  }
-  return query;
-};
-
-jquery(function() {
-  var err, _ref;
-  try {
-    console.log('Ethos attaching URI Intent handlers.');
-    return jquery('body').on('click', '[href]', function(ev) {
-      var ethIntent, follow, href, query;
-      href = jquery(this).attr('href');
-      console.log('href click: ' + href);
-      ethIntent = href.match(/^:eth\?(.*)/);
-      query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
-      if (ethIntent) {
-        follow = window.confirm("Open link in ÐApp: " + query.dapp);
-        if (follow) {
-          window.location = "/" + query.dapp;
+  window.eth = {
+    client: 'ethos',
+    keys: ['asdasda'],
+    ready: function(cb) {
+      console.log('eth ready');
+      return window.onload = function() {
+        var err;
+        try {
+          return cb.call(window);
+        } catch (_error) {
+          err = _error;
+          return console.error(err);
         }
-        ev.preventDefault();
-        return false;
-      }
-    });
-  } catch (_error) {
-    err = _error;
-    return (_ref = window.winston) != null ? _ref.error(err) : void 0;
-  }
-});
-
-console.log("Ethos inject end: ok.");
+      };
+    },
+    getBalance: function() {
+      console.log('eth getBalance');
+      return 0;
+    },
+    stateAt: function() {
+      console.log('eth stateAt');
+      return 1;
+    },
+    transact: function() {
+      console.log('eth transact');
+      return null;
+    },
+    watch: function() {
+      return console.log('eth watch');
+    },
+    fromAscii: function(x) {
+      console.log('eth fromAscii');
+      return x.toString();
+    },
+    secretToAddress: function() {
+      console.log('eth secretToAddress');
+      return '1sasasdasdafasd';
+    }
+  };
+  parseEthQuery = function(href) {
+    var query;
+    query = url.parse(href, true).query;
+    if (!query.dapp) {
+      query.dapp = query.address ? 'etherchain' : query.ammount ? 'walleth' : void 0;
+    }
+    return query;
+  };
+  jquery(function() {
+    var err, _ref;
+    try {
+      console.log('Ethos attaching URI Intent handlers.');
+      return jquery('body').on('click', '[href]', function(ev) {
+        var ethIntent, follow, href, query;
+        href = jquery(this).attr('href');
+        console.log('href click: ' + href);
+        ethIntent = href.match(/^:eth\?(.*)/);
+        query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
+        if (ethIntent) {
+          follow = window.confirm("Open link in ÐApp: " + query.dapp);
+          if (follow) {
+            window.location = "/" + query.dapp;
+          }
+          ev.preventDefault();
+          return false;
+        }
+      });
+    } catch (_error) {
+      err = _error;
+      return (_ref = window.winston) != null ? _ref.error(err) : void 0;
+    }
+  });
+  return console.log("Ethos inject end: ok.");
+})();
 
 
 

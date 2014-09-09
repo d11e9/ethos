@@ -9,6 +9,7 @@
   "window": {
     "show": true,
     "toolbar": true,
+    "frame": true,
     "icon": "./static/assets/ethos-logo.png",
     "position": "center",
     "width": 500,

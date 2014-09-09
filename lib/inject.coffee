@@ -1,100 +1,101 @@
-console.log "Ethos inject.coffee: ok", window
+do ->
+	return if window.EthosInjectSkip
 
-window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
-    alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
-    + ' Column: ' + column + ' StackTrace: ' +  errorObj)
+	console.log "Ethos inject.coffee: ok", window
+	window.EthosInjectSkip = true
 
+	window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
+		alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
+		+ ' Column: ' + column + ' StackTrace: ' +  errorObj)
 
-document.addEventListener 'keyup', (e) ->
-  if (e.keyCode == 'O'.charCodeAt(0) and e.ctrlKey)
-    console.log('open')
-  else if (e.keyCode == 'S'.charCodeAt(0) and e.ctrlKey)
-    console.log('save')
-
-
-window.jquery = jquery = require 'jquery'
-url = require 'url'
-rpc = require 'node-json-rpc'
+	document.addEventListener 'keyup', (e) ->
+		if (e.keyCode == 'O'.charCodeAt(0) and e.ctrlKey) 
+			console.log('open')
+		else if (e.keyCode == 'S'.charCodeAt(0) and e.ctrlKey) 
+			console.log('save')
 
 
-client = new rpc.Client
-	port: 7001
-	host: '127.0.0.1'
-	path: '/'
-	strict: false
+	window.jquery = jquery = require 'jquery'
+	url = require 'url'
+	rpc = require 'node-json-rpc'
 
-rpc = (method,args) ->
-	args = args[0] if args.length
-	client.call
-		jsonrpc: '2.0'
-		method: method
-		params: args
 
-client.call { jsonrpc: '2.0', method: 'ping', params: [] }, (err, resp) -> 
-	if !err and resp?.result
-		console.log( "RPC Ping completed: #{ resp.result }." )
-	else
-		console.error( "RPC Ping Failed.", err )
+	client = new rpc.Client
+		port: 7001
+		host: '127.0.0.1'
+		path: '/'
+		strict: false
 
-window?.winston =
-	error: -> rpc( 'logError', arguments )
-	warn: -> rpc( 'logWarn', arguments )
-	info: -> rpc( 'logInfo', arguments )
+	rpc = (method,args) ->
+		args = args[0] if args.length
+		client.call
+			jsonrpc: '2.0'
+			method: method
+			params: args
 
-console.log "Ethos inject winston RPC check: ", Object.keys( window.winston )
+	client.call { jsonrpc: '2.0', method: 'ping', params: [] }, (err, resp) -> 
+		if !err and resp?.result
+			console.log( "RPC Ping completed: #{ resp.result }." )
+		else
+			console.error( "RPC Ping Failed.", err )
 
-window.eth =
-	client: 'ethos'
-	keys: ['asdasda']
-	ready: (cb) ->
-		console.log 'eth ready'
-		window.onload = ->
-			try
-				cb.call( window )
-			catch err
-				console.error( err )
-	getBalance: ->
-		console.log 'eth getBalance'
-		0
-	stateAt: -> 
-		console.log 'eth stateAt'
-		1
-	transact: -> 
-		console.log 'eth transact'
-		null
-	watch: ->
-		console.log 'eth watch'
-	fromAscii: (x) -> 
-		console.log 'eth fromAscii'
-		x.toString()
-	secretToAddress: ->
-		console.log 'eth secretToAddress'
-		'1sasasdasdafasd'
+	window?.winston =
+		error: -> rpc( 'logError', arguments )
+		warn: -> rpc( 'logWarn', arguments )
+		info: -> rpc( 'logInfo', arguments )
 
-parseEthQuery = (href) ->
-	query = url.parse( href, true ).query
-	unless query.dapp
-		query.dapp = if query.address
-			'etherchain'
-		else if query.ammount
-			'walleth'
-	query
+	window.eth =
+		client: 'ethos'
+		keys: ['asdasda']
+		ready: (cb) ->
+			console.log 'eth ready'
+			window.onload = ->
+				try
+					cb.call( window )
+				catch err
+					console.error( err )
+		getBalance: ->
+			console.log 'eth getBalance'
+			0
+		stateAt: -> 
+			console.log 'eth stateAt'
+			1
+		transact: -> 
+			console.log 'eth transact'
+			null
+		watch: ->
+			console.log 'eth watch'
+		fromAscii: (x) -> 
+			console.log 'eth fromAscii'
+			x.toString()
+		secretToAddress: ->
+			console.log 'eth secretToAddress'
+			'1sasasdasdafasd'
 
-jquery ->
-	try
-		console.log 'Ethos attaching URI Intent handlers.'
-		jquery( 'body' ).on 'click', '[href]', (ev) ->
-			href = jquery( this ).attr 'href'
-			console.log 'href click: ' + href
-			ethIntent = href.match /^:eth\?(.*)/
-			query = parseEthQuery?( href )
+	parseEthQuery = (href) ->
+		query = url.parse( href, true ).query
+		unless query.dapp
+			query.dapp = if query.address
+				'etherchain'
+			else if query.ammount
+				'walleth'
+		query
 
-			if ethIntent
-				follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
-				window.location = "/#{query.dapp}" if follow
-				ev.preventDefault()
-				false
-	catch err
-		window.winston?.error err
+	jquery ->
+		try
+			console.log 'Ethos attaching URI Intent handlers.'
+			jquery( 'body' ).on 'click', '[href]', (ev) ->
+				href = jquery( this ).attr 'href'
+				console.log 'href click: ' + href
+				ethIntent = href.match /^:eth\?(.*)/
+				query = parseEthQuery?( href )
 
-console.log "Ethos inject end: ok."
+				if ethIntent
+					follow = window.confirm "Open link in ÐApp: #{ query.dapp }"
+					window.location = "/#{query.dapp}" if follow
+					ev.preventDefault()
+					false
+		catch err
+			window.winston?.error err
+
+	console.log "Ethos inject end: ok."
