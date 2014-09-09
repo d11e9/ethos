@@ -9,7 +9,7 @@ dappConfig =
 	coin: { name: 'coin', icon: 'database' }
 	coins: { name: 'coins', icon: 'database' }
 	exchange: { name: 'exchange', icon: 'university' }
-	example: { name: 'example', icon: 'share', key: '1Ex4mp13PrivKey' }
+	example: { name: 'example', icon: 'share-alt', key: '1Ex4mp13PrivKey' }
 	default: { name: 'ÐApp', icon: 'cube' }
 
 class DAppManager 
