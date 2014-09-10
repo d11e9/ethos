@@ -4,12 +4,14 @@ html
 		title &Xi;thos
 		script( src="" )
 		link( rel="stylesheet", href="/ethos/static/assets/style.css" )
+		link( rel="stylesheet", href="/ethos/static/assets/404.css" )
 		link( rel="stylesheet", href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" )
 		link( rel="shortcut icon", href="/favicon.ico", type="image/x-icon" )
 		link( rel="icon", href="/favicon.ico", type="image/x-icon" )
 		script( type="text/javascript", src="/ethos/static/assets/inject.bundle.js" )
 	body#body
-		img#ethos-logo( title="Ethos, made for Ethereum", src="/ethos/static/assets/ethos-logo.png" )
+		a(href="/")
+			img#ethos-logo( title="Ethos, made for Ethereum", src="/ethos/static/assets/ethos-logo-inverted.png" )
 
 		p.subtitle <span class="key-combo">Ctrl+H</span> to go home.
 
@@ -17,16 +19,7 @@ html
 		p A DApp was not found to handle this request.
 
 		style.
-			body { 
-				color: #ACAAE9;
-				font-family: monospace;
-				text-align: center;
-			}
-
-			h1 {
-				font-size: 7em;
-				margin: 0;
-			}
+			
 
 		script.
 			window.onload = function(){

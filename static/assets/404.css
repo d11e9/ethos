@@ -1,0 +1,20 @@
+html, body {
+	background-color :#323150;
+	color: white;
+	font-family: monospace;
+	text-align: center;
+}
+
+#ethos-logo,
+.subtitle {
+	transition: none;
+}
+
+.subtitle {
+	color: rgba(255,255,255,0.4);
+}
+
+h1 {
+	font-size: 7em;
+	margin: 0;
+}
