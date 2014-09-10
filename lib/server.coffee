@@ -46,20 +46,7 @@ exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error, stdout, stder
     console.log('Child process Node-v running.')
     console.log('stdout: ' + stdout)
 
-# Ethereum Network
-# FIXME: Does not currently compile on windows
-# try
 
-#   nodeEthereum = require( './node-ethereum' )
-#   ethApp = new nodeEthereum()
-  
-#   ethApp.start ->
-#     winston.info( 'node-ethereum running...' )
-
-# catch err
-#   winston.error "Error loading node-ethereum", err
-
-# winston.info "Loaded ethereum-node."
 
 # DApp Manager
 dappManager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
