@@ -1,4 +1,5 @@
 
+require('coffee-script/register')
 
 express = require( 'express' )
 http = require( 'http' )
@@ -7,12 +8,14 @@ jade = require( 'jade' )
 path = require( 'path' )
 winston = require( 'winston' )
 _ = require( 'underscore' )
+exec = require( 'child_process' ).exec
 
 EthosRPC = require( './EthosRPC.coffee')(winston)
 DAppManager = require( './DAppManager.coffee' )
 
 PORT = 8080
 RPC_PORT = 7001
+ETH_PORT = 7002
 
 app = express()
 app.set( 'views', __dirname + '/../views' )
@@ -31,8 +34,17 @@ process.on 'uncaughtException', (err) ->
 
 winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 
+# FIXME: Techinal Debt.
+# Temprary solution to node-ethereum failing when run in a node-webkit context.
+# Run node-ethereum via the shell, this makes node.js a runtime dependency.
 
-
+exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error, stdout, stderr) ->
+    if error?
+      console.log('exec error: ' + error)
+      console.log('stderr: ' + stderr);
+    else
+      console.log('Child process Node-v running.')
+      console.log('stdout: ' + stdout)
 
 # Ethereum Network
 # FIXME: Does not currently compile on windows
