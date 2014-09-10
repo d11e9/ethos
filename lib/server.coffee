@@ -39,12 +39,12 @@ winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 # Run node-ethereum via the shell, this makes node.js a runtime dependency.
 
 exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error, stdout, stderr) ->
-    if error?
-      console.log('exec error: ' + error)
-      console.log('stderr: ' + stderr);
-    else
-      console.log('Child process Node-v running.')
-      console.log('stdout: ' + stdout)
+  if error?
+    console.log('exec error: ' + error)
+    console.log('stderr: ' + stderr);
+  else
+    console.log('Child process Node-v running.')
+    console.log('stdout: ' + stdout)
 
 # Ethereum Network
 # FIXME: Does not currently compile on windows
@@ -97,3 +97,7 @@ app.get '/ethos/', (req, res) ->
 # Serve other ethos assets
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'})
+
+# 404
+app.get '*', (req,res) ->
+  res.render( '404', { url: req.url } )
