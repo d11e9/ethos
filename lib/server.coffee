@@ -38,8 +38,8 @@ winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 # Temporary solution to node-ethereum failing when run in a node-webkit context.
 # Run node-ethereum via the shell, this makes node.js a runtime dependency.
 
-exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error) ->
-  winston.error( "Error running node-ethereum process.", error ) if error
+#exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error) ->
+#  winston.error( "Error running node-ethereum process.", error ) if error
 
 # DApp Manager
 dappManager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )

@@ -5,3 +5,6 @@
 [submodule "dapps"]
 	path = dapps
 	url = https://github.com/d11e9/dapp-bin.git
+[submodule ".\\lib\\ethereumjs-lib"]
+	path = .\\lib\\ethereumjs-lib
+	url = https://github.com/projectdnet/ethereumjs-lib.git

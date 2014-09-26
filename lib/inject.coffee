@@ -4,6 +4,8 @@ do ->
 	console.log "Ethos inject.coffee: ok", window
 	window.EthosInjectSkip = true
 
+
+
 	window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
 		alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
 		+ ' Column: ' + column + ' StackTrace: ' +  errorObj)
@@ -19,6 +21,7 @@ do ->
 
 
 	window.jquery = jquery = require 'jquery'
+	window.Ethereum = require './ethereumjs-lib/ethereum-min.js'
 	url = require 'url'
 	rpc = require 'node-json-rpc'
 
@@ -61,18 +64,25 @@ do ->
 			console.log 'eth getBalance'
 			0
 		stateAt: -> 
-			console.log 'eth stateAt'
+			console.log 'eth stateAt', arguments
 			1
 		transact: -> 
-			console.log 'eth transact'
+			console.log 'eth transact', arguments
 			null
 		watch: ->
-			console.log 'eth watch'
+			console.log 'eth watch', arguments
+			changed: ->
+
 		fromAscii: (x) -> 
-			console.log 'eth fromAscii'
+			console.log 'eth fromAscii', arguments
 			x.toString()
+
+		toDecimal: (x) ->
+			console.log 'eth toDecimal', arguments
+			parseInt( x )
+
 		secretToAddress: ->
-			console.log 'eth secretToAddress'
+			console.log 'eth secretToAddress', arguments
 			'1sasasdasdafasd'
 
 		getKey: (callback) ->
@@ -118,7 +128,7 @@ do ->
 					ev.preventDefault()
 
 					eth.dapps (err, dapps) ->
-						if dapps.indexOf( query.dapp ) >= 0
+						if !err and dapps?.indexOf( query.dapp ) >= 0
 							console.log('Dapp Installed open' )
 							window.location = "/#{query.dapp}"
 						else
