@@ -23,7 +23,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "npm run compile && coffee ./lib/server.coffee",
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
-    "build-dev": "npm run compile && nwbuild -r .",
+    "build-dev": "npm run compile && nwbuild -r . & tail -f logs/ethereum.log -f logs/ethos.log",
     "dev": "nwbuild -r .",
     "compile": "npm run compile-inject",
     "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./static/assets/inject.bundle.js"

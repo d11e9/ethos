@@ -24,7 +24,7 @@ app.set( 'view engine', 'jade' )
 app.listen( PORT )
 
 winston.add( winston.transports.File, { 
-  filename: 'ethos.log',
+  filename: './logs/ethos.log',
   handleExceptions: true
 })
 
@@ -42,7 +42,10 @@ winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 #  winston.error( "Error running node-ethereum process.", error ) if error
 
 # DApp Manager
-dappManager = new DAppManager( rootDir: path.join( __dirname, '../dapps' ) )
+dappManager = new DAppManager
+  rootDir: path.join( __dirname, '../dapps' )
+  winston: winston
+
 winston.info 'DApps: ', Object.keys dappManager.dapps
 
 # RPC

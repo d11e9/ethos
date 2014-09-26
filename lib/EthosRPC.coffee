@@ -1,4 +1,5 @@
 rpc = require('node-json-rpc')
+Ethereum = require('./ethereumjs-lib')
 
 module.exports = (winston) ->
 
@@ -30,9 +31,9 @@ module.exports = (winston) ->
       @server.addMethod 'getKey', (para,callback) =>
         winston.info( @dappManager.currentDApp + " ÐApp requested KEY." )
         if @dappManager.currentDApp is 'ethos'
-          key = @dappManager.dappConfig[ @dappManager.currentDApp ]?.key
+          key = "1Ex4mPl3Privkey"
         else
-          key = @dappManager.dapps[ dappManager.currentDApp ]?.key
+          key = @dappManager.dapps[ @dappManager.currentDApp ].key or Ethereum.BigInteger( Ethereum.util.sha3( 'an insecure private key' ) ).toString()
         winston.info( "ÐApp #{ @dappManager.currentDApp } KEY is: " + key )
         callback( null, key )
 

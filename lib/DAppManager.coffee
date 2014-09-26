@@ -10,37 +10,43 @@ dappConfig =
 	coins: { name: 'coins', icon: 'database' }
 	exchange: { name: 'exchange', icon: 'university' }
 	example: { name: 'example', icon: 'share-alt', key: '1Ex4mp13PrivKey' }
-	default: { name: 'ÐApp', icon: 'cube' }
+	default: { icon: 'cube' }
+
 
 class DAppManager 
-	constructor: ({@rootDir}) ->
+	constructor: ({@rootDir, @winston}) ->
 		@dirs = @getDirs()
 		@dapps = @getDApps()
 		@currentDApp = 'ethos'
 		@dappConfig = dappConfig
+		@winston.info "INFO DAPPS", @dapps
 
 	getDApps: ->
 		dapps = {}
-		withHtml = @dirs.filter (name) =>
-			@getHtml( name ).length
-
-		_.map withHtml, (name) =>
-			#console.log( 'NAME: ', name)
-			html = @getHtml( name )
-			base = if dappConfig[name]
-				dappConfig[name]
-			else
-				{ name: name, icon: dappConfig.default.icon }
-			base.html = html[0]
-			dapps[name] = base
+		for folder in @dirs
+			config = @getConfig( folder )
+			config.html ?= @getHtml( folder )[0]
+			if config.html
+				dapps[folder] = config
 		dapps
 
-	getHtml: (folder) ->
+	getHtml: (folder) =>
 		#console.log @rootDir, folder
 		dir = path.join( @rootDir, folder )
-		_.filter fs.readdirSync( dir ), (file) =>
+		_.filter fs.readdirSync( dir ), (file) ->
 			ext = path.extname( path.join( dir, file ) )
 			ext is '.html'
+
+	getConfig: (folder) =>
+		dir = path.join( @rootDir, folder )
+		configPath = "#{ dir }/dapp.json"
+		config = _.defaults( dappConfig[ folder ] or { name: folder }, dappConfig.default )
+		try
+			configJson = fs.readFileSync( configPath, "utf8" )
+			config = _.defaults( config, JSON.parse( configJson ) )
+		catch err
+			@winston.warn( "Unable to parse ÐApp config for: #{ folder }, using default." )
+		config
 
 	getDirs:  ->
 		_.filter fs.readdirSync( @rootDir ), (file) =>
@@ -57,11 +63,10 @@ class DAppManager
 
 		(req,res,next) =>
 			dappName = @currentDApp;
-			@winston.info 'URL: ' + req.url 
-			@winston.info 'is asset: ' + @isAsset( req )
+			@winston.info "URL: #{ req.url } is asset: #{ @isAsset( req ) }"
 			# Assets will have extentions and no slashes
 			if @isAsset( req ) and dappName isnt 'ethos'
-				@winston.info( 'Serve ÐApp asset:' )
+				@winston.info( "Serving ÐApp asset: #{ req.url }" )
 				res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
 			else
 				next()
