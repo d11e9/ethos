@@ -28,7 +28,7 @@ a {
 
 body.loaded #ethos-logo {
     opacity: 1;
-    width: 7em;
+    width: 12em;
     margin-top: 2em;
 }
 
@@ -57,7 +57,6 @@ input#search {
     display: block;
     width: 13em;
     margin: 1em auto;
-    margin-bottom: 3em;
     opacity: 0;
     border-radius: 0.7em;
     border: 1px solid #ACAAE9;
@@ -86,7 +85,7 @@ body.quyck-load input#search {
 }
 
 #dapps {
-    margin: 0;
+    margin: 2em;
     padding: 0;
     text-align: center;
     opacity: 0;

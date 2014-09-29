@@ -77,6 +77,9 @@ app.get '/ethos/', (req, res) ->
   dappManager.currentDApp = 'ethos'
   res.render( 'index', { dapps: dappManager.dapps } )
 
+app.get '/ethos/dialog', (req, res) ->
+  res.render( 'dialog' )
+
 # Serve other ethos assets
 app.get '/ethos/static/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'})

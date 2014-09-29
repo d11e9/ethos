@@ -50,7 +50,8 @@ do ->
 
 	window.eth =
 		client: 'ethos'
-		keys: ['asdasda']
+		key: 'No key'
+		keys: ['No keys']
 		ready: (cb) ->
 			console.log 'eth ready'
 			window.onload = ->
@@ -86,14 +87,24 @@ do ->
 			'1sasasdasdafasd'
 
 		getKey: (callback) ->
-			client.call { jsonrpc: '2.0', method: 'getKey', params: [] }, (err, resp) -> 
-				if !err and resp?.result
-					console.log( "RPC getKey completed: #{ resp.result }." )
-					callback?.call( window, null, resp.result )
-				else
+			client.call { jsonrpc: '2.0', method: 'getKey', params: [] }, (err, resp) ->
+				if err
 					console.error( "RPC getKey Failed.", err )
 					callback?.call( window, err, null )
+				else
+					if resp?.result
+						console.log( "RPC getKey completed: #{ resp.result }." )
+						callback?.call( window, null, resp.result )
+					else
+						console.log ( "RPC getKey completed but no key pair exists. create?" )
+						if window.confirm( "No keypair found for this ÐApp. Do you wnat to generate a new private key?" )
+							callback?.call( window, null, "Te5tk3yp41r" )
+						else
+							callback?.call( window, new Error("No keypair found for this ÐApp."), null )
+					
 
+	# Ethos Specific RPC
+	window.ethos = 
 		dapps: (callback) ->
 			client.call { jsonrpc: '2.0', method: 'dapps', params: [] }, (err, resp) -> 
 				if !err and resp?.result
@@ -127,7 +138,7 @@ do ->
 				if ethIntent
 					ev.preventDefault()
 
-					eth.dapps (err, dapps) ->
+					ethos.dapps (err, dapps) ->
 						if !err and dapps?.indexOf( query.dapp ) >= 0
 							console.log('Dapp Installed open' )
 							window.location = "/#{query.dapp}"

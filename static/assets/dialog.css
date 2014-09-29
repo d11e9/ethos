@@ -1,0 +1,27 @@
+
+header {
+	background-color: #ccc;
+	color: #333;
+	padding: .5em;
+	user-select: none;
+}
+
+header h1 {
+	margin: 0;
+	font-size: 14px;
+}
+
+header #close {
+	float: right;
+	margin: .25em;
+	border-radius: .5em;
+	display: block;
+	width: 1em;
+	height: 1em;
+	background-color: red;
+	cursor: pointer;
+}
+
+#content {
+	padding: 1em;
+}

@@ -30,12 +30,17 @@ module.exports = (winston) ->
 
       @server.addMethod 'getKey', (para,callback) =>
         winston.info( @dappManager.currentDApp + " ÐApp requested KEY." )
-        if @dappManager.currentDApp is 'ethos'
-          key = "1Ex4mPl3Privkey"
+        key = if @dappManager.currentDApp is 'ethos'
+          "1Ex4mPl3Privkey"
         else
-          key = @dappManager.dapps[ @dappManager.currentDApp ].key or Ethereum.BigInteger( Ethereum.util.sha3( 'an insecure private key' ) ).toString()
-        winston.info( "ÐApp #{ @dappManager.currentDApp } KEY is: " + key )
-        callback( null, key )
+          @dappManager.dapps[ @dappManager.currentDApp ]?.key
+        
+        if key
+          winston.info( "ÐApp #{ @dappManager.currentDApp } KEY is: " + key )
+          callback( null, key )
+        else
+          winston.info( "ÐApp #{ @dappManager.currentDApp } has no key pair..." )
+          callback( null, null )
 
       @server.addMethod 'dapps', (para, callback) =>
         winston.info( 'RPC dapps requested.' )

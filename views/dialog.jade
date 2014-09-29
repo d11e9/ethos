@@ -1,0 +1,24 @@
+doctype html
+html
+	head
+		title &Xi;thos
+		script( src="" )
+		link( rel="stylesheet", href="/ethos/static/assets/style.css" )
+		link( rel="stylesheet", href="/ethos/static/assets/dialog.css" )
+		link( rel="stylesheet", href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" )
+		link( rel="shortcut icon", href="/favicon.ico", type="image/x-icon" )
+		link( rel="icon", href="/favicon.ico", type="image/x-icon" )
+	body#body
+
+		header
+			i#close
+			h1 Welcome
+
+		div#content
+			p Welcome to Ethos an Ethereum Browser.
+
+		script.
+			document.getElementById( 'close' ).onclick = function(){
+				global.vent.emit( 'close:dialog', { data: 'test:dialog' } )
+				window.close()
+			}

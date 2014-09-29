@@ -2,3 +2,5 @@ node_modules
 build/Ethos
 cache
 npm-debug.log
+static/assets/inject.bundle.js
+static/assets/bootstrap-client.bundle.js

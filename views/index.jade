@@ -16,8 +16,8 @@ html
 		input#search( type="search" )
 
 		#menu
-			a( href="#" )
-				i.fa.fa-bars
+			a( href="#", title="Settings" )
+				i.fa.fa-share-alt
 			ul.inner
 				li
 					a Settings
@@ -44,9 +44,6 @@ html
 					document.getElementById('body').className += ' quick-load';
 					window.location.hash = ''
 				}
-				eth.getKey( function(err,key){
-					console.log( 'Ethos get Key: ', key, ' Error:', err)
-				})
 
 				var searchInput = document.getElementById( 'search' )
 				searchInput.onkeyup = function(){ console.log( 'search: ', searchInput.value )}

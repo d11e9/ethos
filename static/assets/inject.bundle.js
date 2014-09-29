@@ -75,7 +75,8 @@ else if(c>0)r[i++]=c;r.t=i;r.clamp()}function bnpMultiplyTo(a,r){var x=this.abs(
   }
   window.eth = {
     client: 'ethos',
-    keys: ['asdasda'],
+    key: 'No key',
+    keys: ['No keys'],
     ready: function(cb) {
       console.log('eth ready');
       window.onload = function() {
@@ -126,15 +127,26 @@ else if(c>0)r[i++]=c;r.t=i;r.clamp()}function bnpMultiplyTo(a,r){var x=this.abs(
         method: 'getKey',
         params: []
       }, function(err, resp) {
-        if (!err && (resp != null ? resp.result : void 0)) {
-          console.log("RPC getKey completed: " + resp.result + ".");
-          return callback != null ? callback.call(window, null, resp.result) : void 0;
-        } else {
+        if (err) {
           console.error("RPC getKey Failed.", err);
           return callback != null ? callback.call(window, err, null) : void 0;
+        } else {
+          if (resp != null ? resp.result : void 0) {
+            console.log("RPC getKey completed: " + resp.result + ".");
+            return callback != null ? callback.call(window, null, resp.result) : void 0;
+          } else {
+            console.log("RPC getKey completed but no key pair exists. create?");
+            if (window.confirm("No keypair found for this ÐApp. Do you wnat to generate a new private key?")) {
+              return callback != null ? callback.call(window, null, "Te5tk3yp41r") : void 0;
+            } else {
+              return callback != null ? callback.call(window, new Error("No keypair found for this ÐApp."), null) : void 0;
+            }
+          }
         }
       });
-    },
+    }
+  };
+  window.ethos = {
     dapps: function(callback) {
       return client.call({
         jsonrpc: '2.0',
@@ -174,7 +186,7 @@ else if(c>0)r[i++]=c;r.t=i;r.clamp()}function bnpMultiplyTo(a,r){var x=this.abs(
         query = typeof parseEthQuery === "function" ? parseEthQuery(href) : void 0;
         if (ethIntent) {
           ev.preventDefault();
-          eth.dapps(function(err, dapps) {
+          ethos.dapps(function(err, dapps) {
             var follow;
             if (!err && (dapps != null ? dapps.indexOf(query.dapp) : void 0) >= 0) {
               console.log('Dapp Installed open');
