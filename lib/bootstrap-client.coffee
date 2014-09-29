@@ -67,6 +67,7 @@ if global?
 		win.showDevTools()
 
 	global.vent.on 'close:dialog', (data) ->
+		#mainwin.show()
 		console.log "'close:dialog' event fired. data:", data
 
 	
