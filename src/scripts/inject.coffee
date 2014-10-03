@@ -22,6 +22,7 @@ do ->
 	window.jquery = jquery = require 'jquery'
 	window.Ethereum = require '../../lib/ethereumjs-lib/ethereum-min.js'
 	window.WebTorrent = require '../../lib/webtorrent.min.js'
+	window.eth = require( '../../lib/ethereumjs/main.js' ).eth
 	
 	url = require 'url'
 	rpc = require 'node-json-rpc'
@@ -49,59 +50,59 @@ do ->
 		warn: -> rpc( 'logWarn', arguments )
 		info: -> rpc( 'logInfo', arguments )
 
-	window.eth =
-		client: 'ethos'
-		key: 'No key'
-		keys: ['No keys']
-		ready: (cb) ->
-			console.log 'eth ready'
-			window.onload = ->
-				console.log 'window onload'
-				try
-					cb.call( window )
-				catch err
-					console.error( 'onload cb error', err )
-			this
-		getBalance: ->
-			console.log 'eth getBalance'
-			0
-		stateAt: -> 
-			console.log 'eth stateAt', arguments
-			1
-		transact: -> 
-			console.log 'eth transact', arguments
-			null
-		watch: ->
-			console.log 'eth watch', arguments
-			changed: ->
+	# window.eth =
+	# 	client: 'ethos'
+	# 	key: 'No key'
+	# 	keys: ['No keys']
+	# 	ready: (cb) ->
+	# 		console.log 'eth ready'
+	# 		window.onload = ->
+	# 			console.log 'window onload'
+	# 			try
+	# 				cb.call( window )
+	# 			catch err
+	# 				console.error( 'onload cb error', err )
+	# 		this
+	# 	getBalance: ->
+	# 		console.log 'eth getBalance'
+	# 		0
+	# 	stateAt: -> 
+	# 		console.log 'eth stateAt', arguments
+	# 		1
+	# 	transact: -> 
+	# 		console.log 'eth transact', arguments
+	# 		null
+	# 	watch: ->
+	# 		console.log 'eth watch', arguments
+	# 		changed: ->
 
-		fromAscii: (x) -> 
-			console.log 'eth fromAscii', arguments
-			x.toString()
+	# 	fromAscii: (x) -> 
+	# 		console.log 'eth fromAscii', arguments
+	# 		x.toString()
 
-		toDecimal: (x) ->
-			console.log 'eth toDecimal', arguments
-			parseInt( x )
+	# 	toDecimal: (x) ->
+	# 		console.log 'eth toDecimal', arguments
+	# 		parseInt( x )
 
-		secretToAddress: ->
-			console.log 'eth secretToAddress', arguments
-			'1sasasdasdafasd'
+	# 	secretToAddress: ->
+	# 		console.log 'eth secretToAddress', arguments
+	# 		'1sasasdasdafasd'
 
-		getKey: (callback) ->
-			client.call { jsonrpc: '2.0', method: 'getKey', params: [] }, (err, resp) ->
-				if err
-					console.error( "RPC getKey Failed.", err )
-					callback?.call( window, err, null )
-				else
-					if resp?.result
-						console.log( "RPC getKey completed: #{ resp.result }." )
-						callback?.call( window, null, resp.result )
-					else
-						console.log ( "RPC getKey completed but no key pair exists. create?" )
-						if window.confirm( "No keypair found for this ÐApp. Do you wnat to generate a new private key?" )
-							callback?.call( window, null, "Te5tk3yp41r" )
-						else
-							callback?.call( window, new Error("No keypair found for this ÐApp."), null )
+	# 	getKey: (callback) ->
+	# 		client.call { jsonrpc: '2.0', method: 'getKey', params: [] }, (err, resp) ->
+	# 			if err
+	# 				console.error( "RPC getKey Failed.", err )
+	# 				callback?.call( window, err, null )
+	# 			else
+	# 				if resp?.result
+	# 					console.log( "RPC getKey completed: #{ resp.result }." )
+	# 					callback?.call( window, null, resp.result )
+	# 				else
+	# 					console.log ( "RPC getKey completed but no key pair exists. create?" )
+	# 					if window.confirm( "No keypair found for this ÐApp. Do you wnat to generate a new private key?" )
+	# 						callback?.call( window, null, "Te5tk3yp41r" )
+	# 					else
+	# 						callback?.call( window, new Error("No keypair found for this ÐApp."), null )
 					
 
 	# Ethos Specific RPC
@@ -123,9 +124,6 @@ do ->
 			else if query.ammount
 				'walleth'
 		query
-
-	window.eth.ready ->
-		console.log 'Ethos eth Ready.'
 
 	jquery ->
 		try
