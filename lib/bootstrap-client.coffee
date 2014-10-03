@@ -1,9 +1,4 @@
 console.log( 'Bootstraping Ethos...' )
-console.log( "This: ", this )
-console.log( "[Window, Global]:", [typeof window != 'undefined', typeof global != 'undefined'] )
-
-if require?
-	console.log 'Require: ', typeof require
 
 if global?
 	try
@@ -19,6 +14,8 @@ if global?
 
 	# Get the bootstrap window (this one) and hide it.
 	win = gui.Window.get()
+	win.ethos = window.ethos = true
+	console.log win, window
 	win.hide()
 
 	# Create a new main window for app content.
@@ -26,7 +23,8 @@ if global?
 		show: true
 		toolbar: true
 		frame: true
-		icon: "static/assets/ethos-logo.png"
+		icon: "./app/images/ethos-logo.png"
+		"inject-js-start": "./app/scripts/inject.bundle.js"
 		position: "center"
 		width: 1024
 		height: 768
@@ -70,8 +68,6 @@ if global?
 		#mainwin.show()
 		console.log "'close:dialog' event fired. data:", data
 
-	
-	global.showDialog()
 	
 
 console.log( 'Ethos Bootstrap end: ok.' )

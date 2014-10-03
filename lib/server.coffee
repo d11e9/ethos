@@ -1,6 +1,7 @@
 
 require('coffee-script/register')
 
+fs = require( 'fs' )
 express = require( 'express' )
 http = require( 'http' )
 request = require( 'request' )
@@ -18,7 +19,7 @@ RPC_PORT = 7001
 ETH_PORT = 7002
 
 app = express()
-app.set( 'views', __dirname + '/../views' )
+app.set( 'views', __dirname + '/../app/views' )
 app.set( 'view engine', 'jade' )
 
 app.listen( PORT )
@@ -69,9 +70,6 @@ app.get '/', (req,res) ->
   winston.info "Redirecting to Ethos DApp."
   res.redirect '/ethos'
 
-# Serve favicon
-app.get '/favicon.ico', (req,res) -> res.sendFile( './assets/favicon.ico', root: './static' )
-
 # Render Ethos index view
 app.get '/ethos/', (req, res) ->
   dappManager.currentDApp = 'ethos'
@@ -79,10 +77,6 @@ app.get '/ethos/', (req, res) ->
 
 app.get '/ethos/dialog', (req, res) ->
   res.render( 'dialog' )
-
-# Serve other ethos assets
-app.get '/ethos/static/*', (req, res) ->
-  res.sendFile( req.url.replace('/ethos/static/', '' )  , {root: './static'})
 
 # 404
 app.get '*', (req,res) ->

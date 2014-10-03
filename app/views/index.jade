@@ -3,13 +3,13 @@ html
 	head
 		title &Xi;thos
 		script( src="" )
-		link( rel="stylesheet", href="/ethos/static/assets/style.css" )
+		link( rel="stylesheet", href="app://ethos/app/styles/style.css" )
 		link( rel="stylesheet", href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" )
-		link( rel="shortcut icon", href="/favicon.ico", type="image/x-icon" )
-		link( rel="icon", href="/favicon.ico", type="image/x-icon" )
-		script( type="text/javascript", src="/ethos/static/assets/inject.bundle.js" )
+		link( rel="shortcut icon", href="app://ethos/app/images/favicon.ico", type="image/x-icon" )
+		link( rel="icon", href="app://ethos/app/images/favicon.ico", type="image/x-icon" )
+		
 	body#body
-		img#ethos-logo( title="Ethos, made for Ethereum", src="/ethos/static/assets/ethos-logo.png" )
+		img#ethos-logo( title="Ethos, made for Ethereum", src="app://ethos/app/images/ethos-logo.png" )
 
 		p.subtitle <span class="key-combo">Ctrl+H</span> to come home.
 
@@ -37,7 +37,6 @@ html
 					span Add ÐApp
 
 		script.
-
 			window.onload = function(){
 				document.getElementById('body').className += ' loaded';
 				if (window.location.hash === '#home') {

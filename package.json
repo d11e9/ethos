@@ -2,16 +2,16 @@
   "name": "Ethos",
   "version": "0.1.1",
   "description": "Ethereum Browser",
-  "main": "app://ethos/static/bootstrap.html",
+  "main": "app://ethos/app/bootstrap.html",
   "node-main": "./lib/server.js",
   "node-remote": "http://eth;app://",
-  "inject-js-start": "./static/assets/inject.bundle.js",
+  "inject-js-start": "./app/scripts/inject.bundle.js",
   "chromium-args": "--disable-web-security",
   "window": {
     "show": false,
     "toolbar": false,
     "frame": true,
-    "icon": "./static/assets/ethos-logo.png",
+    "icon": "app/images/ethos-logo.png",
     "position": "center",
     "width": 1,
     "height": 1,
@@ -26,8 +26,8 @@
     "build-dev": "npm run compile && nwbuild -r . & tail -f logs/ethereum.log -f logs/ethos.log",
     "dev": "nwbuild -r .",
     "compile": "npm run compile-inject && npm run compile-bootstrap",
-    "compile-bootstrap": "browserify -t coffeeify --im -e ./lib/bootstrap-client.coffee > ./static/assets/bootstrap-client.bundle.js",
-    "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./static/assets/inject.bundle.js"
+    "compile-bootstrap": "browserify -t coffeeify --im -e ./lib/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",
+    "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./app/scripts/inject.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -37,16 +37,14 @@
   "license": "MIT",
   "dependencies": {
     "coffee-script": "~1.7.1",
+    "coffeeify": "~0.7.0",
     "express": "~4.8.4",
     "jade": "~1.5.0",
     "jquery": "~2.1.1",
     "node-json-rpc": "0.0.1",
-    "node-torrent": "~0.2.1",
-    "nt": "^0.4.1",
     "request": "~2.40.0",
-    "winston": "^0.7.3",
-    "coffeeify": "~0.7.0",
-    "underscore": "~1.7.0"
+    "underscore": "~1.7.0",
+    "winston": "^0.7.3"
   },
   "devDependencies": {
     "node-webkit-builder": "~0.1.1",

@@ -1,6 +1,6 @@
 node_modules
 build/Ethos
+app/scripts
+logs/*.log
 cache
 npm-debug.log
-static/assets/inject.bundle.js
-static/assets/bootstrap-client.bundle.js

@@ -22,6 +22,8 @@ do ->
 
 	window.jquery = jquery = require 'jquery'
 	window.Ethereum = require './ethereumjs-lib/ethereum-min.js'
+	window.WebTorrent = require './webtorrent.min.js'
+	
 	url = require 'url'
 	rpc = require 'node-json-rpc'
 
