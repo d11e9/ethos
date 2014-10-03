@@ -13,12 +13,11 @@ header h1 {
 
 header #close {
 	float: right;
-	margin: .25em;
 	border-radius: .5em;
 	display: block;
 	width: 1em;
 	height: 1em;
-	background-color: red;
+	color: #d9383f;
 	cursor: pointer;
 }
 

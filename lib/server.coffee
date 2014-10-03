@@ -42,7 +42,7 @@ winston.info( "Ethos server started at http://localhost:#{ PORT }" )
 #exec 'coffee ./lib/ethereum-server.coffee -n ' + ETH_PORT, (error) ->
 #  winston.error( "Error running node-ethereum process.", error ) if error
 
-# DApp Manager
+# ÐApp Manager
 dappManager = new DAppManager
   rootDir: path.join( __dirname, '../dapps' )
   winston: winston
@@ -60,14 +60,14 @@ rpcServer.start (err) ->
   throw err if err
   winston.info( "Ethos RPC Server running on port #{ RPC_PORT }")
 
-# Intercepts all requests and checks if it needs to load a DApp.
-# If a DApp is loaded then assets are served from that DApps root folder.
+# Intercepts all requests and checks if it needs to load a ÐApp.
+# If a ÐApp is loaded then assets are served from that DApps root folder.
 app.use( dappManager.middleware( app, winston ) )
 
 # Ethos specific routes
 # Redirect to ethos namespace
 app.get '/', (req,res) -> 
-  winston.info "Redirecting to Ethos DApp."
+  winston.info "Redirecting to Ethos ÐApp."
   res.redirect '/ethos'
 
 # Render Ethos index view
