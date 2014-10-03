@@ -19,10 +19,9 @@ do ->
 			console.log('home')
 			window.location.href = 'http://eth:8080/ethos#home'
 
-
 	window.jquery = jquery = require 'jquery'
-	window.Ethereum = require './ethereumjs-lib/ethereum-min.js'
-	window.WebTorrent = require './webtorrent.min.js'
+	window.Ethereum = require '../../lib/ethereumjs-lib/ethereum-min.js'
+	window.WebTorrent = require '../../lib/webtorrent.min.js'
 	
 	url = require 'url'
 	rpc = require 'node-json-rpc'

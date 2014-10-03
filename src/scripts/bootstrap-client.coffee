@@ -8,6 +8,8 @@ if global?
 
 	app = gui.App
 
+	windows = []
+
 	# Attach event bus / vent to global object using EventEmitter
 	EventEmitter = require( 'events' )
 	global.vent = new EventEmitter()
@@ -15,8 +17,9 @@ if global?
 	# Get the bootstrap window (this one) and hide it.
 	win = gui.Window.get()
 	win.ethos = window.ethos = true
-	console.log win, window
 	win.hide()
+
+	windows.push( win )
 
 	# Create a new main window for app content.
 	mainWindowOptions =
@@ -33,6 +36,7 @@ if global?
 	
 	mainWindow = gui.Window.open( 'http://eth:8080/', mainWindowOptions )
 	mainwin = gui.Window.get( mainWindow )
+	windows.push( mainwin )
 	mb = new gui.Menu( type:"menubar" )
 
 	if process.platform is 'darwin'
@@ -40,13 +44,6 @@ if global?
 		mainwin.menu = mb
 
 	mainwin.onerror = -> alert('err')
-
-	mainwin.on 'close', ->
-		this.hide(); # Pretend to be closed already
-		console.log("Ethos shutting down...");
-		this.close(true);
-		win.close();
-
 
 	global.showDialog = (data = {}) ->
 		# Create a new dialog window for notifications
@@ -65,7 +62,6 @@ if global?
 		win.showDevTools()
 
 	global.vent.on 'close:dialog', (data) ->
-		#mainwin.show()
 		console.log "'close:dialog' event fired. data:", data
 
 	

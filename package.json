@@ -26,8 +26,8 @@
     "build-dev": "npm run compile && nwbuild -r . & tail -f ./logs/ethereum.log -f ./logs/ethos.log",
     "dev": "nwbuild -r .",
     "compile": "npm run compile-inject && npm run compile-bootstrap",
-    "compile-bootstrap": "browserify -t coffeeify --im -e ./lib/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",
-    "compile-inject": "browserify -t coffeeify -e ./lib/inject.coffee > ./app/scripts/inject.bundle.js"
+    "compile-bootstrap": "browserify -t coffeeify --im -e ./src/scripts/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",
+    "compile-inject": "browserify -t coffeeify -e ./src/scripts/inject.coffee > ./app/scripts/inject.bundle.js"
   },
   "repository": {
     "type": "git",
