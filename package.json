@@ -25,8 +25,9 @@
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
     "build-dev": "npm run compile && nwbuild -r . & tail -f ./logs/ethereum.log -f ./logs/ethos.log",
     "dev": "nwbuild -r .",
-    "compile": "npm run compile-inject && npm run compile-bootstrap",
+    "compile": "npm run compile-inject && npm run compile-bootstrap && npm run compile-ethos",
     "compile-bootstrap": "browserify -t coffeeify --im -e ./src/scripts/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",
+    "compile-ethos": "browserify -t coffeeify -e ./src/scripts/ethos.coffee > ./app/scripts/ethos.bundle.js",
     "compile-inject": "browserify -t coffeeify -e ./src/scripts/inject.coffee > ./app/scripts/inject.bundle.js"
   },
   "repository": {
@@ -36,6 +37,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "backbone": "^1.1.2",
+    "backbone.marionette": "^2.2.1",
     "coffee-script": "~1.7.1",
     "coffeeify": "~0.7.0",
     "express": "~4.8.4",

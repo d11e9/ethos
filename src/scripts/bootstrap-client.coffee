@@ -1,4 +1,7 @@
-console.log( 'Bootstraping Ethos...' )
+console.log( 'Bootstraping Ethos...', process, global )
+
+process.on "uncaughtException", (err) -> 
+	alert("error: " + err)
 
 if global?
 	try

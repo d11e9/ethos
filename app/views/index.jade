@@ -36,15 +36,5 @@ html
 					i( class="fa fa-plus")
 					span Add ÐApp
 
-		script.
-			window.onload = function(){
-				document.getElementById('body').className += ' loaded';
-				if (window.location.hash === '#home') {
-					document.getElementById('body').className += ' quick-load';
-					window.location.hash = ''
-				}
-
-				var searchInput = document.getElementById( 'search' )
-				searchInput.onkeyup = function(){ console.log( 'search: ', searchInput.value )}
-
-			}
+		script( src="app://ethos/app/scripts/ethos.bundle.js" )
+			

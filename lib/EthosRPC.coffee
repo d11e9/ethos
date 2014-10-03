@@ -44,7 +44,7 @@ module.exports = (winston) ->
 
       @server.addMethod 'dapps', (para, callback) =>
         winston.info( 'RPC dapps requested.' )
-        callback( null, Object.keys( @dappManager.dapps ) )
+        callback( null, @dappManager.dapps )
 
       @server.addMethod 'getKeys', (para, callback) ->
         winston.info( 'RPC getKeys' )
