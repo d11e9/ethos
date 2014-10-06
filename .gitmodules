@@ -8,3 +8,6 @@
 [submodule "lib/ethereumjs"]
 	path = lib/ethereumjs
 	url = https://github.com/ethereum/ethereum.js.git
+[submodule "lib/poly-eth"]
+	path = lib/poly-eth
+	url = git@github.com:d11e9/poly-eth.git
