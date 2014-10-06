@@ -9,39 +9,12 @@ html
 		link( rel="icon", href="app://ethos/app/images/favicon.ico", type="image/x-icon" )
 		
 	body#body
+
 		img#ethos-logo( title="Ethos, made for Ethereum", src="app://ethos/app/images/ethos-logo.png" )
 
 		p.subtitle <span class="key-combo">Ctrl+H</span> to come home.
 
-		input#search( type="search" )
+		#ethos
 
-		#menu
-			a( href="#", title="Settings" )
-				i.fa.fa-share-alt
-			ul.inner
-				li
-					a Settings
-					a Network
-					a About
-
-		ul#dapps
-			- for (var i in dapps) {
-				- if (!dapps[i].iconAsset) {
-					li
-						a( href=":eth?dapp=#{dapps[i].name}" )
-							i( class="fa fa-#{dapps[i].icon}" )
-							span= dapps[i].name
-				- } else {
-					li
-						a( href=":eth?dapp=#{dapps[i].name}" )
-							img( src="#{dapps[i].iconAsset}" )
-							span= dapps[i].name
-				- }
-			- }
-			li
-				a( href="#add" )
-					i( class="fa fa-plus")
-					span Add ÐApp
-
-		script( src="app://ethos/app/scripts/ethos.bundle.js" )
+		script( src="/ethos/app/scripts/ethos.bundle.js" )
 			

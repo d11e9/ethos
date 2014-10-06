@@ -79,6 +79,10 @@ app.get '/ethos/', (req, res) ->
 app.get '/ethos/dialog', (req, res) ->
   res.render( 'dialog' )
 
+# Serve other ethos assets
+app.get '/ethos/app/*', (req, res) ->
+  res.sendFile( req.url.replace('/ethos/app/', '' ), {root: './app'} )
+
 # 404
 app.get '*', (req,res) ->
   res.render( '404', { url: req.url } )

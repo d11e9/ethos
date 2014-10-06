@@ -1,38 +1,37 @@
 
 $ = jquery = require 'jquery'
+_ = require 'underscore'
 Backbone = require 'backbone'
 Backbone.$ = $
 Marionette = require 'backbone.marionette'
+
+
+
+{ EthosAppView, SearchView, DAppView, DAppCollectionView, MenuView } = require './views/index.coffee'
+{ DApp, DAppCollection } = require './models/index.coffee'
 
 jquery ->
 
 	$body = $ 'body'
 	$body.addClass 'loaded'
-
+	
 	if window.location.hash is '#home'
 		$body.addClass 'quick-load'
 		window.location.hash = ''
 
-	# Search Input
-	$searchInput = $ '#search'
-	$searchInput[0].onkeyup = ->
-		console.log "search: #{ $searchInput.val() }"
+	# Ethos
+	AppRegion = new Marionette.Region( el: $('#ethos')[0] )
+	ethosAppView = new EthosAppView()
+	AppRegion.show( ethosAppView )
 
 	# Menu
-	$menu = $ '#menu'
-	$menu.click ->
-		global.showGlobalDev()
+	ethosAppView.menuRegion.show( new MenuView() )
 
-
-	# DApps Collection
-	class DAppView extends Marionette.ItemView
-		template: "<dapps>asdasd</dapps>"
-
+	# DApps
 	ethos.dapps (err, dapps) ->
-		DAppRegion = new Marionette.Region( el: $('#dapps')[0] )
-
-		dappCollectionView = new Marionette.CollectionView
-			collection: new Backbone.Collection( dapps )
-			childView: DAppView
+		dapps = _.values( dapps )
+		dappCollection = new DAppCollection( dapps )
+		dappCollectionView = new DAppCollectionView( collection: dappCollection )
 		
-		DAppRegion.show( dappCollectionView )
+		ethosAppView.dappsRegion.show( dappCollectionView )
+		ethosAppView.searchRegion.show( new SearchView( collection: dappCollection ) )
