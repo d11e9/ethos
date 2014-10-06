@@ -3,6 +3,7 @@ _ = require 'underscore'
 Backbone = require 'backbone'
 Backbone.$ = $
 Marionette = require 'backbone.marionette'
+Fuse = require 'fuse.js'
 
 views = {}
 
@@ -66,5 +67,26 @@ class views.DAppCollectionView extends Marionette.CollectionView
 	id: "dapps"
 	tagName: 'ul'
 	childView: views.DAppView
+
+	initialize: ->
+		@originalCollection = @collection.clone()
+		@listenTo @collection, 'filter', @handleFilter
+		@fuse = new Fuse( @originalCollection.map( (m) -> m.toJSON() ), {
+			caseSensitive: false,
+			includeScore: false,
+			shouldSort: true,
+			threshold: 0.6,
+			location: 0,
+			distance: 100,
+			maxPatternLength: 32,
+			keys: ["name", "title", "description"]
+		})
+
+	handleFilter: (filterStr) =>
+		if !!filterStr
+			@collection.set( @fuse.search( filterStr ) )
+		else 
+			@collection.set( @originalCollection.models )
+		@render()
 
 module.exports = views
