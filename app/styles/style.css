@@ -124,6 +124,13 @@ body.quick-load #dapps {
     padding-bottom: 0.4em;
 }
 
+#dapps li a img {
+    display: block;
+    margin: 0 auto;
+    height: 2.5em;
+    padding-bottom: 0.4em;
+}
+
 #menu {
     position: absolute;
     top: 1em;

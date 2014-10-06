@@ -26,10 +26,17 @@ html
 
 		ul#dapps
 			- for (var i in dapps) {
-				li
-					a( href=":eth?dapp=#{dapps[i].name}" )
-						i( class="fa fa-#{dapps[i].icon}")
-						span= dapps[i].name
+				- if (!dapps[i].iconAsset) {
+					li
+						a( href=":eth?dapp=#{dapps[i].name}" )
+							i( class="fa fa-#{dapps[i].icon}" )
+							span= dapps[i].name
+				- } else {
+					li
+						a( href=":eth?dapp=#{dapps[i].name}" )
+							img( src="#{dapps[i].iconAsset}" )
+							span= dapps[i].name
+				- }
 			- }
 			li
 				a( href="#add" )

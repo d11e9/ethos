@@ -65,6 +65,7 @@ class DAppManager
 			dappName = @currentDApp;
 			@winston.info "URL: #{ req.url } is asset: #{ @isAsset( req ) }"
 			# Assets will have extentions and no slashes
+			
 			if @isAsset( req ) and dappName isnt 'ethos'
 				@winston.info( "Serving ÐApp asset: #{ req.url }" )
 				res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
@@ -78,12 +79,18 @@ class DAppManager
 			url = req.params[0]
 			dappName = url.split('/')[0]
 			dapp = @dapps[ dappName ]
-			@winston.info( 'Loading ÐApp: ' + dappName + ' is asset: ' + @isAsset( req ) )
+			@winston.info( 'Loading ÐApp: ' + dappName + ' is dapp: ' + !!(@dapps[ dappName ] or dappName = 'ethos') )
 
 			unless dapp
 				#if no compatible dapp is availbe then defer to main router.
 				next()
 			else
+				for dapp in @dapps
+					console.log "checking for #{req.url} in #{dapp} ", dapps.assets
+					if dapp.assets?.indexOf( req.url )
+						console.log "found: ", req.url
+					else
+						console.log "--"
 				@currentDApp = dappName
 				dapp.root = "#{ dappName }/#{ dapp.html }"
 				res.sendFile( dapp.root, { root: './dapps' } )

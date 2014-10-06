@@ -73,6 +73,7 @@ app.get '/', (req,res) ->
 # Render Ethos index view
 app.get '/ethos/', (req, res) ->
   dappManager.currentDApp = 'ethos'
+  console.log dappManager.dapps
   res.render( 'index', { dapps: dappManager.dapps } )
 
 app.get '/ethos/dialog', (req, res) ->
