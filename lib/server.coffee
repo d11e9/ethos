@@ -83,6 +83,65 @@ app.get '/ethos/dialog', (req, res) ->
 app.get '/ethos/app/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/app/', '' ), {root: './app'} )
 
+
+browserify = require 'browserify'
+watchify = require 'watchify'
+coffeeify = require 'coffeeify'
+fs = require 'fs'
+path = require 'path'
+
+class WatchedFile
+  constructor: ({input, output, transform, args}) ->
+
+    args = _.extend( watchify.args, args || {} )
+
+    @inputPath = path.join( __dirname, input )
+    @outputPath = path.join( __dirname, output )
+    @outputFile = @outputPath.split( '\\' )[-1..]
+    @inputFile = @inputPath.split( '\\' )[-1..]
+
+    bundle = browserify( @inputPath, args )
+    bundle.transform( transform ) if transform
+
+    @watched = watchify( bundle )
+    @watched.on( 'update', @handleUpdate )
+    @watched.bundle( @handleBundle )
+
+  handleBundle: (err, src) =>
+    if err
+      console.log err
+    else
+      console.log "Updating (#{ @outputFile }) on disk due to update in input file (#{ @inputFile })."
+      fs.writeFile @outputPath, src, (err) =>
+        if err
+          console.log( err )
+        else
+          console.log( "Success (#{ @outputFile }) written to disk." )
+
+  handleUpdate: =>
+    @watched.bundle( @handleBundle )
+
+
+new WatchedFile
+  input: '../src/scripts/inject.coffee'
+  output: '../app/scripts/inject.bundle.js'
+  transform: coffeeify
+  args:
+    test: true
+
+new WatchedFile
+  input: '../src/scripts/ethos.coffee'
+  output: '../app/scripts/ethos.bundle.js'
+  transform: coffeeify
+
+new WatchedFile
+  input: '../src/scripts/bootstrap-client.coffee'
+  output: '../app/scripts/bootstrap-client.bundle.js'
+  transform: coffeeify
+  args:
+    ignoreMissing: true
+
+
 # 404
 app.get '*', (req,res) ->
   res.render( '404', { url: req.url } )

@@ -51,7 +51,7 @@ body.quick-load #ethos-logo {
     transition: opacity 10s ease-in-out;
 }
 
-input#search {
+#search {
     color: rgba(0,0,0,0.4);
     padding: 0.5em;
     display: block;
@@ -67,12 +67,12 @@ input#search {
 }
 
 body.loaded .subtitle,
-body.loaded input#search {
+body.loaded #search {
     opacity: 1;
 }
 
 body.quick-load .subtitle,
-body.quyck-load input#search {
+body.quyck-load #search {
     transition: none;
 }
 

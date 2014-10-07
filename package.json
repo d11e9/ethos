@@ -5,7 +5,6 @@
   "main": "app://ethos/app/bootstrap.html",
   "node-main": "./lib/server.js",
   "node-remote": "http://eth;app://",
-  "inject-js-start": "./app/scripts/inject.bundle.js",
   "chromium-args": "--disable-web-security",
   "window": {
     "show": false,
@@ -21,9 +20,9 @@
   "user-agent": "Mozilla/5.0 (%osinfo) AppleWebKit/%webkit_ver (KHTML, like Gecko) %name/%ver Safari/%webkit_ver",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "npm run compile && coffee ./lib/server.coffee",
+    "server": "coffee ./lib/server.coffee",
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
-    "build-dev": "npm run compile && nwbuild -r . & tail -f ./logs/ethereum.log -f ./logs/ethos.log",
+    "build-dev": "nwbuild -r . & tail -f ./logs/ethereum.log -f ./logs/ethos.log",
     "dev": "nwbuild -r .",
     "compile": "npm run compile-inject && npm run compile-bootstrap && npm run compile-ethos",
     "compile-bootstrap": "browserify -t coffeeify --im -e ./src/scripts/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",

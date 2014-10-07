@@ -5,8 +5,6 @@ do ->
 		console.log "Ethos inject.coffee: ok", window
 		window.EthosInjectSkip = true
 
-
-
 		window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
 			alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
 			+ ' Column: ' + column + ' StackTrace: ' +  errorObj)
@@ -20,16 +18,25 @@ do ->
 				console.log('home')
 				window.location.href = 'http://eth:8080/ethos#home'
 
+		url = require 'url'
+		rpc = require 'node-json-rpc'
 		window.jQuery = window.$ = $ = jquery = require 'jquery'
 		window.Ethereum = require '../../lib/ethereumjs-lib/ethereum-min.js'
 		window.WebTorrent = require '../../lib/webtorrent.min.js'
 
 		polyeth = require( '../../lib/poly-eth/src/index.js' )
 		window.eth = polyeth( require( '../../lib/ethereumjs/main.js' ).eth )
-		
-		url = require 'url'
-		rpc = require 'node-json-rpc'
 
+		# Intercept getKey API
+		window.eth.getKey = (cb) ->
+
+			# this should be local storage or given at dapp instantiation.
+			input = prompt( 'Enter private key... or leave blank' );
+			
+			if input is '' or input is null
+				this.eth.getKey( cb )
+			else
+				cb( null, input )
 
 		client = new rpc.Client
 			port: 7001
@@ -61,7 +68,7 @@ do ->
 		# }, (torrent) -> 
 		# 	console.log "WebTorrent Check success: ", !!torrent
 		# 	console.log "Torrent: ", torrent
-		# )		
+		# )
 
 		# Ethos Specific RPC
 		window.ethos = 

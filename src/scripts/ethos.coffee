@@ -13,7 +13,6 @@ Marionette = require 'backbone.marionette'
 jquery ->
 
 	$body = $ 'body'
-	$body.addClass 'loaded'
 	
 	if window.location.hash is '#home'
 		$body.addClass 'quick-load'
@@ -28,10 +27,12 @@ jquery ->
 	ethosAppView.menuRegion.show( new MenuView() )
 
 	# DApps
-	ethos.dapps (err, dapps) ->
+	ethos?.dapps? (err, dapps) ->
 		dapps = _.values( dapps )
 		dappCollection = new DAppCollection( dapps )
 		dappCollectionView = new DAppCollectionView( collection: dappCollection )
 		
 		ethosAppView.dappsRegion.show( dappCollectionView )
 		ethosAppView.searchRegion.show( new SearchView( collection: dappCollection ) )
+		
+	$body.addClass 'loaded'

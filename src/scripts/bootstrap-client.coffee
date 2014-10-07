@@ -19,7 +19,6 @@ if global?
 
 	# Get the bootstrap window (this one) and hide it.
 	win = gui.Window.get()
-	win.ethos = window.ethos = true
 	win.hide()
 
 	windows.push( win )
@@ -44,7 +43,8 @@ if global?
 
 	if process.platform is 'darwin'
 		mb.createMacBuiltin( "Ethos" )
-		mainwin.menu = mb
+	
+	mainwin.menu = mb
 
 	mainwin.onerror = -> alert('err')
 
@@ -67,6 +67,5 @@ if global?
 	global.vent.on 'close:dialog', (data) ->
 		console.log "'close:dialog' event fired. data:", data
 
-	
 
 console.log( 'Ethos Bootstrap end: ok.' )
