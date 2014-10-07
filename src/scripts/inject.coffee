@@ -28,15 +28,23 @@ do ->
 		window.eth = polyeth( require( '../../lib/ethereumjs/main.js' ).eth )
 
 		# Intercept getKey API
+		origGetKey = window.eth.getKey
 		window.eth.getKey = (cb) ->
 
-			# this should be local storage or given at dapp instantiation.
-			input = prompt( 'Enter private key... or leave blank' );
-			
-			if input is '' or input is null
-				this.eth.getKey( cb )
+			# Private keys for DApps are set in local storage
+			# If none exits then fallback to requesting it from native eth object
+			# TODO: dont fallback, generate a new key clientside.
+			key = localStorage['dappKey']
+			unless key
+				try
+					origGetKey (err, key) ->
+						localStorage['dappKey'] = key unless err
+						cb( err, key )
+				catch err
+					console.log err, this
 			else
-				cb( null, input )
+				console.log "DApp private key loaded from localStorage"
+				cb( null, key )
 
 		client = new rpc.Client
 			port: 7001

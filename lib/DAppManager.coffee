@@ -19,7 +19,6 @@ class DAppManager
 		@dapps = @getDApps()
 		@currentDApp = 'ethos'
 		@dappConfig = dappConfig
-		@winston.info "INFO DAPPS", @dapps
 
 	getDApps: ->
 		dapps = {}

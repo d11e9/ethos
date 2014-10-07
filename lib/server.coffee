@@ -1,6 +1,7 @@
 
 require('coffee-script/register')
 
+_ = require( 'underscore' )
 fs = require( 'fs' )
 express = require( 'express' )
 http = require( 'http' )
@@ -8,7 +9,11 @@ request = require( 'request' )
 jade = require( 'jade' )
 path = require( 'path' )
 winston = require( 'winston' )
-_ = require( 'underscore' )
+
+browserify = require 'browserify'
+watchify = require 'watchify'
+coffeeify = require 'coffeeify'
+
 exec = require( 'child_process' ).exec
 
 EthosRPC = require( './EthosRPC.coffee')(winston)
@@ -73,7 +78,6 @@ app.get '/', (req,res) ->
 # Render Ethos index view
 app.get '/ethos/', (req, res) ->
   dappManager.currentDApp = 'ethos'
-  console.log dappManager.dapps
   res.render( 'index', { dapps: dappManager.dapps } )
 
 app.get '/ethos/dialog', (req, res) ->
@@ -83,12 +87,6 @@ app.get '/ethos/dialog', (req, res) ->
 app.get '/ethos/app/*', (req, res) ->
   res.sendFile( req.url.replace('/ethos/app/', '' ), {root: './app'} )
 
-
-browserify = require 'browserify'
-watchify = require 'watchify'
-coffeeify = require 'coffeeify'
-fs = require 'fs'
-path = require 'path'
 
 class WatchedFile
   constructor: ({input, output, transform, args}) ->
@@ -109,14 +107,14 @@ class WatchedFile
 
   handleBundle: (err, src) =>
     if err
-      console.log err
+      winston.error( err )
     else
-      console.log "Updating (#{ @outputFile }) on disk due to update in input file (#{ @inputFile })."
+      winston.info( "Updating (#{ @outputFile }) on disk due to update in input file (#{ @inputFile })." )
       fs.writeFile @outputPath, src, (err) =>
         if err
-          console.log( err )
+          winston.error( err )
         else
-          console.log( "Success (#{ @outputFile }) written to disk." )
+          winston.info( "Success (#{ @outputFile }) written to disk." )
 
   handleUpdate: =>
     @watched.bundle( @handleBundle )
