@@ -8,7 +8,7 @@ Marionette = require 'backbone.marionette'
 
 
 { EthosAppView, SearchView, DAppView, DAppCollectionView, MenuView } = require './views/index.coffee'
-{ DApp, DAppCollection } = require './models/index.coffee'
+{ DApp, DAppCollection, NameReg } = require './models/index.coffee'
 
 jquery ->
 
@@ -22,6 +22,9 @@ jquery ->
 	AppRegion = new Marionette.Region( el: $('#ethos')[0] )
 	ethosAppView = new EthosAppView()
 	AppRegion.show( ethosAppView )
+
+	# NameReg
+	window.nameReg = new NameReg( Config: "661005d2720d855f1d9976f88bb10c1a3398c77f" )
 
 	# Menu
 	ethosAppView.menuRegion.show( new MenuView() )

@@ -2,7 +2,7 @@ do ->
 	return if window.EthosInjectSkip
 	try
 
-		console.log "Ethos inject.coffee: ok", window
+		console.log "Ethos inject.coffee: ok"
 		window.EthosInjectSkip = true
 
 		window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
@@ -25,7 +25,8 @@ do ->
 		window.WebTorrent = require '../../lib/webtorrent.min.js'
 
 		polyeth = require( '../../lib/poly-eth/src/index.js' )
-		window.eth = polyeth( require( '../../lib/ethereumjs/main.js' ).eth )
+		nativeEth = require( '../../lib/ethereumjs/main.js' ).eth
+		window.eth = polyeth( nativeEth )
 
 		# Intercept getKey API
 		origGetKey = window.eth.getKey
@@ -129,4 +130,4 @@ do ->
 		console.log "Ethos inject end: ok."
 
 	catch err
-		console.log( "Ethos Error (inject.bundle.js): ", err )
+		console.log( "Ethos Error (inject.bundle.js): ", err.message, err )
