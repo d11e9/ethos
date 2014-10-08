@@ -1,4 +1,6 @@
 console.log( 'Bootstraping Ethos...', process, global )
+_ = require 'underscore'
+querystring = require 'querystring'
 
 process.on "uncaughtException", (err) -> 
 	alert("error: " + err)
@@ -19,6 +21,7 @@ if global?
 
 	# Get the bootstrap window (this one) and hide it.
 	win = gui.Window.get()
+	win.showDevTools()
 	win.hide()
 
 	windows.push( win )
@@ -47,17 +50,23 @@ if global?
 	mainwin.menu = mb
 
 	mainwin.onerror = -> alert('err')
+	mainwin.on 'loaded', ->
+		console.log( 'Loaded new window in mainwin' )
+
+	dialogwin = dialogWindow = null
 
 	global.showDialog = (data = {}) ->
 		# Create a new dialog window for notifications
-		dialogWindowOptions =
+		defaultDialogWindowOptions =
+			url: 'http://eth:8080/ethos/dialog'
 			frame: false
 			toolbar: false
 			resizable: false
-			width: data.width or 400
-			height: data.height or 200
-
-		dialogWindow = gui.Window.open( data.url or 'http://eth:8080/ethos/dialog', dialogWindowOptions )
+			width: 400
+			height: 200
+		dialogWindowOptions = _.defaults( data, defaultDialogWindowOptions )
+		url = "#{dialogWindowOptions.url}?#{querystring.stringify( dialogWindowOptions.query )}"
+		dialogWindow = gui.Window.open( url, dialogWindowOptions )
 		dialogwin = gui.Window.get( dialogWindow )
 
 	global.showGlobalDev = ->
@@ -66,6 +75,9 @@ if global?
 
 	global.vent.on 'close:dialog', (data) ->
 		console.log "'close:dialog' event fired. data:", data
+		console.log "global dialog wins:", dialogWindow, dialogwin
+		dialogWindow.hide()
+
 
 
 console.log( 'Ethos Bootstrap end: ok.' )

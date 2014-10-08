@@ -32,6 +32,13 @@ do ->
 		origGetKey = window.eth.getKey
 		window.eth.getKey = (cb) ->
 
+			global.showDialog
+				query:
+					a: 1
+				frame: true
+				toolbar: true
+
+
 			# Private keys for DApps are set in local storage
 			# If none exits then fallback to requesting it from native eth object
 			# TODO: dont fallback, generate a new key clientside.
@@ -48,9 +55,9 @@ do ->
 				cb( null, key )
 
 		client = new rpc.Client
-			port: 7001
-			host: '127.0.0.1'
-			path: '/'
+			port: 8080
+			host: 'eth'
+			path: '/ethos/api'
 			strict: false
 
 		rpc = (method, args, cb) ->

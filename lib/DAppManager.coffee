@@ -67,7 +67,14 @@ class DAppManager
 			
 			if @isAsset( req ) and dappName isnt 'ethos'
 				@winston.info( "Serving ÐApp asset: #{ req.url }" )
-				res.sendFile( req.url, {root: "./dapps/#{ dappName }"} );
+				url = path.join( "./dapps/#{ dappName }", req.url )
+				fs.stat url,  (err, stats) ->
+					unless err
+						size=stats
+						console.log(size.size)
+						res.sendFile( url )
+					else
+						res.send( "var error = '404: #{ url }';" )
 			else
 				next()
 

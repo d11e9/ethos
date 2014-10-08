@@ -4,7 +4,7 @@
   "description": "Ethereum Browser",
   "main": "app://ethos/app/bootstrap.html",
   "node-main": "./lib/server.js",
-  "node-remote": "http://eth;app://",
+  "node-remote": "app://",
   "chromium-args": "--disable-web-security",
   "window": {
     "show": false,
@@ -44,11 +44,12 @@
     "fuse.js": "^1.2.0",
     "jade": "~1.5.0",
     "jquery": "~2.1.1",
+    "node-express-json-rpc2": "^1.0.2",
     "node-json-rpc": "0.0.1",
     "request": "~2.40.0",
     "underscore": "~1.7.0",
-    "winston": "^0.7.3",
-    "watchify": "~1.0.6"
+    "watchify": "~1.0.6",
+    "winston": "^0.7.3"
   },
   "devDependencies": {
     "node-webkit-builder": "~0.1.1",
