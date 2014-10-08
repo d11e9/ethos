@@ -3,7 +3,7 @@ Ethereum = require('./ethereumjs-lib')
  
 
 class EthosRPC
-  constructor: ({@dappManager, @winston }) ->
+  constructor: ({@dappManager, @winston, @global }) ->
 
   handleRPC: (req, res, next) ->
     methods = @methods()
@@ -13,6 +13,9 @@ class EthosRPC
   methods: =>
     ping: (params, respond) =>
       respond( result: 'pong' )
+
+    dialog: (params, respond) =>
+      @global.showDialog
 
     dapps: (params, respond) =>
       respond( result: @dappManager.dapps )

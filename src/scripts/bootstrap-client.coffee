@@ -16,7 +16,7 @@ if global?
 	windows = []
 
 	# Attach event bus / vent to global object using EventEmitter
-	EventEmitter = require( 'events' )
+	EventEmitter = require( 'events' )	
 	global.vent = new EventEmitter()
 
 	# Get the bootstrap window (this one) and hide it.
@@ -50,8 +50,9 @@ if global?
 	mainwin.menu = mb
 
 	mainwin.onerror = -> alert('err')
-	mainwin.on 'loaded', ->
-		console.log( 'Loaded new window in mainwin' )
+	mainWindow.on 'document-end', ->
+		console.log( 'Loaded new window in mainwin')
+		console.log( window.location.href )
 
 	dialogwin = dialogWindow = null
 

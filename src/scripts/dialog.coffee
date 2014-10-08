@@ -1,12 +1,11 @@
 $ = jquery = require 'jquery'
 _ = require 'underscore'
-domain = require 'domain'
+
 Backbone = require 'backbone'
 Backbone.$ = $
 Marionette = require 'backbone.marionette'
 querystring = require 'querystring'
 
-domain.create()
 
 class Dialog extends Backbone.Model
 	defaults:
@@ -29,7 +28,7 @@ class DialogView extends Marionette.ItemView
 	initialize: ( { @id, @model } ) ->
 
 	handleClickClose: ->
-		global.vent.emit( 'close:dialog', id: @id )
+		window.close()
 
 
 class DialogController
@@ -49,4 +48,3 @@ $ ->
 	console.log 'Ethos dialog view init.'
 	dialogController = new DialogController()
 	dialogController.show()
-	asas

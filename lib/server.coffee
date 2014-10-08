@@ -74,6 +74,7 @@ domain.create()
 rpcServer = new EthosRPC
   winston: winston
   dappManager: dappManager
+  global: global
 
 app.all '/ethos/api', (req, res, next) ->
   rpcServer.handleRPC( req, res, next )
@@ -82,7 +83,8 @@ app.all '/ethos/api', (req, res, next) ->
 # Intercepts all requests and checks if it needs to load a ÐApp.
 # If a ÐApp is loaded then assets are served from that DApps root folder.
 
-
+global.test = 69
+console.log global
 
 # Ethos specific routes
 # Redirect to ethos namespace

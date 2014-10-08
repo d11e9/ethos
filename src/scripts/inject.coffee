@@ -32,11 +32,7 @@ do ->
 		origGetKey = window.eth.getKey
 		window.eth.getKey = (cb) ->
 
-			global.showDialog
-				query:
-					a: 1
-				frame: true
-				toolbar: true
+			rpc( 'dialog', ['test'], -> console.log( 'rpc ping dialog', arguments ) )
 
 
 			# Private keys for DApps are set in local storage
