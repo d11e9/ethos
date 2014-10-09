@@ -28,11 +28,14 @@ class views.MenuView extends Marionette.ItemView
 		<div class="inner"></div>
 	"""
 
+	initialize: ({@rpc})->
+
 	events:
 		'click': 'handleClick'
 
-	handleClick: ->
-		global.showGlobalDev()
+	handleClick: (ev) ->
+		ev.preventDefault()	
+		@rpc.showDev()
 
 
 class views.SearchView extends Marionette.ItemView

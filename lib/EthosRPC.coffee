@@ -20,6 +20,10 @@ class EthosRPC
       respond( result: 'ok' )
       # TODO: Fix headers already sent error
       #@global.showDialog()
+    
+    showDev: (params, respond) =>
+      @winston.info( "RPC #showDev request.", params )
+      global.showGlobalDev()
 
     logError: (params, respond) =>
       @winston.error( "RPC #logError request. Error: #{ params[0] }" )

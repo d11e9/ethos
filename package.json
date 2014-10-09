@@ -22,7 +22,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "coffee ./lib/server.coffee",
     "build": "npm install && rm -r ./build/Ethos* && npm run compile && coffee ./build/build.coffee",
-    "build-dev": "nwbuild -r . & tail -f ./logs/ethos.log",
+    "build-dev": "echo '' > ./logs/ethos.log && nwbuild -r . & tail -f ./logs/ethos.log",
     "dev": "nwbuild -r .",
     "compile": "npm run compile-inject && npm run compile-bootstrap && npm run compile-ethos",
     "compile-bootstrap": "browserify -t coffeeify --im -e ./src/scripts/bootstrap-client.coffee > ./app/scripts/bootstrap-client.bundle.js",

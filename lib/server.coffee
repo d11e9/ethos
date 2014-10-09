@@ -23,6 +23,13 @@ ETH_PORT = 7002
 winston.add winston.transports.File, 
   filename: './logs/ethos.log'
   handleExceptions: true
+  prettyPrint: false
+  level: 0
+  silent: false
+  colorize: true
+  timestamp: true
+  maxFiles: 1
+  json: false
 
 global.winston = winston
 
@@ -51,6 +58,12 @@ winston.info "Ethos ÐApps: #{ Object.keys( dappManager.dapps ).join(', ') }"
 app = express()
 app.set( 'views', __dirname + '/../app/views' )
 app.set( 'view engine', 'jade' )
+
+app.use (req, res, next) ->
+  res.on 'header', ->
+    console.trace('HEADERS GOING TO BE WRITTEN')
+  next()
+
 app.use( dappManager.middleware( app, winston ) )
 app.use( jsonrpc )
 app.listen( PORT )

@@ -5,6 +5,7 @@ Backbone = require 'backbone'
 Backbone.$ = $
 Marionette = require 'backbone.marionette'
 
+clientRPC = require './client-rpc.coffee'
 
 
 { EthosAppView, SearchView, DAppView, DAppCollectionView, MenuView } = require './views/index.coffee'
@@ -27,7 +28,7 @@ jquery ->
 	window.nameReg = new NameReg( Config: "661005d2720d855f1d9976f88bb10c1a3398c77f" )
 
 	# Menu
-	ethosAppView.menuRegion.show( new MenuView() )
+	ethosAppView.menuRegion.show( new MenuView( rpc: clientRPC ) )
 
 	# DApps
 	ethos?.dapps? (err, dapps) ->

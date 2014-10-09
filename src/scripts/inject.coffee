@@ -10,7 +10,7 @@ do ->
 			errString = "Error: #{ errorMsg } Script: #{ url } Line: #{ lineNumber } Column: #{ column } StackTrace: #{ errorObj} ";
 			client.call { jsonrpc: '2.0', method: 'logError', params: [errString], id: 5 }, (err, resp) -> 
 				console.log( 'Error logged via RPC.', arguments )
-			
+
 			alert( errString )
 
 		document.addEventListener 'keyup', (e) ->
@@ -70,11 +70,6 @@ do ->
 				console.log( "RPC Ping completed: #{ resp.result }." )
 			else
 				console.error( "RPC Ping Failed.", err )
-
-		window?.winston =
-			error: -> rpc( 'logError', arguments )
-			warn: -> rpc( 'logWarn', arguments )
-			info: -> rpc( 'logInfo', arguments )
 
 
 		window.wtClient = new window.WebTorrent()
