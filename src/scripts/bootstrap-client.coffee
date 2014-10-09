@@ -1,4 +1,4 @@
-console.log( 'Bootstraping Ethos...', process, global )
+console.log( 'Bootstraping Ξthos...', process, global )
 _ = require 'underscore'
 querystring = require 'querystring'
 
@@ -13,18 +13,14 @@ if global?
 
 	app = gui.App
 
-	windows = []
-
 	# Attach event bus / vent to global object using EventEmitter
 	EventEmitter = require( 'events' )	
 	global.vent = new EventEmitter()
 
 	# Get the bootstrap window (this one) and hide it.
-	win = gui.Window.get()
-	win.showDevTools()
+	win = gui.Window.get()	
 	win.hide()
 
-	windows.push( win )
 
 	# Create a new main window for app content.
 	mainWindowOptions =
@@ -41,18 +37,22 @@ if global?
 	
 	mainWindow = gui.Window.open( 'http://eth:8080/', mainWindowOptions )
 	mainwin = gui.Window.get( mainWindow )
-	windows.push( mainwin )
-	mb = new gui.Menu( type:"menubar" )
-
-	if process.platform is 'darwin'
-		mb.createMacBuiltin( "Ethos" )
 	
+
+	global.winston.info( "Bootstrap process object",  process )
+	mb = new gui.Menu( type:"menubar" )
+	#mb.append(new gui.MenuItem({ label: 'Item A' }))
+
+	tray = new gui.Tray({ title: 'Tray', icon: './app/images/ethos-logo.png' });
+
+	mb.createMacBuiltin?( "Ethos" )
 	mainwin.menu = mb
 
+	global.winston.info "Menu items: ", mb
+
 	mainwin.onerror = -> alert('err')
-	mainWindow.on 'document-end', ->
-		console.log( 'Loaded new window in mainwin')
-		console.log( window.location.href )
+	mainWindow.on 'close', ->
+		win.close()
 
 	dialogwin = dialogWindow = null
 
@@ -65,20 +65,15 @@ if global?
 			resizable: false
 			width: 400
 			height: 200
+			query: {}
 		dialogWindowOptions = _.defaults( data, defaultDialogWindowOptions )
-		url = "#{dialogWindowOptions.url}?#{querystring.stringify( dialogWindowOptions.query )}"
+		url = "#{ dialogWindowOptions.url }?#{ querystring.stringify( dialogWindowOptions.query ) }"
 		dialogWindow = gui.Window.open( url, dialogWindowOptions )
 		dialogwin = gui.Window.get( dialogWindow )
+		dialogWindow.focus()
 
 	global.showGlobalDev = ->
 		console.log "showGlobalDev requested"
 		win.showDevTools()
-
-	global.vent.on 'close:dialog', (data) ->
-		console.log "'close:dialog' event fired. data:", data
-		console.log "global dialog wins:", dialogWindow, dialogwin
-		dialogWindow.hide()
-
-
 
 console.log( 'Ethos Bootstrap end: ok.' )

@@ -36,14 +36,20 @@ class views.MenuView extends Marionette.ItemView
 
 
 class views.SearchView extends Marionette.ItemView
-	id: "search"
-	type: 'search'
-	tagName: 'input'
+	id: 'search'
 	template: _.template """
+		<input type="search" list="searchList">
+		<datalist id="searchList">
+			<option value="Apple"></option> 
+			<option value="Orange"></option> 
+			<option value="Peach"></option>
+			<option value="Melon"></option>
+			<option value="Strawberry"></option>
+		</datalist>
 	"""
 
 	events:
-		'keyup': 'handleKeyup'
+		'keyup input': 'handleKeyup'
 
 	initialize: ({ @collection }) ->
 

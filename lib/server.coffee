@@ -12,10 +12,6 @@ winston = require 'winston'
 jsonrpc = require( 'node-express-JSON-RPC2' )()
 coffeeify = require 'coffeeify'
 
-domain = require 'domain'
-
-exec = require( 'child_process' ).exec
-
 EthosRPC = require( './EthosRPC.coffee')
 DAppManager = require( './DAppManager.coffee' )
 WatchedFile = require( './WatchedFile.coffee' )
@@ -24,17 +20,11 @@ PORT = 8080
 RPC_PORT = 7001
 ETH_PORT = 7002
 
-allowCrossDomain = (req, res, next) ->
-  res.header('Access-Control-Allow-Origin', '127.0.0.1')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  next()
-
-
-
 winston.add winston.transports.File, 
   filename: './logs/ethos.log'
   handleExceptions: true
+
+global.winston = winston
 
 process.on 'uncaughtException', (err) -> 
   console.log( err )
@@ -60,14 +50,9 @@ winston.info 'DApps: ', Object.keys dappManager.dapps
 app = express()
 app.set( 'views', __dirname + '/../app/views' )
 app.set( 'view engine', 'jade' )
-
 app.use( dappManager.middleware( app, winston ) )
-
 app.use( jsonrpc )
-
-
 app.listen( PORT )
-domain.create()
 
 
 # # RPC
@@ -83,8 +68,6 @@ app.all '/ethos/api', (req, res, next) ->
 # Intercepts all requests and checks if it needs to load a ÐApp.
 # If a ÐApp is loaded then assets are served from that DApps root folder.
 
-global.test = 69
-console.log global
 
 # Ethos specific routes
 # Redirect to ethos namespace

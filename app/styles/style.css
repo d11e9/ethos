@@ -52,12 +52,14 @@ body.quick-load #ethos-logo {
 }
 
 #search {
+    opacity: 0;
+}
+#search input {
     color: rgba(0,0,0,0.4);
     padding: 0.5em;
     display: block;
     width: 13em;
     margin: 1em auto;
-    opacity: 0;
     border-radius: 0.7em;
     border: 1px solid #ACAAE9;
     background-color: white;

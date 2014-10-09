@@ -4,6 +4,7 @@ do ->
 
 		console.log "Ethos inject.coffee: ok"
 		window.EthosInjectSkip = true
+		window.require = ->
 
 		window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
 			alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
@@ -32,8 +33,8 @@ do ->
 		origGetKey = window.eth.getKey
 		window.eth.getKey = (cb) ->
 
-			rpc( 'dialog', ['test'], -> console.log( 'rpc ping dialog', arguments ) )
-
+			client.call { jsonrpc: '2.0', method: 'dialog', params: [], id: 4 }, (err, resp) -> 
+				console.log( 'rpc ping dialog', arguments )
 
 			# Private keys for DApps are set in local storage
 			# If none exits then fallback to requesting it from native eth object
@@ -59,9 +60,9 @@ do ->
 		rpc = (method, args, cb) ->
 			args = [] unless args
 			args = args[0] if args.length
-			client.call( { jsonrpc: '2.0', method: method, params: args }, cb )
+			client.call( { jsonrpc: '2.0', method: method, params: args, id: 0 }, cb )
 
-		client.call { jsonrpc: '2.0', method: 'ping', params: [] }, (err, resp) -> 
+		client.call { jsonrpc: '2.0', method: 'ping', params: [], id: 1 }, (err, resp) -> 
 			if !err and resp?.result
 				console.log( "RPC Ping completed: #{ resp.result }." )
 			else
@@ -85,7 +86,7 @@ do ->
 		# Ethos Specific RPC
 		window.ethos = 
 			dapps: (callback) ->
-				client.call { jsonrpc: '2.0', method: 'dapps', params: [] }, (err, resp) -> 
+				client.call { jsonrpc: '2.0', method: 'dapps', params: [], id: 3 }, (err, resp) -> 
 					if !err and resp?.result
 						console.log( "RPC Dapps completed:", resp.result )
 						callback?.call( window, null, resp.result )

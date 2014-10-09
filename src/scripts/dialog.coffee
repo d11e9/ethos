@@ -10,7 +10,7 @@ querystring = require 'querystring'
 class Dialog extends Backbone.Model
 	defaults:
 		title: 'Welcome Default'
-		body: 'Default Welcome to Ethos an Ethereum Browser.'
+		body: '<p>Default Welcome to Ethos an Ethereum Browser.</p>'
 
 class DialogView extends Marionette.ItemView
 	template: _.template """
@@ -19,16 +19,21 @@ class DialogView extends Marionette.ItemView
 			<h1><%= title %></h1>
 		</header>
 		<div id="content">
-			<p><%= body %></p>
+			<%= body %>
 		</div>
 	"""
 	events:
 		'click #close': 'handleClickClose'
+		'click #ok': 'handleClickOk'
+		'click #cancel': 'handleClickCancel'
 
 	initialize: ( { @id, @model } ) ->
 
 	handleClickClose: ->
 		window.close()
+
+	handleClickOk: -> alert('ok')
+	handleClickCancel: -> alert('cancel')
 
 
 class DialogController
@@ -40,9 +45,18 @@ class DialogController
 		querystring.parse( window.location.search ).id
 
 	show: ->
-		dialogView = new DialogView( id: @dialogIdInstance(), model: new Dialog() )
+		dialogView = new DialogView( model: getKeyDialog )
 		@dialogRegion.show( dialogView )
 
+getKeyDialog = new Dialog
+	title: "&Xi;thos"
+	body: """
+		<p>A ÐApp is requesting a new private key.</p>
+		<div class="buttons">
+			<button id="cancel">Cancel</button>
+			<button id="ok">OK</button>
+		</div>
+	"""
 
 $ ->
 	console.log 'Ethos dialog view init.'

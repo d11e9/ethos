@@ -15,7 +15,10 @@ class EthosRPC
       respond( result: 'pong' )
 
     dialog: (params, respond) =>
-      @global.showDialog
+      @winston.info( "RPC Dialog request.", params )
+      #@global.showDialog()
+      respond( result: 'ok' )
+
 
     dapps: (params, respond) =>
       respond( result: @dappManager.dapps )
