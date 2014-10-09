@@ -7,8 +7,11 @@ do ->
 		window.require = ->
 
 		window.onerror = (errorMsg, url, lineNumber, column, errorObj) ->
-			alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
-			+ ' Column: ' + column + ' StackTrace: ' +  errorObj)
+			errString = "Error: #{ errorMsg } Script: #{ url } Line: #{ lineNumber } Column: #{ column } StackTrace: #{ errorObj} ";
+			client.call { jsonrpc: '2.0', method: 'logError', params: [errString], id: 5 }, (err, resp) -> 
+				console.log( 'Error logged via RPC.', arguments )
+			
+			alert( errString )
 
 		document.addEventListener 'keyup', (e) ->
 			if (e.keyCode == 'O'.charCodeAt(0) and e.ctrlKey) 

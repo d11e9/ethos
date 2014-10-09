@@ -36,6 +36,13 @@ class DAppManager
 			ext = path.extname( path.join( dir, file ) )
 			ext is '.html'
 
+	getJade: (folder) =>
+		#console.log @rootDir, folder
+		dir = path.join( @rootDir, folder )
+		_.filter fs.readdirSync( dir ), (file) ->
+			ext = path.extname( path.join( dir, file ) )
+			ext is '.jade'
+
 	getConfig: (folder) =>
 		dir = path.join( @rootDir, folder )
 		configPath = "#{ dir }/dapp.json"
@@ -55,7 +62,6 @@ class DAppManager
 	isAsset: (req) -> req.url.match( /\./ )?
 
 	middleware: (app, winston) =>
-		@app = app
 		@winston = winston
 
 		app.use( /^\/(.*)/i, @renderDApp )
@@ -63,42 +69,33 @@ class DAppManager
 		(req,res,next) =>
 			dappName = @currentDApp
 			winston = @winston
-			@winston.info "URL: #{ req.url } is asset: #{ @isAsset( req ) }"
 			# Assets will have extentions and no slashes
 			
-			if @isAsset( req ) and dappName isnt 'ethos'
+			if @isAsset( req ) and dappName in _( @dapps ).keys()
 				root = "./dapps/#{ dappName }"
 				url = path.join( root, req.url )
 				fs.stat url,  (err, stats) ->
 					unless err
-						winston.info( "Serving ÐApp asset: #{ req.url }" )
+						winston.info( "ÐApp Middleware, Serving ÐApp (#{dappName}) asset: #{ req.url }" )
 						res.sendFile( req.url, root: root )
 					else
+						winston.error( "ÐApp Middleware, Error serving asset for ÐApp: #{ url }")
 						res.send( "var error = '404: #{ url }';" )
 			else
 				next()
 
 	renderDApp: (req,res,next) =>
-		if @isAsset( req )
-			@winston.info( 'ÐApp asset.' + req.url )
-		else
-			url = req.params[0]
-			dappName = url.split('/')[0]
-			dapp = @dapps[ dappName ]
-			@winston.info( 'Loading ÐApp: ' + dappName + ' is dapp: ' + !!(@dapps[ dappName ] or dappName = 'ethos') )
+		url = req.params[0]
+		dappName = url.split('/')[0]
+		dapp = @dapps[ dappName ]
 
-			unless dapp
-				#if no compatible dapp is availbe then defer to main router.
-				next()
-			else
-				for dapp in @dapps
-					console.log "checking for #{req.url} in #{dapp} ", dapps.assets
-					if dapp.assets?.indexOf( req.url )
-						console.log "found: ", req.url
-					else
-						console.log "--"
-				@currentDApp = dappName
-				dapp.root = "#{ dappName }/#{ dapp.html }"
-				res.sendFile( dapp.root, { root: './dapps' } )
+		unless dapp
+			#if no compatible dapp is available then defer to main router.
+			next()
+		else
+			@currentDApp = dappName
+			dapp.url = "#{ dappName }/#{ dapp.html }"
+			@winston.info( "Serving ÐApp (#{ dapp.name }) html file: #{ dapp.url }" )
+			res.sendFile( dapp.url, root: './dapps' )
 
 module.exports = DAppManager
