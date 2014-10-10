@@ -35,7 +35,7 @@ class views.MenuView extends Marionette.ItemView
 
 	handleClick: (ev) ->
 		ev.preventDefault()	
-		@rpc.showDev()
+		@rpc.settings()
 
 
 class views.SearchView extends Marionette.ItemView

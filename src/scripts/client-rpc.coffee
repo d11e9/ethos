@@ -18,4 +18,5 @@ module.exports =
 	dapps: handler( 'dapps' )
 	showDev: handler( 'showDev' )
 	dialog: handler( 'dialog' )
+	settings: handler( 'settings' )
 	logError: handler( 'logError' )

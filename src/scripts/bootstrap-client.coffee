@@ -20,8 +20,14 @@ try
 		EventEmitter = require( 'events' )	
 		global.vent = new EventEmitter()
 
+		global.windows =
+			bootstrap: null
+			main: null
+			dialog: null
+			dialogHidden: true
+
 		# Get the bootstrap window (this one) and hide it.
-		win = gui.Window.get()	
+		win = global.windows.bootstrap = gui.Window.get()	
 		win.showDevTools()
 		win.hide()
 
@@ -39,13 +45,11 @@ try
 			min_width: 300
 			min_height: 200
 		
-		mainWindow = gui.Window.open( 'http://eth:8080/', mainWindowOptions )
+		mainWindow = global.windows.main = gui.Window.open( 'http://eth:8080/', mainWindowOptions )
 		mainwin = gui.Window.get( mainWindow )
 		
 		mb = new gui.Menu( type:"menubar" )
 		#mb.append(new gui.MenuItem({ label: 'Item A' }))
-
-		tray = new gui.Tray({ title: 'Tray', icon: './app/images/ethos-logo.png' });
 
 		mb.createMacBuiltin?( "Ethos" )
 		mainwin.menu = mb
@@ -54,12 +58,15 @@ try
 		mainWindow.on 'close', ->
 			win.close()
 
-		dialogwin = dialogWindow = null
+		mainWindow.on 'focus', ->
+			global.winston.info "Ethos MainWindow focus event. active Dialog: ", !global.windows.dialogHidden
+			if global.windows.dialog?
+				global.windows.dialog.focus() unless global.windows.dialogHidden
 
 		global.showDialog = (data = {}) ->
 			# Create a new dialog window for notifications
 			defaultDialogWindowOptions =
-				url: 'http://eth:8080/ethos/dialog'
+				url: 'app://ethos/app/dialog.html'
 				frame: false
 				toolbar: false
 				resizable: false
@@ -68,15 +75,33 @@ try
 				query: {}
 			dialogWindowOptions = _.defaults( data, defaultDialogWindowOptions )
 			url = "#{ dialogWindowOptions.url }?#{ querystring.stringify( dialogWindowOptions.query ) }"
-			global.winston.info "Ethos Node-Webkit: Show Dialog window. ", url
-			dialogWindow = gui.Window.open( url, dialogWindowOptions )
-			dialogwin = gui.Window.get( dialogWindow )
-			dialogWindow.focus()
+			global.winston.info "Ethos Node-Webkit: Show Dialog window. #{url}"
+			dialogWindow = global.windows.dialog = gui.Window.open( url, dialogWindowOptions )
+
+			global.windows.dialogHidden = false
+
+			dialogWindow.on 'close', ->
+				global.winston.info "Closing dialog window." 
+				global.windows.dialogHidden = true
+				global.windows.dialog?.hide()
+
+			dialogWindow.on 'blur', ->
+				global.winston.info "Dialog window blur."
+				global.windows.dialog.focus() unless global.windows.dialogHidden
+
+		global.showSettings = ->
+			@showDialog
+				query:
+					page: 'settings'
+				height: 600
+				width: 600
+				resizable: true
 
 		global.showGlobalDev = ->
 			global.winston.info "Ethos Node-Webkit: showGlobalDev requested."
 			win.showDevTools()
 
 	global?.winston.info( 'Ethos Node-Webkit: Ξthos Bootstrap end: ok.' )
+
 catch bootstrapError
 	alert( 'Bootstrap Error' )

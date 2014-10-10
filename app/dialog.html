@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>&Xi;thos</title> 
+		
+		<link rel="stylesheet" href="app://ethos/app/styles/style.css" />
+		<link rel="stylesheet" href="app://ethos/app/styles/dialog.css" />
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" />
+		<link rel="shortcut icon" href="app://ethos/app/images/favicon.ico", type="image/x-icon" />
+		<link rel="icon" href="app://ethos/app/images/favicon.ico", type="image/x-icon" />
+	</head>
+	<body id="body">
+
+		<script>
+			process.on( 'uncaughtException', function(err){
+				console.log( err )
+				window.location.href ="./html/nwError.html";
+			})
+		</script>
+
+		<script src="app://ethos/app/scripts/dialog.bundle.js"></script>
+	</body>
+</html>

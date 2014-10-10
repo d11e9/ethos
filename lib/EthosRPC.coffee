@@ -17,13 +17,18 @@ class EthosRPC
 
     dialog: (params, respond) =>
       @winston.info( "RPC #dialog request.", params )
-      respond( result: 'ok' )
-      # TODO: Fix headers already sent error
-      #@global.showDialog()
+      @global.showDialog()
+      global.vent.once 'dialog:ok', ->
+        respond( result: 'ok' )  
     
     showDev: (params, respond) =>
       @winston.info( "RPC #showDev request.", params )
       global.showGlobalDev()
+
+    settings: (params, respond) =>
+      @winston.info( "RPC #setting request.", params )
+      @global.showSettings()
+
 
     logError: (params, respond) =>
       @winston.error( "RPC #logError request. Error: #{ params[0] }" )

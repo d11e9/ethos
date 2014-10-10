@@ -66,7 +66,12 @@ app.use (req, res, next) ->
 
 app.use( dappManager.middleware( app, winston ) )
 app.use( jsonrpc )
-app.listen( PORT )
+app.listen( PORT ).on 'error', (err) ->
+  if err.code == 'EADDRINUSE'
+    winston.error( "Ethos local server address in use. EADDRINUSE." )
+  else
+    winston.error( err )
+    
 
 
 # # RPC
