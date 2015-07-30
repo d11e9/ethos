@@ -4,12 +4,19 @@ process.on('uncaughtException', function(){
 
 var gui = require('nw.gui')
 var path = require('path')
+var web3 = require('web3')
 var spawn = require('child_process').spawn
 
 console.log( "Ethos initializing..." )
-gui.Window.get().showDevTools()
 
 var ipfsProcess, ethProcess = null;
+
+
+web3.connect = function(){
+	web3.setProvider( new web3.providers.HttpProvider() )
+	console.log( "Ethereum coinbase: ", web3.eth.coinbase )
+	console.log( "Ethereum accounts: ", web3.eth.accounts )
+}
 
 function toggleGeth ( ethMenu ) {
 
@@ -20,11 +27,12 @@ function toggleGeth ( ethMenu ) {
 	}
 	var geth_path = path.join( process.cwd(), './bin/win/geth/geth.exe')
 	var geth_datadir = path.join( process.cwd(), './eth')
+	var geth_genesis_block = path.join( process.cwd(), './eth', 'genesis_block.json')
 
 	console.log('Running geth binary')
-	console.log( geth_path, geth_datadir )
+	console.log( geth_path, geth_datadir, geth_genesis_block )
 
-	var geth = spawn( geth_path, ['--networkid', '1234234', '--datadir', geth_datadir] )
+	var geth = spawn( geth_path, ['--networkid', '1234234', '--genesis', geth_genesis_block, '--datadir', geth_datadir, '--rpc', '--shh'] )
 
 	geth.on('close', function(code){
 		alert('Geth Exited with code: ' + code);
@@ -35,12 +43,12 @@ function toggleGeth ( ethMenu ) {
 	})
 	geth.stdout.on('data', function (data) {
 		console.log('geth stdout: ' + data);
-		ethMenu.items[0].label = "Status: Active"
-		ethMenu.items[1].label = "Disable"
 	});
 
 	geth.stderr.on('data', function (data) {
 		console.log('geth stderr: ' + data);
+		ethMenu.items[0].label = "Status: Active"
+		ethMenu.items[1].label = "Disable"
 	});
 
 	ethProcess = geth;
@@ -179,5 +187,5 @@ onload = function(){
 	toggleGeth( ethMenu )
 	toggleIPFS( ipfsMenu )
 
-	
+	console.log( "Ethos initialized: ok" )
 }
