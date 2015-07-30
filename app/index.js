@@ -5,17 +5,29 @@ process.on('uncaughtException', function(){
 var gui = require('nw.gui')
 var path = require('path')
 var web3 = require('web3')
+var auto_launch = require('auto-launch')
 var spawn = require('child_process').spawn
 
-console.log( "Ethos initializing..." )
+console.log( "Ξthos initializing..." )
 
 var ipfsProcess, ethProcess = null;
 
 
-web3.connect = function(){
-	web3.setProvider( new web3.providers.HttpProvider() )
-	console.log( "Ethereum coinbase: ", web3.eth.coinbase )
-	console.log( "Ethereum accounts: ", web3.eth.accounts )
+web3.connect = function(ethMenu){
+	var tries = 0;
+	var connect = function(){
+		try {
+			web3.setProvider( new web3.providers.HttpProvider('http://localhost:8545') )
+			console.log( "Ethereum coinbase: ", web3.eth.coinbase )
+			console.log( "Ethereum accounts: ", web3.eth.accounts )
+		} catch (error) {
+			console.log( "Error connecting to local Ethereum node" )
+			console.log( error )
+			tries++;
+			if (tries < 10) setTimeout(connect, 100); 
+		}
+	}
+	setTimeout(connect, 100);
 }
 
 function toggleGeth ( ethMenu ) {
@@ -36,8 +48,8 @@ function toggleGeth ( ethMenu ) {
 
 	geth.on('close', function(code){
 		alert('Geth Exited with code: ' + code);
-		ethMenu.items[0].label = "Status: Disabled"
-		ethMenu.items[1].label = "Activate"
+		ethMenu.items[0].label = "Status: Not Running"
+		ethMenu.items[1].label = "Start"
 		kill( ethProcess )
 		ethProcess = null;
 	})
@@ -47,8 +59,9 @@ function toggleGeth ( ethMenu ) {
 
 	geth.stderr.on('data', function (data) {
 		console.log('geth stderr: ' + data);
-		ethMenu.items[0].label = "Status: Active"
-		ethMenu.items[1].label = "Disable"
+		ethMenu.items[0].label = "Status: Running"
+		ethMenu.items[1].label = "Stop"
+		web3.connect( ethMenu )
 	});
 
 	ethProcess = geth;
@@ -57,7 +70,7 @@ function toggleGeth ( ethMenu ) {
 
 function kill (process) {
 	console.log("Killing process: ", process )
-	process.stdin.pause();
+	if (process.stdin) process.stdin.pause();
 	spawn("taskkill", ["/pid", process.pid, '/f', '/t']);
 	process.kill('SIGINT')
 }
@@ -79,15 +92,15 @@ function toggleIPFS ( ipfsMenu ) {
 	var daemon = spawn( ipfs_path, ['daemon', '--init'] )
 	daemon.on('close', function(code){
 		alert( "IPFS existed with code " + code )
-		ipfsMenu.items[0].label = "Status: Disabled"
-		ipfsMenu.items[1].label = "Activate"
+		ipfsMenu.items[0].label = "Status: Not Running"
+		ipfsMenu.items[1].label = "Start"
 		kill( ipfsProcess )
 		ipfsProcess = null;
 	})
 	daemon.stdout.on('data', function (data) {
 		console.log('ipfs stdout: ' + data);
-		ipfsMenu.items[0].label = "Status: Active"
-		ipfsMenu.items[1].label = "Disable"
+		ipfsMenu.items[0].label = "Status: Running"
+		ipfsMenu.items[1].label = "Stop"
 	});
 
 	daemon.stderr.on('data', function (data) {
@@ -110,11 +123,6 @@ onload = function(){
 		icon: "./app/images/icon-tray.png",
 		menu: menu
 	})
-
-	var title = new gui.MenuItem({
-		label: 'Ethos',
-		enabled: false
-	})
 	
 	var quit = new gui.MenuItem({
 		label: 'Quit',
@@ -127,7 +135,8 @@ onload = function(){
 	})
 
 	var about = new gui.MenuItem({
-		label: 'About',
+		label: 'About \u039Ethos',
+		icon: './app/images/icon-tray.png',
 		click: function(){
 			gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout');
 		}
@@ -151,22 +160,22 @@ onload = function(){
 	})
 
 	ipfsStatus = new gui.MenuItem({
-		label: 'Status: Disabled',
+		label: 'Status: Not Running',
 		enabled: false
 	})
 
 	ipfsToggle = new gui.MenuItem({
-		label: 'Activate',
+		label: 'Start',
 		click: function(){ toggleIPFS( ipfsMenu ) }
 	})
 
 	ethStatus = new gui.MenuItem({
-		label: 'Status: Disabled',
+		label: 'Status: Not Running',
 		enabled: false
 	})
 
 	ethToggle = new gui.MenuItem({
-		label: 'Activate',
+		label: 'Start',
 		click: function(){ toggleGeth( ethMenu ) }
 	})
 
@@ -177,7 +186,6 @@ onload = function(){
 	ethMenu.append( ethStatus )
 	ethMenu.append( ethToggle )
 
-	menu.append( title )
 	menu.append( about )
 	menu.append( ipfs )
 	menu.append( eth )
@@ -187,5 +195,6 @@ onload = function(){
 	toggleGeth( ethMenu )
 	toggleIPFS( ipfsMenu )
 
-	console.log( "Ethos initialized: ok" )
+	console.log( "Ξthos initialized: ok" )
+	
 }
