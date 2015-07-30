@@ -1,0 +1,29 @@
+{
+  "name": "ethos-light",
+  "version": "0.0.0",
+  "description": "",
+  "main": "app/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "window": {
+    "title": "Ethos",
+    "toolbar": false,
+    "frame": true,
+    "show": false,
+    "show_in_taskbar": false,
+    "width": 800,
+    "height": 500,
+    "position": "center",
+    "min_width": 400,
+    "min_height": 200,
+    "max_width": 800,
+    "max_height": 600
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "auto-launch": "^0.1.18",
+    "coffee-script": "^1.9.3"
+  }
+}

@@ -1,0 +1,137 @@
+<html>
+	<head>
+		<title>Ethos</title>
+		<style>
+			body {
+				font-family: monospace;
+				text-align: center;
+				padding: 20vh 2em 2em 2em;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<script>
+			process.on('uncaughtException', function(){
+				alert("uncaught exexption")
+			})
+			
+			var gui = require('nw.gui')
+			var path = require('path')
+			var spawn = require('child_process').spawn
+
+			console.log( "Ethos initializing..." )
+
+
+			function runGeth () {
+
+				alert('running geth')
+				var geth_path = path.join( process.cwd(), './bin/win/geth.exe')
+				var geth_datadir = path.join( process.cwd(), './eth')
+
+				console.log( geth_path, geth_datadir )
+
+				var geth = spawn( geth_path, ['--networkid', '1234234', '--datadir', geth_datadir] )
+				console.log( geth )
+
+				geth.on('close', function(code){
+					alert('Geth Exited with code: ' + code);
+				})
+				geth.stdout.on('data', function (data) {
+					console.log('stdout: ' + data);
+				});
+
+				geth.stderr.on('data', function (data) {
+					console.log('stderr: ' + data);
+				});
+
+			}
+			
+			
+			onload = function(){
+				
+				var menu = new gui.Menu();
+				var ipfsMenu = new gui.Menu()
+				var ethMenu = new gui.Menu()
+
+				var title = new gui.MenuItem({
+					label: 'Ethos',
+					enabled: false
+				})
+				
+				var quit = new gui.MenuItem({
+					label: 'Quit',
+					key: 'q',
+					modifiers: 'ctrl-alt',
+					click: function(){
+						process.exit(0);
+					}
+				})
+
+				var about = new gui.MenuItem({
+					label: 'About',
+					click: function(){
+						gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout');
+					}
+				})
+
+				var debug = new gui.MenuItem({
+					label: 'Debug',
+					click: function(){
+						gui.Window.get().showDevTools()
+					}
+				})
+
+				var ipfs = new gui.MenuItem({
+					label: 'IPFS',
+					submenu: ipfsMenu
+				})
+
+				var eth = new gui.MenuItem({
+					label: 'Ethereum',
+					submenu: ethMenu
+				})
+
+				ipfsStatus = new gui.MenuItem({
+					label: 'Status: Disabled',
+					enabled: false
+				})
+
+				ipfsEnable = new gui.MenuItem({
+					label: 'Activate',
+					click: function(){  }
+				})
+
+				ethStatus = new gui.MenuItem({
+					label: 'Status: Disabled',
+					enabled: false
+				})
+
+				ethEnable = new gui.MenuItem({
+					label: 'Activate',
+					click: function(){ runGeth() }
+				})
+
+
+				ipfsMenu.append( ipfsStatus )
+				ipfsMenu.append( ipfsEnable )
+				
+				ethMenu.append( ethStatus )
+				ethMenu.append( ethEnable )
+
+				menu.append( title )
+				menu.append( about )
+				menu.append( ipfs )
+				menu.append( eth )
+				menu.append( debug )
+				menu.append( quit )
+
+				var tray = new gui.Tray({
+					title: "Ethos",
+					icon: "./app/images/icon-tray.png",
+					menu: menu
+				})
+			}
+		</script>
+	</body>
+</html>
