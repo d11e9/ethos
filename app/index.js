@@ -2,6 +2,14 @@ process.on('uncaughtException', function(){
 	alert("uncaught exexption")
 })
 
+var os, ext = '';
+if (process.platform == 'darwin') {
+	os = 'osx';
+} else {
+	os = 'win';
+	ext = '.exe';
+}
+
 var gui = require('nw.gui')
 var path = require('path')
 var web3 = require('web3')
@@ -37,7 +45,8 @@ function toggleGeth ( ethMenu ) {
 		ethProcess = null;
 		return
 	}
-	var geth_path = path.join( process.cwd(), './bin/win/geth/geth.exe')
+
+	var geth_path = path.join( process.cwd(), './bin/'+os+'/geth/geth'+ext)
 	var geth_datadir = path.join( process.cwd(), './eth')
 	var geth_genesis_block = path.join( process.cwd(), './eth', 'genesis_block.json')
 
@@ -83,7 +92,7 @@ function toggleIPFS ( ipfsMenu ) {
 		return
 	}
 
-	var ipfs_path = path.join( process.cwd(), './bin/win/ipfs/ipfs.exe')
+	var ipfs_path = path.join( process.cwd(), './bin/'+os+'/ipfs/ipfs'+ext)
 	var ipfs_datadir = path.join( process.cwd(), './eth')
 
 	console.log('Running ipfs binary')
@@ -119,7 +128,7 @@ onload = function(){
 	var ethMenu = new gui.Menu()
 
 	var tray = new gui.Tray({
-		title: "Ethos",
+		title: '',
 		icon: "./app/images/icon-tray.png",
 		menu: menu
 	})
