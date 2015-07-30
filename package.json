@@ -1,10 +1,10 @@
 {
-  "name": "Ξthos",
-  "version": "0.0.0",
+  "name": "Ethos",
+  "version": "0.1.1",
   "description": "",
   "main": "app/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "app": "nw ."
   },
   "window": {
     "icon": "app/images/icon-tray.ico",
@@ -27,5 +27,8 @@
     "auto-launch": "^0.1.18",
     "coffee-script": "^1.9.3",
     "web3": "^0.9.2"
+  },
+  "devDependencies": {
+    "nw": "^0.12.2"
   }
 }
