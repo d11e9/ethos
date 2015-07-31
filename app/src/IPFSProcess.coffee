@@ -1,14 +1,18 @@
 path = require 'path'
+fs = require 'fs'
 cp = require 'child_process'
 spawn = cp.spawn
 Backbone = require 'backbone'
 
 module.exports = class IPFSProcess extends Backbone.Model
-	constructor: ({os, ext}) ->
+	constructor: ({@os, ext}) ->
 		@process = null
-		@path = path.join( process.cwd(), "./bin/#{ os }/ipfs/ipfs#{ ext }")
+		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
+		fs.chmodSync( @path, '755') if @os is 'darwin'
 
 	start: ->
+		console.log( @path )
+
 		@process =  spawn( @path, ['daemon', '--init'] )
 
 		@process.on 'close', (code) =>
@@ -34,7 +38,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 
 	kill: ->
 		@process?.stdin?.pause()
-		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t'])
+		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')
 		@process = null
 		@trigger 'status', !!@process

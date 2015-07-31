@@ -1,5 +1,5 @@
 {
-  "name": "Ethos",
+  "name": "Ethoss",
   "version": "0.1.3",
   "description": "An Ethereum Browser",
   "main": "app/index.html",
@@ -11,7 +11,7 @@
   "window": {
     "icon": "app/images/icon-tray.ico",
     "title": "Ethos",
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "show": false,
     "show_in_taskbar": false,

@@ -22,7 +22,8 @@ module.exports = class EthosMenu
 			label: 'About \u039Ethos'
 			icon: './app/images/icon-tray.png'
 			click: ->
-				gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
+				gui.Window.open('app://ethos/app/about.html')
+				#gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
 
 		debug = new gui.MenuItem
 			label: 'Debug'
