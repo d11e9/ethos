@@ -23,12 +23,15 @@ module.exports = class IPFSProcess extends Backbone.Model
 			console.log('IFPS stderr: ' + data)
 			@trigger 'status', !!@process
 
-
 	toggle: ->
 		if @process
 			@kill()
 		else
 			@start()
+
+	addFile: ->
+		console.log( "TODO: Add file to ipfs" )
+
 	kill: ->
 		@process?.stdin?.pause()
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t'])

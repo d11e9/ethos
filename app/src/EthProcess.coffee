@@ -32,6 +32,9 @@ module.exports = class EthProcess extends Backbone.Model
 		else
 			@start()
 
+	newAccount: ->
+		console.log( "TODO: Create new Accounts" )
+
 	kill: ->
 		@process?.stdin?.pause()
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t'])

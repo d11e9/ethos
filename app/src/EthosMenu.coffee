@@ -5,63 +5,61 @@ module.exports = class EthosMenu
 		@ipfsMenu = new gui.Menu()
 		@ethMenu = new gui.Menu()
 
-		@tray = new gui.Tray({
+		@tray = new gui.Tray
 			title: ''
 			icon: "./app/images/icon-tray.png"
 			menu: @menu
-		})
 		
-		quit = new gui.MenuItem({
+		quit = new gui.MenuItem
 			label: 'Quit'
 			key: 'q'
 			modifiers: 'ctrl-alt'
 			click: =>
 				@tray.remove()
 				process.exit(0)
-		})
 
-		about = new gui.MenuItem({
+		about = new gui.MenuItem
 			label: 'About \u039Ethos'
 			icon: './app/images/icon-tray.png'
 			click: ->
 				gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
-		})
 
-		debug = new gui.MenuItem({
+		debug = new gui.MenuItem
 			label: 'Debug'
 			click: ->
 				gui.Window.get().showDevTools()
-		})
 
-		ipfs = new gui.MenuItem({
+		ipfs = new gui.MenuItem
 			label: 'IPFS'
 			submenu: @ipfsMenu
-		})
 
-		eth = new gui.MenuItem({
+		eth = new gui.MenuItem
 			label: 'Ethereum'
 			submenu: @ethMenu
-		})
 
-		ipfsStatus = new gui.MenuItem({
+		ipfsStatus = new gui.MenuItem
 			label: 'Status: Not Running'
 			enabled: false
-		})
 
-		ipfsToggle = new gui.MenuItem({
+		ipfsToggle = new gui.MenuItem
 			label: 'Start'
 			click: => @ipfsProcess.toggle()
-		})
 
-		ethStatus = new gui.MenuItem({
+		ipfsAddFile = new gui.MenuItem
+			label: 'Add File'
+			click: => @ipfsProcess.addFile()
+
+		ethStatus = new gui.MenuItem
 			label: 'Status: Not Running'
 			enabled: false
-		})
 
-		ethToggle = new gui.MenuItem({
+		ethToggle = new gui.MenuItem
 			label: 'Start'
 			click: => @ethProcess.toggle()
-		})
+
+		ethNewAccount = new gui.MenuItem
+			label: 'New Account'
+			click: => @ethProcess.newAccount()
 
 		updateStatus = (status, toggle) ->
 			(running) ->
@@ -77,9 +75,11 @@ module.exports = class EthosMenu
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
+		@ethMenu.append( ipfsAddFile )
 		
 		@ethMenu.append( ethStatus )
 		@ethMenu.append( ethToggle )
+		@ethMenu.append( ethNewAccount )
 
 		@menu.append( about )
 		@menu.append( ipfs )
