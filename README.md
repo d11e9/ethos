@@ -4,7 +4,7 @@
 An Ethereum Browser
 
 
-Still under development. Binaries for the various platforms (when appropriate) will be available at: [https://github.com/projectdnet/ethos/releases](https://github.com/projectdnet/ethos/releases).
+Still under development. Binaries for the various platforms (when appropriate) will be available under the Releases tab.
 
 ##Development Build
 
