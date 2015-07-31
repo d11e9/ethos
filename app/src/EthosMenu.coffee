@@ -75,7 +75,7 @@ module.exports = class EthosMenu
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
-		@ethMenu.append( ipfsAddFile )
+		@ipfsMenu.append( ipfsAddFile )
 		
 		@ethMenu.append( ethStatus )
 		@ethMenu.append( ethToggle )
