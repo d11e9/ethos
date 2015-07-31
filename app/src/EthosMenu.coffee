@@ -16,11 +16,12 @@ module.exports = class EthosMenu
 			modifiers: 'ctrl-alt'
 			click: =>
 				@tray.remove()
+				@ethProcess.kill()
+				@ipfsProcess.kill()
 				process.exit(0)
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			icon: './app/images/icon-tray.png'
 			click: ->
 				gui.Window.open('app://ethos/app/about.html')
 				#gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
