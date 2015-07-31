@@ -1,24 +1,18 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    pkg: grunt.file.readJSON('./package.json'),
-    nodewebkit: {
+    nwjs: {
       options: {
         version: '0.12.2',
-        build_dir: './dist',
-        // specifiy what to build
-        mac: true,
-        win: true,
-        macIcns: 'app/images/logo.icns',
-        // commented out as it fails on osx,
-        // uncomment to build with icon on win
-        // winIco: 'app/images/logo.ico',
-        //linux32: true,
-        //linux64: true
+        buildDir: './dist', // Where the build version of my NW.js app is saved
+        credits: './app/Credits.html',
+        macIcns: './app/images/logo.icns', // Path to the Mac icon file
+        winIco: './app/images/logo.ico',
+        platforms: ['osx', 'win'] // These are the platforms that we want to build
       },
-      src: ['**/**', '!**/dist/**', '!**/eth/blockchain/**', '!**/eth/key*/**', '!**/eth/extra/**', '!**/eth/state/**', '!**/eth/node*/**', '!**/eth/geth.ipc', '!**/cache/**', '!**/node_modules/grunt*/**', '!**/node_modules/nw*/**', '!**/Gruntfile.js']
+      src: ['**/**', '!**/dist/**', '!**/eth/**', '**/eth/.gitignore*','!**/cache/**', '!**/node_modules/grunt*/**', '!**/node_modules/nw*/**', '!**/Gruntfile.js']
     },
   });
 
-  grunt.loadNpmTasks('grunt-node-webkit-builder');
-  grunt.registerTask('default', ['nodewebkit']);
+  grunt.loadNpmTasks('grunt-nw-builder');
+  grunt.registerTask('default', ['nwjs']);
 };
