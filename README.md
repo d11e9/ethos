@@ -3,22 +3,36 @@
 
 An Ethereum Browser
 
+Still under development.
+Binaries for the various platforms (where appropriate) will be available as [releases on github](http://github.com/projectdnet/ethos/releases)
 
-Still under development. Binaries for the various platforms (when appropriate) will be available under the Releases tab.
+## Getting started
+
+Ethos aims to be the easiest way to use Ethereum for non technical users. Once installed and run for the first time, the user should be prompted whether they want it to launch at startup. This then handles running both Ethereum and IPFS nodes under the hood. Allowing the end user to use their browser of choice to interact with the network.
+
+###OSX
+
+![OSX screenshot](/app/images/screenshots/osx.png?raw=true "OSX screenshot")
+
+###Windows
+
+![Windows screenshot](/app/images/screenshots/windows.png?raw=true "Windows screenshot")
 
 ##Development Build
 
 This application is essentially a node-webkit wrapper around other [Ethereum](http://ethereum.org) projects and [IPFS](http://ipfs.io) which when used together make for a better DApp user experience.
 
-## Getting started
+To build from source or contribute your can do the following:
 
-Ethos aims to be the easiest way to use Ethereum for non technical users. Once installed and run for the first time, the user should be prompted whether they what it to launch at startup. This then handles running both Ethereum and IPFS nodes under the hood. Allowing the end user to use their browser of choice to interact with the network.
+    $ git clone https://githib.com/projectdnet/ethos
+    $ cd ethos
+    $ npm install
 
-###Windows
+    $ # to run without building
+    $ npm run app
 
-![Windows screen shot](/app/images/screenshots/windows.png?raw=true "Windows screen shot")
+    $ # to build distribution binaries
+    $ npm run build
 
-###OSX
 
-![OSX screen shot](/app/images/screenshots/osx.png?raw=true "OSX screen shot")
 
