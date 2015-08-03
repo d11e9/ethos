@@ -7,6 +7,10 @@ module.exports = (gui) ->
 	os = process.platform
 	ext = ''
 	ext = '.exe' if os is 'win32'
+
+	mb = new gui.Menu({type:"menubar"});
+	mb.createMacBuiltin("Ethos");
+	gui.Window.get().menu = mb;
 		
 
 	path = require 'path'
@@ -41,8 +45,5 @@ module.exports = (gui) ->
 
 		ethProcess.start()
 		ipfsProcess.start()
-
-		ethProcess.on 'status', (running) ->
-			web3.connect() if running
 
 		console.log( "Ξthos initialized: ok" )

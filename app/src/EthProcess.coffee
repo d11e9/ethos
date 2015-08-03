@@ -1,20 +1,38 @@
 path = require 'path'
 fs = require 'fs'
 cp = require 'child_process'
+web3 = require 'web3'
 spawn = cp.spawn
 Backbone = require 'backbone'
 
 module.exports = class EthProcess extends Backbone.Model
 	constructor: ({@os, ext}) ->
 		@process = null
-		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }")
-		@datadir = path.join( process.cwd(), './eth')
-		@genesis_block = path.join( process.cwd(), './app/', 'genesis_block.json')
+		@connected = false
+		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
+		@datadir = path.join( process.cwd(), './eth' )
+		@ipcPath = path.join( @datadir, './geth.ipc' )
+		@genesis_block = path.join( process.cwd(), './app/', 'genesis_block.json' )
 		fs.chmodSync( @path, '755') if @os is 'darwin'
+		@listenTo @, 'status', (running) =>
+			return if running and @connected
+			@connected = false if @connected and !running
+			return unless running
+			web3.setProvider( new web3.providers.IpcProvider( @ipcPath ) )
+			console.log "ETH checking ipc connection", @connected, running
+			web3.eth.getBlockNumber (err, blockNumber) =>
+				if err
+					console.log err
+					@connected = false
+				else
+					@connected = true
+					console.log( "ETH block ##{ blockNumber }" )
+				@trigger( 'connected', @connected )
+
 
 	start: ->
 		console.log( @path, @datadir, @genesis_block )
-		@process = spawn( @path, ['--networkid', '1234234', '--genesis', @genesis_block, '--datadir', @datadir, '--rpc', '--shh'] )
+		@process = spawn( @path, [ '--genesis', @genesis_block, '--datadir', @datadir, '--rpc', '--shh'] )
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)
@@ -22,12 +40,11 @@ module.exports = class EthProcess extends Backbone.Model
 		
 		@process.stdout.on 'data', (data) =>
 			console.log('geth stdout: ' + data)
-			@trigger 'status', !!@process
+			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
 			console.log('geth stderr: ' + data)
-			@trigger 'status', !!@process
-
+			@trigger( 'status', !!@process )
 
 	toggle: ->
 		if @process
@@ -43,4 +60,4 @@ module.exports = class EthProcess extends Backbone.Model
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')
 		@process = null
-		@trigger 'status', !!@process
+		@trigger( 'status', !!@process )

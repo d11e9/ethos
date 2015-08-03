@@ -22,7 +22,7 @@ Ethos aims to be the easiest way to use Ethereum for non technical users. Once i
 
 This application is essentially a node-webkit wrapper around other [Ethereum](http://ethereum.org) projects and [IPFS](http://ipfs.io) which when used together make for a better DApp user experience.
 
-To build from source or contribute your can do the following:
+To build from source or contribute you can do the following:
 
     $ git clone https://githib.com/projectdnet/ethos
     $ cd ethos
