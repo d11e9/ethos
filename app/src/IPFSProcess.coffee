@@ -3,11 +3,16 @@ fs = require 'fs'
 cp = require 'child_process'
 spawn = cp.spawn
 Backbone = require 'backbone'
+ipfsApi = require 'ipfs-api'
+
+
 
 module.exports = class IPFSProcess extends Backbone.Model
 	constructor: ({@os, ext}) ->
 		@process = null
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
+		@api = new ipfsApi()
+		window.ipfs = @api
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 
 	start: ->
@@ -33,8 +38,26 @@ module.exports = class IPFSProcess extends Backbone.Model
 		else
 			@start()
 
+	info: =>
+		@api.id (err,info) ->
+			console.log( "IPFS ID: #{ info.ID }" )
+			
+		@api.pin.list (err,pinList) ->
+			console.log( "IFPS pinned files:", pinList)
+
 	addFile: ->
-		console.log( "TODO: Add file to ipfs" )
+		chooser = window.document.querySelector('#ipfsAddFile')
+		chooser.addEventListener "change", (evt) =>
+			filePath = evt.target.value
+			console.log "TODO: IPFS add file", filePath
+			@api.add filePath, (err,res) =>
+				if err or !res
+					console.log "Error:", err
+				else
+					for file in res
+						console.log "Added: ", file.Hash 
+						@api.pin.add( file.Hash )
+		chooser.click()
 
 	kill: ->
 		@process?.stdin?.pause()

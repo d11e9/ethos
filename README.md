@@ -16,7 +16,7 @@ Ethos aims to be the easiest way to use Ethereum for non technical users. Once i
 
 ###Windows
 
-![Windows screenshot](/app/images/screenshots/windows.png?raw=true "Windows screenshot")
+![Windows screenshot](/app/images/screenshots/win.png?raw=true "Windows screenshot")
 
 ##Development Build
 

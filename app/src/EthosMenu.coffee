@@ -51,6 +51,10 @@ module.exports = class EthosMenu
 			label: 'Add File'
 			click: => @ipfsProcess.addFile()
 
+		ipfsInfo = new gui.MenuItem
+			label: 'Info'
+			click: => @ipfsProcess.info()
+
 		ethStatus = new gui.MenuItem
 			label: 'Status: Not Running'
 			enabled: false
@@ -78,6 +82,7 @@ module.exports = class EthosMenu
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
 		@ipfsMenu.append( ipfsAddFile )
+		@ipfsMenu.append( ipfsInfo )
 		
 		@ethMenu.append( ethStatus )
 		@ethMenu.append( ethToggle )
