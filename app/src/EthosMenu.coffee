@@ -86,7 +86,11 @@ module.exports = class EthosMenu
 			label: 'Start'
 			click: => @ethProcess.toggle()
 
-		ethNewAccount = new gui.MenuItem
+		ethAccounts = new gui.MenuItem
+			label: 'Accounts'
+			submenu: new gui.Menu()
+
+		ethNewAccount = 
 			label: 'New Account'
 			click: => @ethProcess.newAccount()
 
@@ -101,6 +105,12 @@ module.exports = class EthosMenu
 
 		@ethProcess.on 'status', updateStatus( ethStatus, ethToggle )
 		@ipfsProcess.on 'status', updateStatus( ipfsStatus, ipfsToggle )
+		@ethProcess.on 'status', (running) ->
+			ethAccounts.submenu = new gui.Menu()
+			ethAccounts.submenu.append( new gui.MenuItem(ethNewAccount) )
+			web3.eth.getAccounts (err, accounts) ->
+				return if err
+				ethAccounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
@@ -109,7 +119,7 @@ module.exports = class EthosMenu
 		
 		@ethMenu.append( ethStatus )
 		@ethMenu.append( ethToggle )
-		@ethMenu.append( ethNewAccount )
+		@ethMenu.append( ethAccounts )
 
 		@menu.append( about )
 		@menu.append( ipfs )

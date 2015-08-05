@@ -32,7 +32,7 @@ module.exports = class EthProcess extends Backbone.Model
 
 	start: ->
 		console.log( @path, @datadir )
-		@process = spawn( @path, [ '--datadir', @datadir, '--rpc', '--shh'] )
+		@process = spawn( @path, [ '--datadir', @datadir, '--rpc', '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3'] )
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)
@@ -54,6 +54,20 @@ module.exports = class EthProcess extends Backbone.Model
 
 	newAccount: ->
 		console.log( "TODO: Create new Accounts" )
+		pass1 = window.prompt( "Enter passphrase: ")
+		pass2 = window.prompt( "Repeat passphrase: ")
+		if pass1 is pass2
+			web3.currentProvider.sendAsync({
+				jsonrpc: "2.0",
+				id: 1,
+				method: "personal_newAccount",
+				params: [pass1]
+				}, (err,res) -> console.log( "Account created: ", res.result ))
+		else
+			alert("Passphrases do not match.")
+
+		web3.eth.getAccounts (err,accounts) ->
+			console.log("Accounts:", accounts)
 
 	kill: ->
 		@process?.stdin?.pause()
