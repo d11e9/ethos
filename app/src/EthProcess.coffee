@@ -12,7 +12,7 @@ module.exports = class EthProcess extends Backbone.Model
 		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
 		@datadir = path.join( process.cwd(), './eth' )
 		@ipcPath = path.join( @datadir, './geth.ipc' )
-		@genesis_block = path.join( process.cwd(), './app/', 'genesis_block.json' )
+
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@listenTo @, 'status', (running) =>
 			return if running and @connected
@@ -31,8 +31,8 @@ module.exports = class EthProcess extends Backbone.Model
 
 
 	start: ->
-		console.log( @path, @datadir, @genesis_block )
-		@process = spawn( @path, [ '--genesis', @genesis_block, '--datadir', @datadir, '--rpc', '--shh'] )
+		console.log( @path, @datadir )
+		@process = spawn( @path, [ '--datadir', @datadir, '--rpc', '--shh'] )
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)
