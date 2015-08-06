@@ -1,11 +1,13 @@
 web3 = require 'web3'
 
-
 module.exports = class EthosMenu
 	constructor: ({gui, @ethProcess, @ipfsProcess})->
+		EthereumMenu = require( './EthereumMenu.coffee')(gui)
+
 		@menu = new gui.Menu()
 		@ipfsMenu = new gui.Menu()
-		@ethMenu = new gui.Menu()
+
+		@ethMenu = new EthereumMenu( process: @ethProcess )
 
 		@tray = new gui.Tray
 			title: ''
@@ -13,7 +15,7 @@ module.exports = class EthosMenu
 			menu: @menu
 
 		@tray.on 'click', () ->
-			alert("TRay click")
+			window.alert("Tray click")
 		
 		quit = new gui.MenuItem
 			label: 'Quit'
@@ -58,10 +60,6 @@ module.exports = class EthosMenu
 			label: 'IPFS'
 			submenu: @ipfsMenu
 
-		eth = new gui.MenuItem
-			label: 'Ethereum'
-			submenu: @ethMenu
-
 		ipfsStatus = new gui.MenuItem
 			label: 'Status: Not Running'
 			enabled: false
@@ -103,27 +101,28 @@ module.exports = class EthosMenu
 					stat.label = "Status: Not Running"
 					toggle.label = "Start"
 
-		@ethProcess.on 'status', updateStatus( ethStatus, ethToggle )
-		@ipfsProcess.on 'status', updateStatus( ipfsStatus, ipfsToggle )
-		@ethProcess.on 'status', (running) ->
-			ethAccounts.submenu = new gui.Menu()
-			ethAccounts.submenu.append( new gui.MenuItem(ethNewAccount) )
-			web3.eth.getAccounts (err, accounts) ->
-				return if err
-				ethAccounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
+		#@ethProcess.on 'status', updateStatus( ethStatus, ethToggle )
+		#@ipfsProcess.on 'status', updateStatus( ipfsStatus, ipfsToggle )
+		# @ethProcess.on 'status', (running) ->
+		# 	console.log ethAccounts
+		# 	ethAccounts.submenu = new gui.Menu()
+		# 	ethAccounts.submenu.append( new gui.MenuItem(ethNewAccount) )
+		# 	web3.eth.getAccounts (err, accounts) ->
+		# 		return if err
+		# 		ethAccounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
 		@ipfsMenu.append( ipfsAddFile )
 		@ipfsMenu.append( ipfsInfo )
 		
-		@ethMenu.append( ethStatus )
-		@ethMenu.append( ethToggle )
-		@ethMenu.append( ethAccounts )
+		# @ethMenu.append( ethStatus )
+		# @ethMenu.append( ethToggle )
+		# @ethMenu.append( ethAccounts )
 
 		@menu.append( about )
 		@menu.append( ipfs )
-		@menu.append( eth )
+		@menu.append( @ethMenu.get() )
 		@menu.append( debug )
 		@menu.append( quit )
 

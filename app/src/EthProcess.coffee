@@ -1,7 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 cp = require 'child_process'
-web3 = require 'web3'
+
 spawn = cp.spawn
 Backbone = require 'backbone'
 
@@ -11,16 +11,22 @@ module.exports = class EthProcess extends Backbone.Model
 		@connected = false
 		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
 		@datadir = path.join( process.cwd(), './eth' )
-		@ipcPath = path.join( @datadir, './geth.ipc' )
+		@web3 = require 'web3'
+		@ipcPath = if @os is 'darwin'
+				path.join( @datadir, './geth.ipc' )
+			else
+				'\\\\.\\pipe\\geth.ipc'
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
+		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+
 		@listenTo @, 'status', (running) =>
 			return if running and @connected
 			@connected = false if @connected and !running
 			return unless running
-			web3.setProvider( new web3.providers.IpcProvider( @ipcPath ) )
+			
 			console.log "ETH checking ipc connection", @connected, running
-			web3.eth.getBlockNumber (err, blockNumber) =>
+			@web3.eth.getBlockNumber (err, blockNumber) =>
 				if err
 					console.log err
 					@connected = false
@@ -52,12 +58,12 @@ module.exports = class EthProcess extends Backbone.Model
 		else
 			@start()
 
-	newAccount: ->
+	newAccount: =>
 		console.log( "TODO: Create new Accounts" )
 		pass1 = window.prompt( "Enter passphrase: ")
 		pass2 = window.prompt( "Repeat passphrase: ")
 		if pass1 is pass2
-			web3.currentProvider.sendAsync({
+			@web3.currentProvider.sendAsync({
 				jsonrpc: "2.0",
 				id: 1,
 				method: "personal_newAccount",
@@ -66,7 +72,7 @@ module.exports = class EthProcess extends Backbone.Model
 		else
 			alert("Passphrases do not match.")
 
-		web3.eth.getAccounts (err,accounts) ->
+		@web3.eth.getAccounts (err,accounts) ->
 			console.log("Accounts:", accounts)
 
 	kill: ->

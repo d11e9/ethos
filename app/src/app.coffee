@@ -8,9 +8,9 @@ module.exports = (gui) ->
 	ext = ''
 	ext = '.exe' if os is 'win32'
 
-	mb = new gui.Menu({type:"menubar"});
-	mb.createMacBuiltin("Ethos");
-	gui.Window.get().menu = mb;
+	mb = new gui.Menu(type:"menubar")
+	mb.createMacBuiltin("Ethos") if os is 'darwin'
+	gui.Window.get().menu = mb
 		
 
 	path = require 'path'
@@ -21,22 +21,6 @@ module.exports = (gui) ->
 	IPFSProcess = require './IPFSProcess.coffee'
 
 	console.log( "Ξthos initializing..." )
-
-	web3.connect = (ethMenu) ->
-		tries = 0
-		connect = ->
-			try
-				web3.setProvider( new web3.providers.HttpProvider('http://localhost:8545') )
-				console.log( "Ethereum coinbase: ", web3.eth.coinbase )
-				console.log( "Ethereum accounts: ", web3.eth.accounts )
-			catch error
-				console.log( "Error connecting to local Ethereum node" )
-				console.log( error )
-				tries++
-				setTimeout( connect, 100 ) if tries < 10
-		setTimeout( connect, 100 )
-
-
 
 	window.onload = ->		
 		ethProcess = new EthProcess({os, ext})
