@@ -1,5 +1,3 @@
-alert = window.alert
-
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
 		console.error "Error: Uncaught exexption: #{ msg }"
@@ -7,12 +5,12 @@ module.exports = (gui) ->
 	os = process.platform
 	ext = ''
 	ext = '.exe' if os is 'win32'
-
-	mb = new gui.Menu(type:"menubar")
+	win = gui.Window.get()
+	mb = new gui.Menu( type:"menubar" )
 	mb.createMacBuiltin("Ethos") if os is 'darwin'
 	gui.Window.get().menu = mb
 		
-	gui.Window.get().showDevTools()
+	win.showDevTools()
 	
 	path = require 'path'
 	web3 = require 'web3'
@@ -20,15 +18,24 @@ module.exports = (gui) ->
 	EthosMenu = require './EthosMenu.coffee'
 	EthProcess = require './EthProcess.coffee'
 	IPFSProcess = require './IPFSProcess.coffee'
+	Config = require './Config.coffee'
 
 	console.log( "Ξthos initializing..." )
 
-	window.onload = ->		
-		window.eth = ethProcess = new EthProcess({os, ext})
-		window.ipfs = ipfsProcess = new IPFSProcess({os, ext})
-		window.ethos = menu = new EthosMenu({gui,ipfsProcess, ethProcess})
+	win.window.onload = ->		
+		win.window.eth = ethProcess = new EthProcess({os, ext})
+		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext})
+		win.window.ethos = menu = new EthosMenu({gui,ipfsProcess, ethProcess})
 
 		ethProcess.start()
 		ipfsProcess.start()
+		config = new Config()
+		config.load()
+
+		global.ethos =
+			toggleLogging: ->
+				ethProcess.logging = !ethProcess.logging
+				ipfsProcess.logging = !ipfsProcess.logging
+			config: config
 
 		console.log( "Ξthos initialized: ok" )

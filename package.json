@@ -11,7 +11,7 @@
   "window": {
     "icon": "app/images/icon-tray.ico",
     "title": "Ethos",
-    "toolbar": true,
+    "toolbar": false,
     "frame": true,
     "show": false,
     "show_in_taskbar": false,

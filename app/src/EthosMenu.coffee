@@ -1,28 +1,37 @@
 web3 = require 'web3'
 
 
-wrap = (func) ->
-	oldOnError = window.onerror
-	window.onerror = ->
-	func.apply( this, arguments )
-	window.onerror = oldOnError
+newWindowOptions =
+	icon: "app/images/icon-tray.ico"
+	title: "Ethos"
+	toolbar: true
+	frame: true
+	show: true
+	show_in_taskbar: true
+	width: 800
+	height: 500
+	position: "center"
+	min_width: 400
+	min_height: 200
+	max_width: 800
+	max_height: 600
 
 module.exports = class EthosMenu
-	constructor: ({gui, @ethProcess, @ipfsProcess})->
-		EthereumMenu = require( './EthereumMenu.coffee')(gui)
+	openWindow: (url) ->
+		global.child = @gui.Window.open( url, newWindowOptions )
+		setTimeout ( -> child.focus() ), 100
 
+	constructor: ({@gui, @ethProcess, @ipfsProcess})->
+		gui = @gui
+		EthereumMenu = require( './EthereumMenu.coffee')(gui)
 		@menu = new gui.Menu()
 		@ipfsMenu = new gui.Menu()
-
 		@ethMenu = new EthereumMenu( process: @ethProcess )
 
 		@tray = new gui.Tray
 			title: ''
 			icon: "./app/images/icon-tray.png"
 			menu: @menu
-
-		@tray.on 'click', () ->
-			window.alert("Tray click")
 		
 		quit = new gui.MenuItem
 			label: 'Quit'
@@ -36,27 +45,11 @@ module.exports = class EthosMenu
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			click: ->
-				child = gui.Window.open 'app://ethos/app/about.html',
-					"icon": "app/images/icon-tray.ico",
-				    "title": "Ethos",
-				    "toolbar": true,
-				    "frame": true,
-				    "show": false,
-				    "show_in_taskbar": false,
-				    "width": 800,
-				    "height": 500,
-				    "position": "center",
-				    "min_width": 400,
-				    "min_height": 200,
-				    "max_width": 800,
-				    "max_height": 600
-				mb = new gui.Menu({type:"menubar"})
-				mb.createMacBuiltin("About Ethos")
-				child.menu = mb
-				global.about = child
+			click: => @openWindow( 'app://ethos/app/about.html' )
 
-				#gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
+		settings = new gui.MenuItem
+			label: 'Settings'
+			click: => @openWindow( 'app://ethos/app/settings.html' )
 
 		debug = new gui.MenuItem
 			label: 'Debug'
@@ -111,6 +104,7 @@ module.exports = class EthosMenu
 		@ipfsMenu.append( ipfsInfo )
 
 		@menu.append( about )
+		@menu.append( settings )
 		@menu.append( ipfs )
 		@menu.append( @ethMenu.get() )
 		@menu.append( debug )
