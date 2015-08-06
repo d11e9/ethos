@@ -1,5 +1,12 @@
 web3 = require 'web3'
 
+
+wrap = (func) ->
+	oldOnError = window.onerror
+	window.onerror = ->
+	func.apply( this, arguments )
+	window.onerror = oldOnError
+
 module.exports = class EthosMenu
 	constructor: ({gui, @ethProcess, @ipfsProcess})->
 		EthereumMenu = require( './EthereumMenu.coffee')(gui)
@@ -70,55 +77,38 @@ module.exports = class EthosMenu
 
 		ipfsAddFile = new gui.MenuItem
 			label: 'Add File'
+			enabled: false
 			click: => @ipfsProcess.addFile()
 
 		ipfsInfo = new gui.MenuItem
 			label: 'Info'
-			click: => @ipfsProcess.info()
-
-		ethStatus = new gui.MenuItem
-			label: 'Status: Not Running'
 			enabled: false
+			click: =>
+				@ipfsProcess.info (err,res) ->
+					gui.Shell.openExternal("http://localhost:8080/ipns/#{ res.info.ID}") unless err
 
-		ethToggle = new gui.MenuItem
-			label: 'Start'
-			click: => @ethProcess.toggle()
-
-		ethAccounts = new gui.MenuItem
-			label: 'Accounts'
-			submenu: new gui.Menu()
-
-		ethNewAccount = 
-			label: 'New Account'
-			click: => @ethProcess.newAccount()
-
-		updateStatus = (stat, toggle) ->
-			(running) ->
-				if running
-					stat.label = "Status: Running"
-					toggle.label = "Stop"
-				else
-					stat.label = "Status: Not Running"
-					toggle.label = "Start"
-
-		#@ethProcess.on 'status', updateStatus( ethStatus, ethToggle )
-		#@ipfsProcess.on 'status', updateStatus( ipfsStatus, ipfsToggle )
-		# @ethProcess.on 'status', (running) ->
-		# 	console.log ethAccounts
-		# 	ethAccounts.submenu = new gui.Menu()
-		# 	ethAccounts.submenu.append( new gui.MenuItem(ethNewAccount) )
-		# 	web3.eth.getAccounts (err, accounts) ->
-		# 		return if err
-		# 		ethAccounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
+		@ipfsProcess.on 'status', (running) =>
+			if running
+				ipfsStatus.label = "Status: Connecting"
+				ipfsToggle.label = "Stop"
+				ipfsAddFile.enabled = false
+				ipfsInfo.enabled = false
+				try
+					@ipfsProcess.api.id (err, info) ->
+						ipfsStatus.label = "Status: Connected" unless err
+						ipfsAddFile.enabled = !err
+						ipfsInfo.enabled = !err
+				catch err
+			else
+				ipfsStatus.label = "Status: Not Running"
+				ipfsToggle.label = "Start"
+				ipfsAddFile.enabled = false
+				ipfsInfo.enabled = false
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
 		@ipfsMenu.append( ipfsAddFile )
 		@ipfsMenu.append( ipfsInfo )
-		
-		# @ethMenu.append( ethStatus )
-		# @ethMenu.append( ethToggle )
-		# @ethMenu.append( ethAccounts )
 
 		@menu.append( about )
 		@menu.append( ipfs )

@@ -38,12 +38,18 @@ module.exports = class IPFSProcess extends Backbone.Model
 		else
 			@start()
 
-	info: =>
-		@api.id (err,info) ->
+	info: (cb) =>
+		@api.id (err,info) =>
 			console.log( "IPFS ID: #{ info.ID }" )
-			
-		@api.pin.list (err,pinList) ->
-			console.log( "IFPS pinned files:", pinList)
+			if err
+			 	cb( err, null )
+			 	return
+			@api.pin.list (err,pins) ->
+				console.log( "IFPS pinned files:", pins)
+				if err
+			 		cb( err, null )
+			 		return
+				cb( err, info: info, pins: pins )
 
 	addFile: ->
 		chooser = window.document.querySelector('#ipfsAddFile')

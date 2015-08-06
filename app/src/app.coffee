@@ -12,7 +12,8 @@ module.exports = (gui) ->
 	mb.createMacBuiltin("Ethos") if os is 'darwin'
 	gui.Window.get().menu = mb
 		
-
+	gui.Window.get().showDevTools()
+	
 	path = require 'path'
 	web3 = require 'web3'
 	spawn = require( 'child_process' ).spawn

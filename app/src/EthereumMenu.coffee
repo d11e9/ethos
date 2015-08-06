@@ -11,12 +11,12 @@ module.exports = (gui) ->
 			@createStatusItem()
 			@createNewAccountItem()
 			@createAccountsItem()
+			@process.on( 'status', @update )
 			@update()
 
 		update: =>
-			@updateAccounts()
 			@updateStatus()
-			window.setTimeout( @update, 1000 )
+			@updateAccounts()
 			
 		get: -> @rootItem
 
@@ -29,7 +29,10 @@ module.exports = (gui) ->
 		createNewAccountItem: ->
 			@newAccount = new gui.MenuItem
 				label: 'New Account'
-				click: => @process.newAccount()
+				click: =>
+					@process.newAccount()
+					@updateAccounts()
+
 			@menu.append( @newAccount )
 
 		createAccountsItem: ->
@@ -54,7 +57,7 @@ module.exports = (gui) ->
 				if err
 					@status.label = "Status: Not Connected"
 				else
-					@status.label = "Block: ##{block}"
+					@status.label = "Status: Connected ##{block}"
 
 
 
