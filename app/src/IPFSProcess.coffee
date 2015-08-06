@@ -26,11 +26,11 @@ module.exports = class IPFSProcess extends Backbone.Model
 		
 		@process.stdout.on 'data', (data) =>
 			console.log('IFPS stdout: ' + data)
-			@trigger 'status', !!@process
+			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
 			console.log('IFPS stderr: ' + data)
-			@trigger 'status', !!@process
+			@trigger( 'status', !!@process )
 
 	toggle: ->
 		if @process
@@ -64,4 +64,4 @@ module.exports = class IPFSProcess extends Backbone.Model
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')
 		@process = null
-		@trigger 'status', !!@process
+		@trigger( 'status', !!@process )
