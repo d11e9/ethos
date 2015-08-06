@@ -21,10 +21,16 @@ module.exports = (gui) ->
 		get: -> @rootItem
 
 		createStatusItem: ->
+			@toggle = new gui.MenuItem
+				label: 'Start'
+				click: => @process.toggle()
+
 			@status = new gui.MenuItem
 				label: 'Status: Initializing'
 				enabled: false
+
 			@menu.append( @status )
+			@menu.append( @toggle )
 
 		createNewAccountItem: ->
 			@newAccount = new gui.MenuItem
@@ -56,8 +62,13 @@ module.exports = (gui) ->
 			@web3.eth.getBlockNumber (err,block) =>
 				if err
 					@status.label = "Status: Not Connected"
+					@toggle.label = "Start"
+					@newAccount.enabled = false
 				else
 					@status.label = "Status: Connected ##{block}"
+					@toggle.label = "Stop"
+					@newAccount.enabled = true
+				@updateAccounts()
 
 
 

@@ -84,26 +84,26 @@ module.exports = class EthosMenu
 			label: 'Info'
 			enabled: false
 			click: =>
-				@ipfsProcess.info (err,res) ->
-					gui.Shell.openExternal("http://localhost:8080/ipns/#{ res.info.ID}") unless err
+				@ipfsProcess.info (err,res) =>
+					address = @ipfsProcess.config.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
+					console.log( "IPFS Gateway address: #{address}" )
+					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID}") unless err
 
 		@ipfsProcess.on 'status', (running) =>
-			if running
-				ipfsStatus.label = "Status: Connecting"
-				ipfsToggle.label = "Stop"
-				ipfsAddFile.enabled = false
-				ipfsInfo.enabled = false
-				try
-					@ipfsProcess.api.id (err, info) ->
-						ipfsStatus.label = "Status: Connected" unless err
-						ipfsAddFile.enabled = !err
-						ipfsInfo.enabled = !err
-				catch err
-			else
+			ipfsStatus.label = "Status: Connecting"
+			ipfsToggle.label = "Stop"
+			ipfsAddFile.enabled = false
+			ipfsInfo.enabled = false
+			if !running
 				ipfsStatus.label = "Status: Not Running"
 				ipfsToggle.label = "Start"
-				ipfsAddFile.enabled = false
-				ipfsInfo.enabled = false
+
+		@ipfsProcess.on 'connected', =>
+			@ipfsProcess.api.id (err, info) ->
+				console.log( "IPFS connected: ", err, info)
+				ipfsStatus.label = "Status: Connected" unless err
+				ipfsAddFile.enabled = !err
+				ipfsInfo.enabled = !err
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )

@@ -12,8 +12,13 @@ module.exports = class IPFSProcess extends Backbone.Model
 		@process = null
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
 		@api = new ipfsApi()
-		window.ipfs = @api
 		fs.chmodSync( @path, '755') if @os is 'darwin'
+		@on 'status', (running) =>
+			if running
+				@api.config.show (err, config) =>
+					@config = config
+					@trigger( 'connected' ) unless err
+					console.log( "IPFS config: ", err, config)
 
 	start: ->
 		console.log( @path )

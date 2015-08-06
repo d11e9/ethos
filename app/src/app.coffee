@@ -2,7 +2,7 @@ alert = window.alert
 
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		alert "Error: Uncaught exexption: #{ msg }"
+		console.error "Error: Uncaught exexption: #{ msg }"
 
 	os = process.platform
 	ext = ''
@@ -24,9 +24,9 @@ module.exports = (gui) ->
 	console.log( "Ξthos initializing..." )
 
 	window.onload = ->		
-		ethProcess = new EthProcess({os, ext})
-		ipfsProcess = new IPFSProcess({os, ext})
-		menu = new EthosMenu({gui,ipfsProcess, ethProcess})
+		window.eth = ethProcess = new EthProcess({os, ext})
+		window.ipfs = ipfsProcess = new IPFSProcess({os, ext})
+		window.ethos = menu = new EthosMenu({gui,ipfsProcess, ethProcess})
 
 		ethProcess.start()
 		ipfsProcess.start()
