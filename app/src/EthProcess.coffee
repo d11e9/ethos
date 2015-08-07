@@ -6,9 +6,8 @@ spawn = cp.spawn
 Backbone = require 'backbone'
 
 module.exports = class EthProcess extends Backbone.Model
-	constructor: ({@os, ext}) ->
+	constructor: ({@os, ext, @config}) ->
 		@process = null
-		@logging = true
 		@connected = false
 		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
 		@datadir = path.join( process.cwd(), './eth' )
@@ -46,11 +45,11 @@ module.exports = class EthProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('geth stdout: ' + data) if @logging
+			console.log('geth stdout: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('geth stderr: ' + data) if @logging
+			console.log('geth stderr: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 	toggle: ->

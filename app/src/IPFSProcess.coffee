@@ -8,9 +8,8 @@ ipfsApi = require 'ipfs-api'
 
 
 module.exports = class IPFSProcess extends Backbone.Model
-	constructor: ({@os, ext}) ->
+	constructor: ({@os, ext, @config}) ->
 		@process = null
-		@logging = true
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
 		@api = new ipfsApi()
 		fs.chmodSync( @path, '755') if @os is 'darwin'
@@ -31,11 +30,11 @@ module.exports = class IPFSProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('IFPS stdout: ' + data) if @logging
+			console.log('IFPS stdout: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('IFPS stderr: ' + data) if @logging
+			console.log('IFPS stderr: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 	toggle: ->

@@ -22,20 +22,16 @@ module.exports = (gui) ->
 
 	console.log( "Ξthos initializing..." )
 
-	win.window.onload = ->		
-		win.window.eth = ethProcess = new EthProcess({os, ext})
-		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext})
-		win.window.ethos = menu = new EthosMenu({gui,ipfsProcess, ethProcess})
-
-		ethProcess.start()
-		ipfsProcess.start()
+	win.window.onload = ->
 		config = new Config()
 		config.load()
 
-		global.ethos =
-			toggleLogging: ->
-				ethProcess.logging = !ethProcess.logging
-				ipfsProcess.logging = !ipfsProcess.logging
-			config: config
+		win.window.eth = ethProcess = new EthProcess({os, ext, config})
+		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
+		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess})
 
+		ethProcess.start() if config.flags.ethStart
+		ipfsProcess.start() if config.flags.ipfsStart
+
+		global.ethos = config
 		console.log( "Ξthos initialized: ok" )
