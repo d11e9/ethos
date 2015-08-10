@@ -58,6 +58,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 
 	addFile: ->
 		chooser = window.document.querySelector('#ipfsAddFile')
+		console.log "TODO: IPFS Add file", chooser
 		chooser.addEventListener "change", (evt) =>
 			filePath = evt.target.value
 			console.log "TODO: IPFS add file", filePath
