@@ -8,12 +8,17 @@ ipfsApi = require 'ipfs-api'
 
 
 module.exports = class IPFSProcess extends Backbone.Model
-	constructor: ({@os, ext}) ->
+	constructor: ({@os, ext, @config}) ->
 		@process = null
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
 		@api = new ipfsApi()
-		window.ipfs = @api
 		fs.chmodSync( @path, '755') if @os is 'darwin'
+		@on 'status', (running) =>
+			if running
+				@api.config.show (err, config) =>
+					@config = config
+					@trigger( 'connected' ) unless err
+					console.log( "IPFS config: ", err, config)
 
 	start: ->
 		console.log( @path )
@@ -25,11 +30,11 @@ module.exports = class IPFSProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('IFPS stdout: ' + data)
+			console.log('IFPS stdout: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('IFPS stderr: ' + data)
+			console.log('IFPS stderr: ' + data) if @config.get('logging')
 			@trigger( 'status', !!@process )
 
 	toggle: ->
@@ -38,15 +43,22 @@ module.exports = class IPFSProcess extends Backbone.Model
 		else
 			@start()
 
-	info: =>
-		@api.id (err,info) ->
+	info: (cb) =>
+		@api.id (err,info) =>
 			console.log( "IPFS ID: #{ info.ID }" )
-			
-		@api.pin.list (err,pinList) ->
-			console.log( "IFPS pinned files:", pinList)
+			if err
+			 	cb( err, null )
+			 	return
+			@api.pin.list (err,pins) ->
+				console.log( "IFPS pinned files:", pins)
+				if err
+			 		cb( err, null )
+			 		return
+				cb( err, info: info, pins: pins )
 
 	addFile: ->
-		chooser = window.document.querySelector('#ipfsAddFile')
+		chooser = window.document.querySelector('#addFile')
+		console.log "TODO: IPFS Add file", chooser
 		chooser.addEventListener "change", (evt) =>
 			filePath = evt.target.value
 			console.log "TODO: IPFS add file", filePath

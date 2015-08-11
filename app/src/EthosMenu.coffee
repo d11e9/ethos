@@ -1,19 +1,37 @@
 web3 = require 'web3'
 
 
+newWindowOptions =
+	icon: "app/images/icon-tray.ico"
+	title: "Ethos"
+	toolbar: false
+	frame: true
+	show: true
+	show_in_taskbar: true
+	width: 800
+	height: 500
+	position: "center"
+	min_width: 400
+	min_height: 200
+	max_width: 800
+	max_height: 600
+
 module.exports = class EthosMenu
-	constructor: ({gui, @ethProcess, @ipfsProcess})->
+	openWindow: (url) ->
+		global.child = @gui.Window.open( url, newWindowOptions )
+		setTimeout ( -> child.focus() ), 100
+
+	constructor: ({@gui, @ethProcess, @ipfsProcess})->
+		gui = @gui
+		EthereumMenu = require( './EthereumMenu.coffee')(gui)
 		@menu = new gui.Menu()
 		@ipfsMenu = new gui.Menu()
-		@ethMenu = new gui.Menu()
+		@ethMenu = new EthereumMenu( process: @ethProcess )
 
 		@tray = new gui.Tray
 			title: ''
 			icon: "./app/images/icon-tray.png"
 			menu: @menu
-
-		@tray.on 'click', () ->
-			alert("TRay click")
 		
 		quit = new gui.MenuItem
 			label: 'Quit'
@@ -27,27 +45,11 @@ module.exports = class EthosMenu
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			click: ->
-				child = gui.Window.open 'app://ethos/app/about.html',
-					"icon": "app/images/icon-tray.ico",
-				    "title": "Ethos",
-				    "toolbar": true,
-				    "frame": true,
-				    "show": false,
-				    "show_in_taskbar": false,
-				    "width": 800,
-				    "height": 500,
-				    "position": "center",
-				    "min_width": 400,
-				    "min_height": 200,
-				    "max_width": 800,
-				    "max_height": 600
-				mb = new gui.Menu({type:"menubar"})
-				mb.createMacBuiltin("About Ethos")
-				child.menu = mb
-				global.about = child
+			click: => @openWindow( 'app://ethos/app/about.html' )
 
-				#gui.Shell.openExternal('http://localhost:8080/ipfs/ethosAbout')
+		settings = new gui.MenuItem
+			label: 'Settings'
+			click: => @openWindow( 'app://ethos/app/settings.html' )
 
 		debug = new gui.MenuItem
 			label: 'Debug'
@@ -57,10 +59,6 @@ module.exports = class EthosMenu
 		ipfs = new gui.MenuItem
 			label: 'IPFS'
 			submenu: @ipfsMenu
-
-		eth = new gui.MenuItem
-			label: 'Ethereum'
-			submenu: @ethMenu
 
 		ipfsStatus = new gui.MenuItem
 			label: 'Status: Not Running'
@@ -72,58 +70,43 @@ module.exports = class EthosMenu
 
 		ipfsAddFile = new gui.MenuItem
 			label: 'Add File'
+			enabled: false
 			click: => @ipfsProcess.addFile()
 
 		ipfsInfo = new gui.MenuItem
 			label: 'Info'
-			click: => @ipfsProcess.info()
-
-		ethStatus = new gui.MenuItem
-			label: 'Status: Not Running'
 			enabled: false
+			click: =>
+				@ipfsProcess.info (err,res) =>
+					address = @ipfsProcess.config.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
+					console.log( "IPFS Gateway address: #{address}" )
+					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID}") unless err
 
-		ethToggle = new gui.MenuItem
-			label: 'Start'
-			click: => @ethProcess.toggle()
+		@ipfsProcess.on 'status', (running) =>
+			ipfsStatus.label = "Status: Connecting"
+			ipfsToggle.label = "Stop"
+			ipfsAddFile.enabled = false
+			ipfsInfo.enabled = false
+			if !running
+				ipfsStatus.label = "Status: Not Running"
+				ipfsToggle.label = "Start"
 
-		ethAccounts = new gui.MenuItem
-			label: 'Accounts'
-			submenu: new gui.Menu()
-
-		ethNewAccount = 
-			label: 'New Account'
-			click: => @ethProcess.newAccount()
-
-		updateStatus = (stat, toggle) ->
-			(running) ->
-				if running
-					stat.label = "Status: Running"
-					toggle.label = "Stop"
-				else
-					stat.label = "Status: Not Running"
-					toggle.label = "Start"
-
-		@ethProcess.on 'status', updateStatus( ethStatus, ethToggle )
-		@ipfsProcess.on 'status', updateStatus( ipfsStatus, ipfsToggle )
-		@ethProcess.on 'status', (running) ->
-			ethAccounts.submenu = new gui.Menu()
-			ethAccounts.submenu.append( new gui.MenuItem(ethNewAccount) )
-			web3.eth.getAccounts (err, accounts) ->
-				return if err
-				ethAccounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
+		@ipfsProcess.on 'connected', =>
+			@ipfsProcess.api.id (err, info) ->
+				console.log( "IPFS connected: ", err, info)
+				ipfsStatus.label = "Status: Connected" unless err
+				ipfsAddFile.enabled = !err
+				ipfsInfo.enabled = !err
 			
 		@ipfsMenu.append( ipfsStatus )
 		@ipfsMenu.append( ipfsToggle )
 		@ipfsMenu.append( ipfsAddFile )
 		@ipfsMenu.append( ipfsInfo )
-		
-		@ethMenu.append( ethStatus )
-		@ethMenu.append( ethToggle )
-		@ethMenu.append( ethAccounts )
 
 		@menu.append( about )
+		@menu.append( settings )
 		@menu.append( ipfs )
-		@menu.append( eth )
+		@menu.append( @ethMenu.get() )
 		@menu.append( debug )
 		@menu.append( quit )
 

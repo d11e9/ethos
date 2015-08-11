@@ -1,49 +1,34 @@
-alert = window.alert
+
+path = require 'path'
+web3 = require 'web3'
 
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		alert "Error: Uncaught exexption: #{ msg }"
+		window.alert "Error: Uncaught exexption: #{ msg }"
 
 	os = process.platform
-	ext = ''
-	ext = '.exe' if os is 'win32'
+	ext = if os is 'win32' then '.exe' else ''
 
-	mb = new gui.Menu({type:"menubar"});
-	mb.createMacBuiltin("Ethos");
-	gui.Window.get().menu = mb;
-		
+	win = gui.Window.get()
 
-	path = require 'path'
-	web3 = require 'web3'
-	spawn = require( 'child_process' ).spawn
+	Config = require './Config.coffee'
 	EthosMenu = require './EthosMenu.coffee'
 	EthProcess = require './EthProcess.coffee'
 	IPFSProcess = require './IPFSProcess.coffee'
 
 	console.log( "Ξthos initializing..." )
+	config = new Config()
+	config.load()
 
-	web3.connect = (ethMenu) ->
-		tries = 0
-		connect = ->
-			try
-				web3.setProvider( new web3.providers.HttpProvider('http://localhost:8545') )
-				console.log( "Ethereum coinbase: ", web3.eth.coinbase )
-				console.log( "Ethereum accounts: ", web3.eth.accounts )
-			catch error
-				console.log( "Error connecting to local Ethereum node" )
-				console.log( error )
-				tries++
-				setTimeout( connect, 100 ) if tries < 10
-		setTimeout( connect, 100 )
+	win.window.onload = ->
+		win.window.win = win
+		win.window.log = -> window.console.log arguments
+		win.window.eth = ethProcess = new EthProcess({os, ext, config})
+		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
+		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess})
 
+		ethProcess.start() if config.flags.ethStart
+		ipfsProcess.start() if config.flags.ipfsStart
 
-
-	window.onload = ->		
-		ethProcess = new EthProcess({os, ext})
-		ipfsProcess = new IPFSProcess({os, ext})
-		menu = new EthosMenu({gui,ipfsProcess, ethProcess})
-
-		ethProcess.start()
-		ipfsProcess.start()
-
+		global.ethos = config
 		console.log( "Ξthos initialized: ok" )

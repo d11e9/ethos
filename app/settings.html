@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<title>Ethos</title>
+		<style>
+			body {
+				font-family: monospace;
+				padding: 2em;
+			}
+
+			.logo {
+				height: 3em;
+				float: left;
+			}
+
+			h1 {
+				font-size: 2em;
+				line-height: 1.5em;
+				margin: 0;
+				float: left;
+			}
+
+			.header {
+				overflow: auto;
+				margin-bottom: 2em;
+			}
+
+			form {
+				clear: both;
+			}
+
+		</style>
+		
+	</head>
+	<body>
+		<div class="header">
+			<img class="logo" src="images/icon.png" alt="Ethos: an Ethereum browser">
+			<h1>&Xi;thos</h1>
+		</div>
+
+		<h2>Startup</h2>
+		<form action="#">
+			<div class="form-group">
+				<input type="checkbox" id="startup">
+				<label for="startup">Launch Ethos at startup</label>
+			</div>
+			<div class="form-group">
+				<input type="checkbox" id="ethStart">
+				<label for="ethStart">Start Ethereum by default</label>
+			</div>
+			<div class="form-group">
+				<input type="checkbox" id="ipfsStart">
+				<label for="ipfsStart">Start IPFS by default</label>
+			</div>
+		</form>
+		<h2>Other</h2>
+		<form action="#">
+			<div class="form-group">
+				<input type="checkbox" id="logging">
+				<label for="logging">Log process output to console</label>
+			</div>
+		</form>
+		<script src="js/settings.js"></script>
+	</body>
+</html>
