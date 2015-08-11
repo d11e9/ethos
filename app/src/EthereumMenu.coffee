@@ -10,7 +10,9 @@ module.exports = (gui) ->
 			@web3 = @process.web3
 			@createStatusItem()
 			@createNewAccountItem()
+			@createImportItem()
 			@createAccountsItem()
+			@createMiningItem()
 			@process.on( 'status', @update )
 			@update()
 
@@ -41,11 +43,48 @@ module.exports = (gui) ->
 
 			@menu.append( @newAccount )
 
+		createImportItem: ->
+			@import = new gui.MenuItem
+				label: 'Import Wallet'
+				click: =>
+					chooser = window.document.querySelector('#addFile')
+					chooser.addEventListener "change", (ev) =>
+						filePath = ev.target.value
+						@process.importWallet filePath, (err) ->
+							window.alert( "Wallet imported successfully") unless err
+
+					chooser.click()
+			@menu.append( @import )
+
+		createMiningItem: ->
+			@mining = new gui.MenuItem
+				label: 'Mining'
+				click: =>
+					@process.toggleMining()
+					@updateMining()
+
+			@menu.append( @mining )
+
 		createAccountsItem: ->
 			@accounts = new gui.MenuItem
 				label: 'Accounts'
 				submenu: new gui.Menu()
 			@menu.append( @accounts )
+
+
+		updateMining: =>
+			@web3.eth.getMining (err, mining) =>
+				if err or !mining
+					@mining.label = "Start Mining"
+				else
+					@mining.label = "Stop Mining"
+
+		accountItem: (address) =>
+			new gui.MenuItem
+				label: address
+				icon: "./app/images/lock-icon.png"
+				click: =>
+					@process.unlock( address, window.prompt("Enter passphrase to unlock account: #{address}") )
 
 		updateAccounts: =>
 			@web3.eth.getAccounts (err, accounts) =>
@@ -56,7 +95,7 @@ module.exports = (gui) ->
 					@accounts.label = "Accounts (#{accounts.length})"
 					@accounts.enabled = true
 					@accounts.submenu.remove(item) for item in @accounts.submenu.items
-					@accounts.submenu.append( new gui.MenuItem( label: acc ) ) for acc in accounts
+					@accounts.submenu.append( @accountItem(acc) ) for acc in accounts
 
 		updateStatus: =>
 			@web3.eth.getBlockNumber (err,block) =>
@@ -69,6 +108,7 @@ module.exports = (gui) ->
 					@toggle.label = "Stop"
 					@newAccount.enabled = true
 				@updateAccounts()
+				@updateMining()
 
 
 

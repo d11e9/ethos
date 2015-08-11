@@ -4,7 +4,7 @@ web3 = require 'web3'
 
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		console.error "Error: Uncaught exexption: #{ msg }"
+		window.alert "Error: Uncaught exexption: #{ msg }"
 
 	os = process.platform
 	ext = if os is 'win32' then '.exe' else ''
@@ -22,6 +22,7 @@ module.exports = (gui) ->
 
 	win.window.onload = ->
 		win.window.win = win
+		win.window.log = -> window.console.log arguments
 		win.window.eth = ethProcess = new EthProcess({os, ext, config})
 		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
 		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess})
