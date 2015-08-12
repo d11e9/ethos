@@ -7,11 +7,12 @@ path = require 'path'
 module.exports = (gui) ->
 
 	class Account
-		constructor: (@address, @process) ->
+		constructor: (@address, @web3) ->
 			@submenu = new gui.Menu()
-			@submenu.append new gui.MenuItem
-				label: "Balance: #{}"
+			@balanceItem = new gui.MenuItem
+				label: "Balance: \u039E ..."
 				enabled: false
+			@submenu.append @balanceItem
 			@submenu.append new gui.MenuItem
 				label: "Unlock"
 				click: @handleUnlock
@@ -21,19 +22,26 @@ module.exports = (gui) ->
 			@submenu.append new gui.MenuItem
 				label: "Receive"
 				click: @handleReceive
+			acc = @address
+			@web3.eth.getBalance @address, (err, balance) =>
+				return if err
+				ethBalance = @web3.fromWei( balance )
+				@balanceItem.label = "Balance: \u039E #{ethBalance}"
 
 		getShortAddr: ->
 			chars = 6
 			"#{@address.substring(0,chars)}...#{@address.substring(@address.length - chars,@address.length)}"
 
 		handleUnlock: =>
-			@process.unlock( @address, window.prompt("Enter passphrase to unlock account: #{ @address }") )
+			@process.unlock( @address )
 
 		handleSend: =>
 			window.alert("TODO: Handle send")
 
 		handleReceive: =>
-			window.alert("TODO: Handle Receive")
+			clipboard = gui.Clipboard.get()
+			clipboard.set(@address, 'text')
+			window.alert( "Address copied to your clipboard.")
 
 	class EthereumMenu
 		constructor: ({@process}) ->
@@ -114,7 +122,7 @@ module.exports = (gui) ->
 					@mining.label = "Stop Mining"
 
 		accountItem: (address) =>
-			account = new Account(address, @process)
+			account = new Account(address, @web3)
 			new gui.MenuItem
 				label: account.getShortAddr()
 				icon: "./app/images/lock-icon.png"

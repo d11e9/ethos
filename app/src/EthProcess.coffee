@@ -61,20 +61,19 @@ module.exports = class EthProcess extends Backbone.Model
 		else
 			@start()
 
-	unlock: (acc, passphrase) =>
+	unlock: (acc) =>
+		passphrase = prompt("Enter passphrase to unlock account: #{ acc }")
 		jsonrpc =
 			jsonrpc: "2.0"
 			id: 1
 			method: "personal_unlockAccount"
 			params: [acc, passphrase]
-
 		@web3.currentProvider.sendAsync jsonrpc, (err,res) ->
 			if res.error
 				alert( res.error.message )
 			console.log( "Account Unlocked: ", res?.result is true )
 
 	newAccount: =>
-		console.log( "TODO: Create new Accounts" )
 		pass1 = prompt( "Enter passphrase: ")
 		pass2 = prompt( "Repeat passphrase: ")
 		if pass1 is pass2
@@ -91,7 +90,6 @@ module.exports = class EthProcess extends Backbone.Model
 			console.log("Accounts:", accounts)
 
 	toggleMining: =>
-		console.log "TODO: Toggle mining"
 		@web3.eth.getMining (err, mining) =>
 			if err
 				console.log err
