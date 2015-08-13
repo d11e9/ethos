@@ -7,7 +7,8 @@ path = require 'path'
 module.exports = (gui) ->
 
 	class Account
-		constructor: (@address, @web3) ->
+		constructor: (@address, @process) ->
+			@web3 = @process.web3
 			@submenu = new gui.Menu()
 			@balanceItem = new gui.MenuItem
 				label: "Balance: \u039E ..."
@@ -123,7 +124,7 @@ module.exports = (gui) ->
 					@mining.label = "Stop Mining"
 
 		accountItem: (address) =>
-			account = new Account(address, @web3)
+			account = new Account(address, @process)
 			new gui.MenuItem
 				label: account.getShortAddr()
 				icon: "./app/images/lock-icon.png"

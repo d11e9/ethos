@@ -22,6 +22,10 @@ module.exports = class EthProcess extends Backbone.Model
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+		@listenTo @config, 'restartEth', =>
+			console.log( "RESTART ETH")
+			@kill() if @process
+			@start()
 
 		@listenTo @, 'status', (running) =>
 			return if running and @connected
@@ -40,8 +44,9 @@ module.exports = class EthProcess extends Backbone.Model
 
 
 	start: ->
-		console.log( @path, @datadir )
-		@process = spawn( @path, [ '--datadir', @datadir, '--rpc', '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3'] )
+		args = [ '--datadir', @datadir, '--rpc', '--rpcaddr', 'localhost', '--rpcport', @config.eth.ethRpcPort, '--rpccorsdomain', @config.eth.ethRpcCorsDomain,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		console.log( "STARTING ETH: ", @path, args)
+		@process = spawn( @path, args )
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)

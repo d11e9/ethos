@@ -1,10 +1,16 @@
-module.exports = class Config
+Backbone = require 'backbone'
+
+module.exports = class Config extends Backbone.Model
 	constructor: ->
 		@flags =
 			startup: 1
 			ethStart: 1
 			ipfsStart: 1
 			logging: 1
+		@eth =
+			ethRpcPort: 8545
+			ethRpcCorsDomain: "*"
+
 		@saveDefaults()
 
 	key: (flag) -> "ethosFlag_#{ flag}"

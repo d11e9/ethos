@@ -4,7 +4,7 @@ web3 = require 'web3'
 newWindowOptions =
 	icon: "app/images/icon-tray.ico"
 	title: "Ethos"
-	toolbar: false
+	toolbar: true
 	frame: true
 	show: true
 	show_in_taskbar: true
