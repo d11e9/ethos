@@ -94,7 +94,8 @@ module.exports = (gui) ->
 						filePath = ev.target.value
 						@process.importWallet filePath, (err) ->
 							window.alert( "Wallet imported successfully") unless err
-
+						gui.Window.get().hide()
+					gui.Window.get().show()
 					chooser.click()
 			@menu.append( @import )
 
