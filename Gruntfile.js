@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         credits: './app/Credits.html',
         macIcns: './app/images/logo.icns', // Path to the Mac icon file
         winIco: './app/images/logo.ico',
-        platforms: ['osx'] // These are the platforms that we want to build
+        platforms: ['osx', 'win'] // These are the platforms that we want to build
       },
       src: ['**/**', '!**/dist/**', '!**/eth/**', '**/eth/.gitignore*','!**/cache/**', '!**/node_modules/grunt*/**', '!**/node_modules/nw*/**', '!**/Gruntfile.js']
     },

@@ -55,6 +55,9 @@ module.exports = class IPFSProcess extends Backbone.Model
 			 		cb( err, null )
 			 		return
 				cb( err, info: info, pins: pins )
+				
+	getGateway: ->
+		@config.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
 
 	addFile: ->
 		chooser = window.document.querySelector('#addFile')

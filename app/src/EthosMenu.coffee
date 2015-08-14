@@ -1,30 +1,30 @@
 web3 = require 'web3'
 
 
-newWindowOptions =
-	icon: "app/images/icon-tray.ico"
-	title: "Ethos"
-	toolbar: false
-	frame: true
-	show: true
-	show_in_taskbar: true
-	width: 800
-	height: 500
-	position: "center"
-	min_width: 400
-	min_height: 200
 
 module.exports = class EthosMenu
 	openWindow: (url) ->
+		newWindowOptions =
+			icon: "app/images/icon-tray.ico"
+			title: "Ethos"
+			toolbar: @config.getBool( 'debug' )
+			frame: true
+			show: true
+			show_in_taskbar: true
+			width: 800
+			height: 500
+			position: "center"
+			min_width: 400
+			min_height: 200
 		global.child = @gui.Window.open( url, newWindowOptions )
 		setTimeout ( -> child.focus() ), 100
 
-	constructor: ({@gui, @ethProcess, @ipfsProcess})->
+	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
 		gui = @gui
 		EthereumMenu = require( './EthereumMenu.coffee')(gui)
 		@menu = new gui.Menu()
 		@ipfsMenu = new gui.Menu()
-		@ethMenu = new EthereumMenu( process: @ethProcess )
+		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
 
 		@tray = new gui.Tray
 			title: ''
@@ -76,7 +76,7 @@ module.exports = class EthosMenu
 			enabled: false
 			click: =>
 				@ipfsProcess.info (err,res) =>
-					address = @ipfsProcess.config.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
+					address = @process.getGateway()
 					console.log( "IPFS Gateway address: #{address}" )
 					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID}") unless err
 
