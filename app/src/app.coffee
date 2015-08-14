@@ -25,7 +25,7 @@ module.exports = (gui) ->
 		win.window.log = -> window.console.log arguments
 		win.window.eth = ethProcess = new EthProcess({os, ext, config})
 		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
-		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess})
+		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess, config})
 
 		ethProcess.start() if config.getBool( 'ethStart' )
 		ipfsProcess.start() if config.getBool( 'ipfsStart' )

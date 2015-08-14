@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head></head>
+	<body>
+
+		<h1>Wallet</h1>
+		<p>Address:
+			<select name="account" id="account">
+			</select>
+		</p>
+		<p>Blance: <span class="balance"></span></p>
+
+		<form action="">
+			<input type="text" placeholder="<to_address>">
+			<input type="number" placeholder="<value>">
+			<select name="unit" id="">
+				<option value="wei">Wei</option>
+			</select>
+			<button>Send</button>
+		</form>	
+
+		<script>
+			var sel = document.getElementById('account');
+
+			function updateBalance () {
+				web3.eth.getBalance( sel.value, function(err,resp){
+					var el = document.querySelector('.balance')
+					el.innerHTML = resp;
+				})
+			}
+
+			sel.addEventListener( 'change', updateBalance )
+
+			web3.eth.getAccounts( function(err,resp) {				
+				for (var a in resp) {
+					el = document.createElement('option')
+					el.value = resp[a]
+					el.innerHTML = resp[a]
+					sel.appendChild( el )
+				}
+				updateBalance()
+			})
+			
+		</script>
+	</body>
+</html>

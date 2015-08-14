@@ -1,9 +1,10 @@
 path = require 'path'
 
+
 module.exports = (gui) ->
 
 	class Account
-		constructor: (@address, @process) ->
+		constructor: (@address, @process, @config) ->
 			@web3 = @process.web3
 			@submenu = new gui.Menu()
 			@balanceItem = new gui.MenuItem
@@ -33,7 +34,21 @@ module.exports = (gui) ->
 			@process.unlock( @address )
 
 		handleSend: =>
-			window.alert("TODO: Handle send")
+			newWindowOptions =
+				icon: "app/images/icon-tray.ico"
+				title: "Ethos"
+				toolbar: @config.getBool( 'debug' )
+				frame: true
+				show: true
+				show_in_taskbar: true
+				width: 800
+				height: 500
+				position: "center"
+				min_width: 400
+				min_height: 200
+				"new-instance": true
+				"inject-js-start": "app/js/web3.js"
+			gui.Window.open( 'app://ethos/ipfs/wallet/index.html', newWindowOptions )
 
 		handleReceive: =>
 			clipboard = gui.Clipboard.get()
@@ -41,7 +56,7 @@ module.exports = (gui) ->
 			window.alert( "Address copied to your clipboard.")
 
 	class EthereumMenu
-		constructor: ({@process}) ->
+		constructor: ({@process, @config}) ->
 			@menu = new gui.Menu()
 			@rootItem = new gui.MenuItem
 				label: 'Ethereum'
@@ -120,7 +135,7 @@ module.exports = (gui) ->
 					@mining.label = "Stop Mining"
 
 		accountItem: (address) =>
-			account = new Account(address, @process)
+			account = new Account(address, @process, @config)
 			new gui.MenuItem
 				label: account.getShortAddr()
 				icon: "./app/images/lock-icon.png"

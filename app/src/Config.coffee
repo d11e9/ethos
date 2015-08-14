@@ -3,6 +3,7 @@ Backbone = require 'backbone'
 module.exports = class Config extends Backbone.Model
 	constructor: ->
 		@flags =
+			debug: true
 			startup: true
 			ethStart: true
 			ipfsStart: true
