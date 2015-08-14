@@ -1,13 +1,22 @@
-module.exports = class Config
+Backbone = require 'backbone'
+
+module.exports = class Config extends Backbone.Model
 	constructor: ->
 		@flags =
-			startup: 1
-			ethStart: 1
-			ipfsStart: 1
-			logging: 1
+			startup: true
+			ethStart: true
+			ipfsStart: true
+			logging: true
+			ethRpc: true
+			ethRpcAddr: 'localhost'
+			ethRpcPort: 8545
+			ethRpcCorsDomain: "*"
+			ethRemoteNode: true
+			ethRemoteNodeAddr: ""
+
 		@saveDefaults()
 
-	key: (flag) -> "ethosFlag_#{ flag}"
+	key: (flag) -> "ethosFlag_#{ flag }"
 
 	load: ->
 		for flag of @flags
@@ -19,9 +28,11 @@ module.exports = class Config
 		for flag of @flags
 			@set( flag, @flags[flag] ) unless @get(flag)?
 
-	get: (flag) ->
-		parseInt( window.localStorage.getItem( @key(flag) ), 10 ) or 0
+	get: (flag) -> window.localStorage.getItem( @key(flag) )
+
+	getBool: (flag) -> @get( flag ) is 'true'
 
 	set: (flag, value) ->
-		@flags[flag] = if value then 1 else 0
+		console.log( "Updating config: #{ flag }: #{ value }")
+		@flags[flag] = value
 		window.localStorage.setItem( @key(flag), @flags[flag] )

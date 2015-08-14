@@ -27,8 +27,8 @@ module.exports = (gui) ->
 		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
 		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess})
 
-		ethProcess.start() if config.flags.ethStart
-		ipfsProcess.start() if config.flags.ipfsStart
+		ethProcess.start() if config.getBool( 'ethStart' )
+		ipfsProcess.start() if config.getBool( 'ipfsStart' )
 
 		global.ethos = config
 		console.log( "Ξthos initialized: ok" )

@@ -13,8 +13,6 @@ newWindowOptions =
 	position: "center"
 	min_width: 400
 	min_height: 200
-	max_width: 800
-	max_height: 600
 
 module.exports = class EthosMenu
 	openWindow: (url) ->

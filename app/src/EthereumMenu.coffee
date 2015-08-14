@@ -1,6 +1,45 @@
 path = require 'path'
 
 module.exports = (gui) ->
+
+	class Account
+		constructor: (@address, @process) ->
+			@web3 = @process.web3
+			@submenu = new gui.Menu()
+			@balanceItem = new gui.MenuItem
+				label: "Balance: \u039E ..."
+				enabled: false
+			@submenu.append @balanceItem
+			@submenu.append new gui.MenuItem
+				label: "Unlock"
+				click: @handleUnlock
+			@submenu.append new gui.MenuItem
+				label: "Send"
+				click: @handleSend
+			@submenu.append new gui.MenuItem
+				label: "Receive"
+				click: @handleReceive
+			acc = @address
+			@web3.eth.getBalance @address, (err, balance) =>
+				return if err
+				ethBalance = @web3.fromWei( balance )
+				@balanceItem.label = "Balance: \u039E #{ethBalance}"
+
+		getShortAddr: ->
+			chars = 6
+			"#{@address.substring(0,chars)}...#{@address.substring(@address.length - chars,@address.length)}"
+
+		handleUnlock: =>
+			@process.unlock( @address )
+
+		handleSend: =>
+			window.alert("TODO: Handle send")
+
+		handleReceive: =>
+			clipboard = gui.Clipboard.get()
+			clipboard.set(@address, 'text')
+			window.alert( "Address copied to your clipboard.")
+
 	class EthereumMenu
 		constructor: ({@process}) ->
 			@menu = new gui.Menu()
@@ -52,7 +91,8 @@ module.exports = (gui) ->
 						filePath = ev.target.value
 						@process.importWallet filePath, (err) ->
 							window.alert( "Wallet imported successfully") unless err
-
+						gui.Window.get().hide()
+					gui.Window.get().show()
 					chooser.click()
 			@menu.append( @import )
 
@@ -80,11 +120,11 @@ module.exports = (gui) ->
 					@mining.label = "Stop Mining"
 
 		accountItem: (address) =>
+			account = new Account(address, @process)
 			new gui.MenuItem
-				label: address
+				label: account.getShortAddr()
 				icon: "./app/images/lock-icon.png"
-				click: =>
-					@process.unlock( address, window.prompt("Enter passphrase to unlock account: #{address}") )
+				submenu: account.submenu
 
 		updateAccounts: =>
 			@web3.eth.getAccounts (err, accounts) =>

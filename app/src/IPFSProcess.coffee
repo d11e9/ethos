@@ -30,11 +30,11 @@ module.exports = class IPFSProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('IFPS stdout: ' + data) if @config.get('logging')
+			console.log('IFPS stdout: ' + data) if @config.getBool('logging')
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('IFPS stderr: ' + data) if @config.get('logging')
+			console.log('IFPS stderr: ' + data) if @config.getBool('logging')
 			@trigger( 'status', !!@process )
 
 	toggle: ->
