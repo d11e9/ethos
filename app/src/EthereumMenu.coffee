@@ -67,7 +67,7 @@ module.exports = (gui) ->
 			@createImportItem()
 			@createAccountsItem()
 			@createMiningItem()
-			@process.on( 'status', @update )
+			@process.on( 'connected', @update )
 			@update()
 
 		update: =>
@@ -78,7 +78,7 @@ module.exports = (gui) ->
 
 		createStatusItem: ->
 			@toggle = new gui.MenuItem
-				label: 'Start'
+				label: if @config.getBool('ethRemoteNode') then 'Connect' else 'Start'
 				click: => @process.toggle()
 
 			@status = new gui.MenuItem
@@ -91,6 +91,7 @@ module.exports = (gui) ->
 		createNewAccountItem: ->
 			@newAccount = new gui.MenuItem
 				label: 'New Account'
+				enabled: !@config.getBool('ethRemoteNode')
 				click: =>
 					@process.newAccount()
 					@updateAccounts()
@@ -100,6 +101,7 @@ module.exports = (gui) ->
 		createImportItem: ->
 			@import = new gui.MenuItem
 				label: 'Import Wallet'
+				enabled: !@config.getBool('ethRemoteNode')
 				click: =>
 					chooser = window.document.querySelector('#addFile')
 					chooser.addEventListener "change", (ev) =>
@@ -114,6 +116,7 @@ module.exports = (gui) ->
 		createMiningItem: ->
 			@mining = new gui.MenuItem
 				label: 'Mining'
+				enabled: !@config.getBool('ethRemoteNode')
 				click: =>
 					@process.toggleMining()
 					@updateMining()
@@ -154,13 +157,15 @@ module.exports = (gui) ->
 
 		updateStatus: =>
 			@web3.eth.getBlockNumber (err,block) =>
+				status = if @config.getBool('ethRemoteNode') then 'Connected' else 'Running'
 				if err
-					@status.label = "Status: Not Connected"
-					@toggle.label = "Start"
+					@status.label = "Status: Not #{status}"
+					@toggle.label = if @config.getBool('ethRemoteNode') then 'Connect' else 'Start'
 					@newAccount.enabled = false
 				else
-					@status.label = "Status: Connected ##{block}"
-					@toggle.label = "Stop"
+					toggle = if @config.getBool('ethRemoteNode') then 'Disconnect' else 'Stop'
+					@status.label = "Status: #{status} ##{block}"
+					@toggle.label = toggle
 					@newAccount.enabled = true
 				@updateAccounts()
 				@updateMining()

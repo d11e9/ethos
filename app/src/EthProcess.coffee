@@ -21,13 +21,7 @@ module.exports = class EthProcess extends Backbone.Model
 				'\\\\.\\pipe\\geth.ipc'
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
-		if @config.getBool( 'ethRemoteNode' )
-			@rpcPath = @config.get( 'ethRemoteNodeAddr' )
-			console.log "Connecting to Remote Ethereum Node: #{ @rpcPath }"
-			@web3.setProvider( new @web3.providers.HttpProvider( @rpcPath ) )
-		else
-			console.log "Connecting to Local Ethereum Node: ipc:#{ @rpcPath }"
-			@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+		
 
 		@listenTo @config, 'restartEth', =>
 			console.log( "RESTART ETH")
@@ -39,11 +33,11 @@ module.exports = class EthProcess extends Backbone.Model
 
 	checkStatus: (running) =>
 		return if running and @connected
-		@connected = false if @connected and !running
-		return unless running
+		@connected = false if !running
 		
-		console.log "ETH checking ipc connection", @connected, running
+		console.log "ETH checking connection", @connected, running, @web3.currentProvider
 		@web3.eth.getBlockNumber (err, blockNumber) =>
+			console.log "Recieved data from web3.getBlockNumber", arguments
 			if err
 				console.log err
 				@connected = false
@@ -51,10 +45,19 @@ module.exports = class EthProcess extends Backbone.Model
 				@connected = true
 				console.log( "ETH block ##{ blockNumber }" )
 			@trigger( 'connected', @connected )
+		@trigger( 'connected', @connected )
 
 
 	start: ->
-		return if @config.getBool("ethRemoteNode")
+		if @config.getBool( 'ethRemoteNode' )
+			@rpcPath = @config.get( 'ethRemoteNodeAddr' )
+			console.log "Connecting to Remote Ethereum Node: #{ @rpcPath }"
+			@web3.setProvider( new @web3.providers.HttpProvider( @rpcPath ) )
+			@trigger( 'status', true )
+			return
+
+		console.log "Connecting to Local Ethereum Node: ipc:#{ @rpcPath }"
+		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
 
 		rpc = ['--rpc', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
 		args = [ '--datadir', @datadir,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
@@ -75,8 +78,10 @@ module.exports = class EthProcess extends Backbone.Model
 			console.log('geth stderr: ' + data) if @config.getBool('logging')
 			@trigger( 'status', !!@process )
 
+		
+
 	toggle: ->
-		if @process
+		if @connected
 			@kill()
 		else
 			@start()
@@ -142,4 +147,7 @@ module.exports = class EthProcess extends Backbone.Model
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')
 		@process = null
-		@trigger( 'status', !!@process )
+		@web3.currentProvider = null;
+		@web3.setProvider( null )
+		@connected = false
+		@trigger( 'status', false )
