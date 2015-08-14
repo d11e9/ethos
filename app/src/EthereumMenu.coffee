@@ -1,9 +1,5 @@
 path = require 'path'
 
-
-
-
-
 module.exports = (gui) ->
 
 	class Account

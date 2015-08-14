@@ -44,8 +44,8 @@ module.exports = class EthProcess extends Backbone.Model
 
 
 	start: ->
-		args = [ '--datadir', @datadir, '--rpc', '--rpcaddr', 'localhost', '--rpcport', @config.eth.ethRpcPort, '--rpccorsdomain', @config.eth.ethRpcCorsDomain,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
-		console.log( "STARTING ETH: ", @path, args)
+		args = [ '--datadir', @datadir, '--rpc', '--rpcaddr', 'localhost', '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
 		@process = spawn( @path, args )
 
 		@process.on 'close', (code) =>
@@ -53,11 +53,11 @@ module.exports = class EthProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('geth stdout: ' + data) if @config.get('logging')
+			console.log('geth stdout: ' + data) if @config.getBool('logging')
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('geth stderr: ' + data) if @config.get('logging')
+			console.log('geth stderr: ' + data) if @config.getBool('logging')
 			@trigger( 'status', !!@process )
 
 	toggle: ->
