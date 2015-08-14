@@ -4,7 +4,7 @@ web3 = require 'web3'
 newWindowOptions =
 	icon: "app/images/icon-tray.ico"
 	title: "Ethos"
-	toolbar: true
+	toolbar: false
 	frame: true
 	show: true
 	show_in_taskbar: true
@@ -13,8 +13,6 @@ newWindowOptions =
 	position: "center"
 	min_width: 400
 	min_height: 200
-	max_width: 800
-	max_height: 600
 
 module.exports = class EthosMenu
 	openWindow: (url) ->

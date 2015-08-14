@@ -28,6 +28,33 @@
 				clear: both;
 			}
 
+			.vert > * {
+				margin: .5em 0;
+				display: block;
+			}
+
+			.vert input {
+				width: 90%;
+				padding: 0.4em;
+			}
+
+			.half-width {
+				float: left;
+				width: 50%;
+				box-sizing: border-box;
+			}
+
+			.well {
+				border: 1px solid #ccc;
+				border-radius: 0.5em;
+				padding: 1em;
+				margin-bottom: 2em;
+			}
+
+			.eth {
+				clear: both;
+			}
+
 		</style>
 		
 	</head>
@@ -37,56 +64,64 @@
 			<h1>&Xi;thos</h1>
 		</div>
 
-		<h2>Startup</h2>
-		<form action="#">
-			<div class="form-group">
-				<input type="checkbox" id="startup">
-				<label for="startup">Launch Ethos at startup</label>
-			</div>
-			<div class="form-group">
-				<input type="checkbox" id="ethStart">
-				<label for="ethStart">Start Ethereum by default</label>
-			</div>
-			<div class="form-group">
-				<input type="checkbox" id="ipfsStart">
-				<label for="ipfsStart">Start IPFS by default</label>
-			</div>
-		</form>
-		<h2>Other</h2>
-		<form action="#">
-			<div class="form-group">
-				<input type="checkbox" id="logging">
-				<label for="logging">Log process output to console</label>
-			</div>
-		</form>
-
-		<h2>Ethereum</h2>
-		<p>Ethereum must be restarted for these settings to take effect.</p>
-		<div class="eth">
+		<div class="half-width">
+			<h2>Startup</h2>
 			<form action="#">
 				<div class="form-group">
-					<input type="checkbox" id="ethRpc">
-					<label for="ethRpc">Enable RPC</label>
+					<input type="checkbox" id="startup">
+					<label for="startup">Launch Ethos at startup</label>
 				</div>
 				<div class="form-group">
-					<label for="ethRpcAddr">RPC Address: </label>
-					<input type="text" id="ethRpcAddr" value="">
+					<input type="checkbox" id="ethStart">
+					<label for="ethStart">Start Ethereum by default</label>
 				</div>
 				<div class="form-group">
-					<label for="ethRpcPort">RPC Port: </label>
-					<input type="number" id="ethRpcPort" value="">
+					<input type="checkbox" id="ipfsStart">
+					<label for="ipfsStart">Start IPFS by default</label>
 				</div>
+			</form>
+		</div>
+		<div class="half-width">
+			<h2>Other</h2>
+			<form action="#">
 				<div class="form-group">
-					<label for="ethRpcCorsDomain">RPC Cors Domains: </label>
-					<input type="text" id="ethRpcCorsDomain" value="">
+					<input type="checkbox" id="logging">
+					<label for="logging">Log process output to console</label>
 				</div>
-				<div class="form-group">
-					<input type="checkbox" id="ethRemoteNode">
-					<label for="ethRemoteNode">Use Remote Node</label>
+			</form>
+		</div>
+
+		<div class="eth">
+			<h2>Ethereum</h2>
+			<p>Ethereum must be restarted for these settings to take effect.</p>
+			<form action="#">
+				<div class="half-width">
+					<div class="form-group">
+						<input type="checkbox" id="ethRpc">
+						<label for="ethRpc">Enable RPC</label>
+					</div>
+					<div class="form-group vert">
+						<label for="ethRpcAddr">RPC Address: </label>
+						<input type="text" id="ethRpcAddr" value="">
+					</div>
+					<div class="form-group vert">
+						<label for="ethRpcPort">RPC Port: </label>
+						<input type="number" id="ethRpcPort" value="">
+					</div>
+					<div class="form-group vert">
+						<label for="ethRpcCorsDomain">RPC Cors Domains: </label>
+						<input type="text" id="ethRpcCorsDomain" value="">
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="ethRemoteNodeAddr">Remote Node Address: </label>
-					<input type="text" id="ethRemoteNodeAddr" value="">
+				<div class="half-width">
+					<div class="form-group">
+						<input type="checkbox" id="ethRemoteNode">
+						<label for="ethRemoteNode">Use Remote Node</label>
+					</div>
+					<div class="form-group vert">
+						<label for="ethRemoteNodeAddr">Remote Node Address: </label>
+						<input type="text" id="ethRemoteNodeAddr" value="">
+					</div>
 				</div>
 			</form>
 		</div>
