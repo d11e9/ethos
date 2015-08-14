@@ -21,30 +21,45 @@ module.exports = class EthProcess extends Backbone.Model
 				'\\\\.\\pipe\\geth.ipc'
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
-		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+		if @config.getBool( 'ethRemoteNode' )
+			@rpcPath = @config.get( 'ethRemoteNodeAddr' )
+			console.log "Connecting to Remote Ethereum Node: #{ @rpcPath }"
+			@web3.setProvider( new @web3.providers.HttpProvider( @rpcPath ) )
+		else
+			console.log "Connecting to Local Ethereum Node: ipc:#{ @rpcPath }"
+			@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+
 		@listenTo @config, 'restartEth', =>
 			console.log( "RESTART ETH")
 			@kill() if @process
 			@start()
 
-		@listenTo @, 'status', (running) =>
-			return if running and @connected
-			@connected = false if @connected and !running
-			return unless running
-			
-			console.log "ETH checking ipc connection", @connected, running
-			@web3.eth.getBlockNumber (err, blockNumber) =>
-				if err
-					console.log err
-					@connected = false
-				else
-					@connected = true
-					console.log( "ETH block ##{ blockNumber }" )
-				@trigger( 'connected', @connected )
+		@listenTo( @, 'status', @checkStatus )
+
+
+	checkStatus: (running) =>
+		return if running and @connected
+		@connected = false if @connected and !running
+		return unless running
+		
+		console.log "ETH checking ipc connection", @connected, running
+		@web3.eth.getBlockNumber (err, blockNumber) =>
+			if err
+				console.log err
+				@connected = false
+			else
+				@connected = true
+				console.log( "ETH block ##{ blockNumber }" )
+			@trigger( 'connected', @connected )
 
 
 	start: ->
-		args = [ '--datadir', @datadir, '--rpc', '--rpcaddr', 'localhost', '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		return if @config.getBool("ethRemoteNode")
+
+		rpc = ['--rpc', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
+		args = [ '--datadir', @datadir,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
+
 		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
 		@process = spawn( @path, args )
 
@@ -122,6 +137,7 @@ module.exports = class EthProcess extends Backbone.Model
 			cb( code != 0 )
 
 	kill: ->
+		console.log("KILLING ETHEREUM PROCESS")
 		@process?.stdin?.pause()
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')

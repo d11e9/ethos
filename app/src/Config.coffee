@@ -7,8 +7,12 @@ module.exports = class Config extends Backbone.Model
 			ethStart: true
 			ipfsStart: true
 			logging: true
+			ethRpc: true
+			ethRpcAddr: 'localhost'
 			ethRpcPort: 8545
 			ethRpcCorsDomain: "*"
+			ethRemoteNode: true
+			ethRemoteNodeAddr: ""
 
 		@saveDefaults()
 
