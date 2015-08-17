@@ -32,6 +32,9 @@ To build from source or contribute you can do the following:
     $ npm run app
 
     $ # to build distribution binaries
+    $ # NOTE: This build will not work on windows unless you are using npm >= 3
+    $ # This is due to long path names in dependencies, npm 3 creates a better/flatter structure.
+    $
     $ npm run build
 
 
