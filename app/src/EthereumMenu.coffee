@@ -15,11 +15,8 @@ module.exports = (gui) ->
 				label: "Unlock"
 				click: @handleUnlock
 			@submenu.append new gui.MenuItem
-				label: "Send"
-				click: @handleSend
-			@submenu.append new gui.MenuItem
-				label: "Receive"
-				click: @handleReceive
+				label: "Wallet"
+				click: @openWallet
 			acc = @address
 			@web3.eth.getBalance @address, (err, balance) =>
 				return if err
@@ -28,12 +25,12 @@ module.exports = (gui) ->
 
 		getShortAddr: ->
 			chars = 6
-			"#{@address.substring(0,chars)}...#{@address.substring(@address.length - chars,@address.length)}"
+			"#{@address.substring(2,chars)}...#{@address.substring(@address.length - chars,@address.length)}"
 
 		handleUnlock: =>
 			@process.unlock( @address )
 
-		handleSend: =>
+		openWallet: =>
 			newWindowOptions =
 				icon: "app/images/icon-tray.ico"
 				title: "Ethos"
@@ -49,11 +46,6 @@ module.exports = (gui) ->
 				"new-instance": true
 				"inject-js-start": "app/js/web3.js"
 			gui.Window.open( 'app://ethos/ipfs/wallet/index.html', newWindowOptions )
-
-		handleReceive: =>
-			clipboard = gui.Clipboard.get()
-			clipboard.set(@address, 'text')
-			window.alert( "Address copied to your clipboard.")
 
 	class EthereumMenu
 		constructor: ({@process, @config}) ->
@@ -141,18 +133,22 @@ module.exports = (gui) ->
 			account = new Account(address, @process, @config)
 			new gui.MenuItem
 				label: account.getShortAddr()
-				icon: "./app/images/lock-icon.png"
 				submenu: account.submenu
 
 		updateAccounts: =>
 			@web3.eth.getAccounts (err, accounts) =>
-				if err or !accounts.length
+				console.log( err, accounts, @accounts )
+				if err or accounts.length is 0
 					@accounts.label = "Accounts (0)"
 					@accounts.enabled = false
+					try
+						@accounts.submenu.remove( item ) for item in @accounts.submenu.items
+					catch e
+						console.log(e) if @config.getBool( 'logging' )
 				else if @accounts.submenu.items.length != accounts.length
 					@accounts.label = "Accounts (#{accounts.length})"
 					@accounts.enabled = true
-					@accounts.submenu.remove(item) for item in @accounts.submenu.items
+					@accounts.submenu.remove( item ) for item in @accounts.submenu.items
 					@accounts.submenu.append( @accountItem(acc) ) for acc in accounts
 
 		updateStatus: =>
