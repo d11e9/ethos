@@ -22,9 +22,11 @@ module.exports = class EthosMenu
 	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
 		gui = @gui
 		EthereumMenu = require( './EthereumMenu.coffee')(gui)
+		DAppsMenu = require( './DAppsMenu.coffee')(gui)
 		@menu = new gui.Menu()
 		@ipfsMenu = new gui.Menu()
 		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
+		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config )
 
 		@tray = new gui.Tray
 			title: ''
@@ -105,6 +107,7 @@ module.exports = class EthosMenu
 		@menu.append( settings )
 		@menu.append( ipfs )
 		@menu.append( @ethMenu.get() )
+		@menu.append( @dappsMenu.get() )
 		@menu.append( debug )
 		@menu.append( quit )
 
