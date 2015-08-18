@@ -15,10 +15,10 @@ module.exports = class IPFSProcess extends Backbone.Model
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@on 'status', (running) =>
 			if running
-				@api.config.show (err, config) =>
-					@config = config
+				@api.config.show (err, ipfsConfig) =>
+					@ipfsConfig = ipfsConfig
 					@trigger( 'connected' ) unless err
-					console.log( "IPFS config: ", err, config)
+					console.log( "IPFS config: ", err, ipfsConfig)
 
 	start: ->
 		console.log( @path )
@@ -57,7 +57,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 				cb( err, info: info, pins: pins )
 				
 	getGateway: ->
-		@config.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
+		@ipfsConfig.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
 
 	addFile: ->
 		chooser = window.document.querySelector('#addFile')

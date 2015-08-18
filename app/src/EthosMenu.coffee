@@ -76,9 +76,9 @@ module.exports = class EthosMenu
 			enabled: false
 			click: =>
 				@ipfsProcess.info (err,res) =>
-					address = @process.getGateway()
+					address = @ipfsProcess.getGateway()
 					console.log( "IPFS Gateway address: #{address}" )
-					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID}") unless err
+					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID }") unless err
 
 		@ipfsProcess.on 'status', (running) =>
 			ipfsStatus.label = "Status: Connecting"
