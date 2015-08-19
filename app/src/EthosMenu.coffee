@@ -23,8 +23,10 @@ module.exports = class EthosMenu
 		gui = @gui
 		EthereumMenu = require( './EthereumMenu.coffee')(gui)
 		DAppsMenu = require( './DAppsMenu.coffee')(gui)
+		IPFSMenu = require('./IPFSMenu.coffee')(gui)
+
 		@menu = new gui.Menu()
-		@ipfsMenu = new gui.Menu()
+		@ipfsMenu = new IPFSMenu( process: @ipfsProcess, config: @config )
 		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
 		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config )
 
@@ -56,56 +58,10 @@ module.exports = class EthosMenu
 			click: ->
 				gui.Window.get().showDevTools()
 
-		ipfs = new gui.MenuItem
-			label: 'IPFS'
-			submenu: @ipfsMenu
-
-		ipfsStatus = new gui.MenuItem
-			label: 'Status: Not Running'
-			enabled: false
-
-		ipfsToggle = new gui.MenuItem
-			label: 'Start'
-			click: => @ipfsProcess.toggle()
-
-		ipfsAddFile = new gui.MenuItem
-			label: 'Add File'
-			enabled: false
-			click: => @ipfsProcess.addFile()
-
-		ipfsInfo = new gui.MenuItem
-			label: 'Info'
-			enabled: false
-			click: =>
-				@ipfsProcess.info (err,res) =>
-					address = @ipfsProcess.getGateway()
-					console.log( "IPFS Gateway address: #{address}" )
-					gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID }") unless err
-
-		@ipfsProcess.on 'status', (running) =>
-			ipfsStatus.label = "Status: Connecting"
-			ipfsToggle.label = "Stop"
-			ipfsAddFile.enabled = false
-			ipfsInfo.enabled = false
-			if !running
-				ipfsStatus.label = "Status: Not Running"
-				ipfsToggle.label = "Start"
-
-		@ipfsProcess.on 'connected', =>
-			@ipfsProcess.api.id (err, info) ->
-				console.log( "IPFS connected: ", err, info)
-				ipfsStatus.label = "Status: Connected" unless err
-				ipfsAddFile.enabled = !err
-				ipfsInfo.enabled = !err
-			
-		@ipfsMenu.append( ipfsStatus )
-		@ipfsMenu.append( ipfsToggle )
-		@ipfsMenu.append( ipfsAddFile )
-		@ipfsMenu.append( ipfsInfo )
 
 		@menu.append( about )
 		@menu.append( settings )
-		@menu.append( ipfs )
+		@menu.append( @ipfsMenu.get() )
 		@menu.append( @ethMenu.get() )
 		@menu.append( @dappsMenu.get() )
 		@menu.append( debug )

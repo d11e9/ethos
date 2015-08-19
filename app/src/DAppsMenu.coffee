@@ -31,14 +31,9 @@ module.exports = (gui) ->
 				min_height: 200
 				"new-instance": true
 				"inject-js-start": "app/js/web3.js"
-				"inject-js-end": "app/js/web3rpc.js"
+				"inject-js-end": "app/js/web3-provider-setup.js"
 
 		openDApp: (name) ->
 			console.log "Opening #{name} DApp"
-			w = gui.Window.open( "app://ethos/ipfs/#{name}/index.html", @getWindowOptions() )
-			dappWin = gui.Window.get(w)
-			dappWin.focus()
-			console.log( dappWin )
-			dappWin.on 'document-end', (frame) ->
-				console.log "DApp document-end fired", frame
-				dappWin.eval "alert('EVAL!')"
+			gui.Window.open( "app://ethos/ipfs/#{name}/index.html", @getWindowOptions() )
+
