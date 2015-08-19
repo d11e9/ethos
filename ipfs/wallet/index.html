@@ -219,14 +219,14 @@
 					web3.eth.estimateGas( txObject, function(err, result){
 						if (err) alert(err.message);
 						else {
-							console.log("gas estimate: ", result)
+							console.log("Gas estimate: " + result)
 							document.getElementById('gas').value = result;
 						}
 					})
 					web3.eth.getGasPrice( function(err, result){
 						if (err) alert(err.message);
 						else {
-							console.log("gas price: ", result)
+							console.log("Gas price: " + result)
 							document.getElementById('gas_price').value = result;
 						}
 					})
@@ -242,7 +242,7 @@
 						web3.eth.sendTransaction( txObject, function(err,resp){
 
 							console.log( "Transaction sent: ", txObject )
-							if (err) alert( "Error: ", err.message ) 
+							if (err) alert( "Error: " + err.message ) 
 							if (resp) console.log( "Response: ", resp )
 						})
 					}
