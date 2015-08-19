@@ -16,8 +16,9 @@ module.exports = class EthosMenu
 			position: "center"
 			min_width: 400
 			min_height: 200
-		global.child = @gui.Window.open( url, newWindowOptions )
-		setTimeout ( -> child.focus() ), 100
+		child = @gui.Window.open( url, newWindowOptions )
+		setTimeout( ( -> child.focus() ), 100 )
+		child
 
 	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
 		gui = @gui
@@ -47,11 +48,25 @@ module.exports = class EthosMenu
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			click: => @openWindow( 'app://ethos/app/about.html' )
+			click: =>
+				unless @about
+					@about = @openWindow( 'app://ethos/app/about.html' )
+					self = @
+					@about.on 'close', ->
+						this.close( true )
+						self.about = null 
+				@about.focus()
 
 		settings = new gui.MenuItem
 			label: 'Settings'
-			click: => @openWindow( 'app://ethos/app/settings.html' )
+			click: =>
+				unless @settings
+					@settings = @openWindow( 'app://ethos/app/settings.html' )
+					self = @
+					@settings.on 'close', ->
+						this.close( true ) 
+						self.settings = null
+				@settings.focus()
 
 		debug = new gui.MenuItem
 			label: 'Debug'

@@ -39,5 +39,5 @@ module.exports = class Config extends Backbone.Model
 	set: (flag, value) ->
 		console.log( "Updating config: #{ flag }: #{ value }")
 		@flags[flag] = value
-		@trigger( 'updated' )
 		window.localStorage.setItem( @key(flag), @flags[flag] )
+		@trigger( 'updated' )
