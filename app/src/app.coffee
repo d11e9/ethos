@@ -21,6 +21,7 @@ module.exports = (gui) ->
 	config.load()
 
 	win.window.onload = ->
+		global.config = config
 		win.window.win = win
 		win.window.log = -> window.console.log arguments
 		win.window.eth = ethProcess = new EthProcess({os, ext, config})

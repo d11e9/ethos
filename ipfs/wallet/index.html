@@ -126,118 +126,136 @@
 		</div>
 
 		<script>
-			var sel = document.getElementById('account');
 
-			function update () {
-				updateBalance()
-				updateTransactions()
-			}
+			window.onload = function(){
 
-			function updateBalance () {
-				document.querySelector('.address').innerHTML = sel.value
-				web3.eth.getBalance( sel.value, function(err,resp){
-					var el = document.querySelector('.balance')
-					el.innerHTML = web3.fromWei( resp, 'ether' );
-				})
-			}
-
-
-			function updateTransactions () {
-				var filter = web3.eth.filter({address: sel.value})
-				var table = document.querySelector('.body .transactions table' )
-				// filter.watch( function(err, item){
-				// 	console.log( arguments )
-				// })
-			}
-
-			sel.addEventListener( 'change', update )
-
-			web3.eth.getAccounts( function(err,resp) {
-				if (err) {
-					document.querySelector('.connectionError').style.display = 'block';
-				} else {
-					for (var a in resp) {
-						el = document.createElement('option')
-						el.value = resp[a]
-						el.innerHTML = resp[a]
-						sel.appendChild( el )
-					}
-					update()
+				if (!web3.currentProvider) {
+					web3.setProvider( new web3.providers.HttpProvider( "http://localhost:8545") )
 				}
-			})
 
-			tabs = ['sendReceive', 'transactions']
-			for (var tab in tabs) {
-				var button = document.querySelector('.tabs .' + tabs[tab] )
-				var body = document.querySelector('.body .' + tabs[tab] )
-				var item = tabs[tab]
-				button.onclick = (function(i){ return function(ev){
-					var button = ev.target;
-					var body = document.querySelector('.body .' + i )
-					var isShown = body.style.display === 'block' 
-					for (var t in tabs) {
-						var b1 = document.querySelector('.body .' + tabs[t] )
-						var b2 = document.querySelector('.tabs .' + tabs[t] )
-						b1.style.display = 'none'
-						b2.className = b2.className.replace(' active', '')
-					}
+				var sel = document.getElementById('account');
 
-					body.style.display = isShown ? 'none' : 'block';
-					button.className += ' active'
-				}})(item)
-			}
-
-
-
-			function getTransactionObject() {
-				var from = sel.value
-				var to = document.getElementById('to_address').value
-				var value = document.getElementById('amount').value
-				var unit = document.getElementById('unit').value
-				var gas = document.getElementById('gas').value
-				var gasPrice = document.getElementById('gas_price').value
-				tx = {
-					from: from,
-					to: to,
-					value: web3.toWei( value, unit ),
-					gas: gas,
-					gasPrice: gasPrice
+				function update () {
+					updateBalance()
+					updateTransactions()
 				}
-				console.log("tx: ", tx)
-				return tx;
-			}
 
-			function estimateGas() {
-				var txObject = getTransactionObject()
-				web3.eth.estimateGas( txObject, function(err, result){
-					if (err) alert(err.message);
-					else {
-						document.getElementById('gas').value = result;
-					}
-				})
-			}
-
-			function sendTx() {
-				var txObject = getTransactionObject();
-
-				if (!web3.isAddress(to)) {
-					alert("To address: " + to + " is not a valid address!")
-				} else {
-					web3.eth.sendTransaction( txObject, function(err,resp){
-						console.log( "transaction sent", arguments )
+				function updateBalance () {
+					document.querySelector('.address').innerHTML = sel.value
+					web3.eth.getBalance( sel.value, function(err,resp){
+						var el = document.querySelector('.balance')
+						el.innerHTML = web3.fromWei( resp, 'ether' );
 					})
 				}
-			}
 
 
-			var sendTxButton = document.querySelector('.sendReceive button')
-			sendTxButton.onclick = sendTx;
+				function updateTransactions () {
+					var filter = web3.eth.filter({address: sel.value})
+					var table = document.querySelector('.body .transactions table' )
+					// filter.watch( function(err, item){
+					// 	console.log( arguments )
+					// })
+				}
 
-			var estimateGasButton = document.querySelector('.estimateGas')
-			estimateGasButton.onclick = estimateGas;
+				sel.addEventListener( 'change', update )
+
+				web3.eth.getAccounts( function(err,resp) {
+					if (err) {
+						document.querySelector('.connectionError').style.display = 'block';
+					} else {
+						for (var a in resp) {
+							el = document.createElement('option')
+							el.value = resp[a]
+							el.innerHTML = resp[a]
+							sel.appendChild( el )
+						}
+						update()
+					}
+				})
+
+				tabs = ['sendReceive', 'transactions']
+				for (var tab in tabs) {
+					var button = document.querySelector('.tabs .' + tabs[tab] )
+					var body = document.querySelector('.body .' + tabs[tab] )
+					var item = tabs[tab]
+					button.onclick = (function(i){ return function(ev){
+						var button = ev.target;
+						var body = document.querySelector('.body .' + i )
+						var isShown = body.style.display === 'block' 
+						for (var t in tabs) {
+							var b1 = document.querySelector('.body .' + tabs[t] )
+							var b2 = document.querySelector('.tabs .' + tabs[t] )
+							b1.style.display = 'none'
+							b2.className = b2.className.replace(' active', '')
+						}
+
+						body.style.display = isShown ? 'none' : 'block';
+						button.className += ' active'
+					}})(item)
+				}
 
 
-			
+
+				function getTransactionObject() {
+					var from = sel.value
+					var to = document.getElementById('to_address').value
+					var value = document.getElementById('amount').value
+					var unit = document.getElementById('unit').value
+					var gas = document.getElementById('gas').value
+					var gasPrice = document.getElementById('gas_price').value
+					tx = {
+						from: from,
+						to: to,
+						value: web3.toWei( value, unit ),
+						gas: gas,
+						gasPrice: gasPrice
+					}
+					console.log("tx: ", tx)
+					return tx;
+				}
+
+				function estimateGas() {
+					var txObject = getTransactionObject()
+					web3.eth.estimateGas( txObject, function(err, result){
+						if (err) alert(err.message);
+						else {
+							console.log("gas estimate: ", result)
+							document.getElementById('gas').value = result;
+						}
+					})
+					web3.eth.getGasPrice( function(err, result){
+						if (err) alert(err.message);
+						else {
+							console.log("gas price: ", result)
+							document.getElementById('gas_price').value = result;
+						}
+					})
+				}
+
+				function sendTx() {
+					var txObject = getTransactionObject();
+
+					if (!web3.isAddress(txObject.to)) {
+						alert("To address: " + to + " is not a valid address!")
+					} else {
+						console.log( "Sending transaction: ", txObject )
+						web3.eth.sendTransaction( txObject, function(err,resp){
+
+							console.log( "Transaction sent: ", txObject )
+							if (err) alert( "Error: ", err.message ) 
+							if (resp) console.log( "Response: ", resp )
+						})
+					}
+				}
+
+
+				var sendTxButton = document.querySelector('.sendReceive button')
+				sendTxButton.onclick = sendTx;
+
+				var estimateGasButton = document.querySelector('.estimateGas')
+				estimateGasButton.onclick = estimateGas;
+
+			}			
 		</script>
 	</body>
 </html>

@@ -53,6 +53,11 @@ module.exports = class EthProcess extends Backbone.Model
 			@rpcPath = @config.get( 'ethRemoteNodeAddr' )
 			console.log "Connecting to Remote Ethereum Node: #{ @rpcPath }"
 			@web3.setProvider( new @web3.providers.HttpProvider( @rpcPath ) )
+			rpcProviderJs = """
+				web3.setProvider( new web3.providers.HttpProvider( "#{ @rpcPath }" ) );
+			"""
+			fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), rpcProviderJs, (err) ->
+				console.log( err )
 			@trigger( 'status', true )
 			return
 
@@ -60,7 +65,7 @@ module.exports = class EthProcess extends Backbone.Model
 		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
 
 		rpc = ['--rpc', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--datadir', @datadir,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		args = [ '--datadir', @datadir,'--shh', '--ipcapi','--gpomin', web3.toW, 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
 		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
 
 		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
