@@ -3,22 +3,30 @@ web3 = require 'web3'
 
 
 module.exports = class EthosMenu
-	openWindow: (url) ->
-		newWindowOptions =
-			icon: "app/images/icon-tray.ico"
-			title: "Ethos"
-			toolbar: @config.getBool( 'debug' )
-			frame: true
-			show: true
-			show_in_taskbar: true
-			width: 800
-			height: 500
-			position: "center"
-			min_width: 400
-			min_height: 200
-		child = @gui.Window.open( url, newWindowOptions )
-		setTimeout( ( -> child.focus() ), 100 )
-		child
+	openWindow: (name) ->
+		unless @[name]
+			newWindowOptions =
+				icon: "app/images/icon-tray.ico"
+				title: "Ethos"
+				toolbar: @config.getBool( 'debug' )
+				frame: true
+				show: true
+				show_in_taskbar: true
+				width: 800
+				height: 500
+				position: "center"
+				min_width: 400
+				min_height: 200
+			
+			@[name] = @gui.Window.open( "app://ethos/app/#{name}.html", newWindowOptions )
+			
+			self = this
+			@[name].on 'close', ->
+				this.close( true )
+				self[name] = null
+
+			setTimeout( ( => @[name].focus() ), 100 )
+		@[name].focus()
 
 	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
 		gui = @gui
@@ -48,25 +56,11 @@ module.exports = class EthosMenu
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			click: =>
-				unless @about
-					@about = @openWindow( 'app://ethos/app/about.html' )
-					self = @
-					@about.on 'close', ->
-						this.close( true )
-						self.about = null 
-				@about.focus()
+			click: =>  @openWindow( 'about' )
 
 		settings = new gui.MenuItem
 			label: 'Settings'
-			click: =>
-				unless @settings
-					@settings = @openWindow( 'app://ethos/app/settings.html' )
-					self = @
-					@settings.on 'close', ->
-						this.close( true ) 
-						self.settings = null
-				@settings.focus()
+			click: => @openWindow( 'settings' )				
 
 		debug = new gui.MenuItem
 			label: 'Debug'
