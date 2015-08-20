@@ -6,6 +6,16 @@ An Ethereum Browser
 Still under development. Be waned that this project is still in an early alpha phase.
 Binaries and Installers for Windows & OSX will be available under the **Releases** tab on GitHub.
 
+##Features
+
+* Built in IPFS Node
+* Built in Ethereum Full node (geth)
+* Import Presale Wallet
+* Create new accounts
+* Simple GUI
+* Basic DApp Wallet
+* Allow connecting to remote Ethereum Node
+
 ## Getting started
 
 Ethos aims to be the easiest way to use Ethereum for non technical users. This then handles running both Ethereum and IPFS nodes under the hood. Allowing the end user to use their browser of choice to interact with the network.
