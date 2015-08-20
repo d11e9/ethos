@@ -2,3 +2,4 @@ node_modules
 *.log
 cache
 dist
+app/js/web3-provider-setup.js

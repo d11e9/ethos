@@ -53,6 +53,11 @@ module.exports = class EthProcess extends Backbone.Model
 			@rpcPath = @config.get( 'ethRemoteNodeAddr' )
 			console.log "Connecting to Remote Ethereum Node: #{ @rpcPath }"
 			@web3.setProvider( new @web3.providers.HttpProvider( @rpcPath ) )
+			rpcProviderJs = """
+				web3.setProvider( new web3.providers.HttpProvider( "#{ @rpcPath }" ) );
+			"""
+			fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), rpcProviderJs, (err) ->
+				console.log( err )
 			@trigger( 'status', true )
 			return
 

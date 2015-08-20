@@ -29,7 +29,10 @@ module.exports = class Config extends Backbone.Model
 		for flag of @flags
 			@set( flag, @flags[flag] ) unless @get(flag)?
 
-	get: (flag) -> window.localStorage.getItem( @key(flag) )
+	get: (flag) ->
+		value = window.localStorage.getItem( @key(flag) )
+		console.log "getting config var: #{flag} value is: #{value}"
+		value
 
 	getBool: (flag) -> @get( flag ) is 'true'
 
@@ -37,3 +40,4 @@ module.exports = class Config extends Backbone.Model
 		console.log( "Updating config: #{ flag }: #{ value }")
 		@flags[flag] = value
 		window.localStorage.setItem( @key(flag), @flags[flag] )
+		@trigger( 'updated' )

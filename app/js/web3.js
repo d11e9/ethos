@@ -10329,5 +10329,3 @@ module.exports = web3;
 },{"./lib/web3":22,"./lib/web3/contract":25,"./lib/web3/httpprovider":31,"./lib/web3/iban":32,"./lib/web3/ipcprovider":33,"./lib/web3/namereg":41,"./lib/web3/transfer":44}]},{},["web3"])
 //# sourceMappingURL=web3.js.map
 
-
-web3.setProvider( new web3.providers.HttpProvider( "http://localhost:8545") )
