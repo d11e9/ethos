@@ -3,7 +3,7 @@ Backbone = require 'backbone'
 module.exports = class Config extends Backbone.Model
 	constructor: ->
 		@flags =
-			debug: true
+			debug: false
 			startup: true
 			ethStart: true
 			ipfsStart: true
@@ -13,7 +13,7 @@ module.exports = class Config extends Backbone.Model
 			ethRpcAddr: 'localhost'
 			ethRpcPort: 8545
 			ethRpcCorsDomain: "*"
-			ethRemoteNode: true
+			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
 
 		@saveDefaults()

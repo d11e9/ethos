@@ -3,7 +3,7 @@ web3 = require 'web3'
 
 
 module.exports = class EthosMenu
-	openWindow: (name) ->
+	openWindow: (name, width, height) ->
 		unless @[name]
 			title = name
 			title[0] = title[0].toUpperCase()
@@ -14,8 +14,8 @@ module.exports = class EthosMenu
 				frame: true
 				show: true
 				show_in_taskbar: true
-				width: 800
-				height: 500
+				width: width or 800
+				height: height or 500
 				position: "center"
 				min_width: 400
 				min_height: 200
@@ -29,6 +29,10 @@ module.exports = class EthosMenu
 
 			setTimeout( ( => @[name].focus() ), 100 )
 		@[name].focus()
+
+
+	showAbout: ->
+		@openWindow( 'about', 986, 385 )
 
 	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
 		gui = @gui
@@ -59,7 +63,7 @@ module.exports = class EthosMenu
 
 		about = new gui.MenuItem
 			label: 'About \u039Ethos'
-			click: =>  @openWindow( 'about' )
+			click: =>  @showAbout()
 
 		settings = new gui.MenuItem
 			label: 'Settings'
