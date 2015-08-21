@@ -2,6 +2,7 @@ module.exports = (gui) ->
 	class DAppsMenu
 		constructor: ({@eth, @ipfs, @config}) ->
 			@menu = new gui.Menu()
+			@dappWindows = []
 			@rootItem = new gui.MenuItem
 				label: '\u00D0Apps'
 				submenu: @menu
@@ -17,6 +18,7 @@ module.exports = (gui) ->
 				click: => @openDApp('wallet')
 
 		get: -> @rootItem
+		closeAll: -> w.close(true) for w in @dappWindows
 		getWindowOptions: ->
 				icon: "app/images/icon-tray.ico"
 				title: "Ethos"
@@ -35,5 +37,5 @@ module.exports = (gui) ->
 
 		openDApp: (name) ->
 			console.log "Opening #{name} DApp"
-			gui.Window.open( "app://ethos/ipfs/#{name}/index.html", @getWindowOptions() )
+			@dappWindows.push( gui.Window.open( "app://ethos/ipfs/#{name}/index.html", @getWindowOptions() ) )
 
