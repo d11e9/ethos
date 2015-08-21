@@ -69,6 +69,8 @@ Section "Ethos"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ethos" \
     "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 
+  MessageBox MB_OK "Currently Ethos take a while to launch on windows. So please be patient.$\r$\nAlso note that your firewall might try block network access for geth.exe and ipfs.exe, while this is useful for testing, you will have to allow access to connect to the network."
+
 SectionEnd
 
 
