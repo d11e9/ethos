@@ -1,4 +1,6 @@
 
+path = require 'path'
+
 module.exports = (gui) ->
 	console.log( "Ξthos settings: loading" )
 	win = gui.Window.get()
@@ -9,6 +11,10 @@ module.exports = (gui) ->
 		rootDir = process.cwd()
 		console.log "RootDir: #{ rootDir }"
 		win.window.document.getElementById('rootDir').innerHTML = rootDir
+
+		execDir = path.join( process.execPath, '../' )
+		console.log "RootDir: #{ execDir }"
+		win.window.document.getElementById('execDir').innerHTML = execDir
 
 		version = config.package.version
 		console.log "Version: #{ version }"
