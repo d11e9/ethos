@@ -1,9 +1,15 @@
 Backbone = require 'backbone'
+path = require 'path'
 
 module.exports = class Config extends Backbone.Model
 	constructor: (@package)->
+		@execDir = path.join( process.execPath, '../' )
+		if @execDir.indexOf('node_modules') >= 0 or process.platform is 'darwin'
+			@execDir = process.cwd()
+		
 		@flags =
 			debug: false
+			alert: true
 			startup: true
 			ethStart: true
 			ipfsStart: true

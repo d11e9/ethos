@@ -6,11 +6,10 @@ Backbone = require 'backbone'
 ipfsApi = require 'ipfs-api'
 
 
-
 module.exports = class IPFSProcess extends Backbone.Model
 	constructor: ({@os, ext, @config}) ->
 		@process = null
-		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
+		@path = path.join( @config.execDir, "./bin/#{ @os }/ipfs/ipfs#{ ext }")
 		@api = new ipfsApi()
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@on 'status', (running) =>

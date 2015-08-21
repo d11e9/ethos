@@ -4,8 +4,12 @@ web3 = require 'web3'
 
 
 module.exports = (gui) ->
+	
 	process.on 'uncaughtException', (msg)->
-		console.log "Error: Uncaught exexption: #{ msg }"
+		#if config.getBool('alert')
+		window.alert "Error: Uncaught Exception: #{ msg }"
+		#else
+		#	console.error "Uncaught Exception: ", msg
 
 	os = process.platform
 	ext = if os is 'win32' then '.exe' else ''
@@ -22,6 +26,7 @@ module.exports = (gui) ->
 	ethosPackge = require( '../../package.json' )
 	config = new Config( ethosPackge )
 	config.load()
+
 
 	win.window.onload = ->
 		win.window.win = win

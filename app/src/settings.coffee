@@ -12,7 +12,7 @@ module.exports = (gui) ->
 		console.log "RootDir: #{ rootDir }"
 		win.window.document.getElementById('rootDir').innerHTML = rootDir
 
-		execDir = path.join( process.execPath, '../' )
+		execDir = config.execDir
 		console.log "RootDir: #{ execDir }"
 		win.window.document.getElementById('execDir').innerHTML = execDir
 
