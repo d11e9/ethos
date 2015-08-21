@@ -2,6 +2,7 @@
 path = require 'path'
 web3 = require 'web3'
 
+
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
 		console.log "Error: Uncaught exexption: #{ msg }"
@@ -17,7 +18,9 @@ module.exports = (gui) ->
 	IPFSProcess = require './IPFSProcess.coffee'
 
 	console.log( "Ξthos initializing..." )
-	config = new Config()
+
+	ethosPackge = require( '../../package.json' )
+	config = new Config( ethosPackge )
 	config.load()
 
 	win.window.onload = ->

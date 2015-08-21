@@ -1,7 +1,7 @@
 Backbone = require 'backbone'
 
 module.exports = class Config extends Backbone.Model
-	constructor: ->
+	constructor: (@package)->
 		@flags =
 			debug: false
 			startup: true
@@ -25,7 +25,7 @@ module.exports = class Config extends Backbone.Model
 			value = @get( flag )
 			@flags[ flag ] = value if value?
 		console.log "Config loaded: ", @flags
-			
+
 	saveDefaults: ->
 		for flag of @flags
 			@set( flag, @flags[flag] ) unless @get(flag)?
