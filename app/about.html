@@ -2,22 +2,78 @@
 	<head>
 		<title>Ethos</title>
 		<style>
-			body {
+			html, body {
+				padding: 0;
+				margin: 0;
 				font-family: monospace;
-				text-align: center;
-				padding: 20vh 2em 2em 2em;
 			}
 
 			.logo {
-				height: 12em;
+				height: 6em;
+			}
+
+			.branding {
+				text-align: center;
+				padding: 2em;
+				box-sizing: border-box;
+			}
+			
+			.right {
+				float: right;
+				padding: 2em;
+				box-sizing: border-box;
+			}
+
+			.right img {
+				max-width: 100%;
+			}
+
+
+			#windows, #osx { display: none; }
+
+			body.win32 #windows,
+			body.win64 #windows {
+				display: block;
+			}
+
+			body.darwin #osx {
+				display: block;
 			}
 			
 		</style>
 		
 	</head>
 	<body>
-		<img class="logo" src="images/icon.png" alt="Ethos: an Ethereum browser">
-		<h1>&Xi;thos</h1>
-		<p>An Ethereum Browser</p>
+
+		<script> document.body.className += process.platform; </script>
+
+		<div class="right">
+			<div id="windows">
+				<img src="images/screenshots/win.png" alt="">
+			</div>
+			<div id="osx">
+				<img src="images/screenshots/osx.png" alt="">
+			</div>
+		</div>
+
+		<div class="branding">
+			<img class="logo" src="images/icon.png" alt="Ethos: an Ethereum browser">
+			<h1>&Xi;thos</h1>
+			<p>An Ethereum Browser</p>
+
+			<form action="#">
+				<label for="showAbout"><input id="showAbout" type="checkbox"> Show this page at startup</label>
+			</form>
+		</div>
+
+		<script>
+			var flag = 'showAbout'
+			var el = document.getElementById(flag)
+			el.checked = config.getBool(flag)
+			el.addEventListener( 'change', function(ev){
+				global.ethos.set( flag, ev.target.checked )
+			})
+		</script>	
+
 	</body>
 </html>
