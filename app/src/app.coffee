@@ -32,4 +32,4 @@ module.exports = (gui) ->
 
 		global.ethos = config
 		console.log( "Ξthos initialized: ok" )
-		menu.openWindow( 'about' )
+		menu.openWindow( 'about' ) if config.getBool( 'showAbout' )

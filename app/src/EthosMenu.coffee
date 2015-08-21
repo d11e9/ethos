@@ -54,6 +54,7 @@ module.exports = class EthosMenu
 				@tray.remove()
 				@ethProcess.kill()
 				@ipfsProcess.kill()
+				@dappsMenu.closeAll()
 				process.exit(0)
 
 		about = new gui.MenuItem

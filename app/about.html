@@ -69,7 +69,7 @@
 		<script>
 			var flag = 'showAbout'
 			var el = document.getElementById(flag)
-			el.checked = config.getBool(flag)
+			el.checked = global.ethos.getBool(flag)
 			el.addEventListener( 'change', function(ev){
 				global.ethos.set( flag, ev.target.checked )
 			})
