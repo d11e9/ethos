@@ -5,9 +5,11 @@ web3 = require 'web3'
 module.exports = class EthosMenu
 	openWindow: (name) ->
 		unless @[name]
+			title = name
+			title[0] = title[0].toUpperCase()
 			newWindowOptions =
 				icon: "app/images/icon-tray.ico"
-				title: "Ethos"
+				title: "\u039Ethos #{title}"
 				toolbar: @config.getBool( 'debug' )
 				frame: true
 				show: true
