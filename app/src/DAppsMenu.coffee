@@ -7,15 +7,31 @@ module.exports = (gui) ->
 				label: '\u00D0Apps'
 				submenu: @menu
 
-			@menu.append new gui.MenuItem
-				label: 'Add New'
+			@newDapp =  new gui.Menu()
+
+			@newDapp.append new gui.MenuItem
+				label: 'From IPFS hash'
 				click: =>
 					ipfsHash = window.prompt("Please enter the IPFS content hash of the \u00D0App to add.")
 					console.log( "TODO: get DApp from ipfsHash: ", ipfsHash )
 
+			@newDapp.append new gui.MenuItem
+				label: 'Local Folder'
+				click: =>
+					@ipfs.addFolder (err, resp) ->
+						console.log( "TODO: Load dapps from filesystem via ipfs ", arguments )
+
+			@menu.append new gui.MenuItem
+				label: 'Add \u00D0App'
+				submenu: @newDapp
+
 			@menu.append new gui.MenuItem
 				label: 'Basic Wallet'
 				click: => @openDApp('wallet')
+
+			@menu.append new gui.MenuItem
+				label: 'Psst'
+				click: => @openDApp('psst')
 
 		get: -> @rootItem
 		closeAll: -> w.close(true) for w in @dappWindows
