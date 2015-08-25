@@ -61,6 +61,13 @@
 		
 	</head>
 	<body>
+		<div class="info">
+			<p>
+				Version: <span id="version"></span><br/>
+				Root folder: <span id="rootDir"></span><br/>
+				Exec folder: <span id="execDir"></span>
+			</p>
+		</div>
 		<div class="half-width">
 			<h2>Startup</h2>
 			<form action="#">
@@ -108,6 +115,10 @@
 					<div class="form-group vert">
 						<label for="ethRpcPort">RPC Port: </label>
 						<input type="number" id="ethRpcPort" value="">
+					</div>
+					<div class="form-group vert">
+						<label for="ethRpcProxyPort">RPC Proxy Port: </label>
+						<input type="number" id="ethRpcProxyPort" value="">
 					</div>
 					<div class="form-group vert">
 						<label for="ethRpcCorsDomain">RPC Cors Domains: </label>

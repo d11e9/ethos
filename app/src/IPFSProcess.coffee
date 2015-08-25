@@ -59,7 +59,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 	getGateway: ->
 		@ipfsConfig.Addresses.Gateway.replace('/ip4/','').replace('/tcp/', ':')
 
-	addFile: ->
+	addFile: (callback)->
 		chooser = window.document.querySelector('#addFile')
 		console.log "TODO: IPFS Add file", chooser
 		chooser.addEventListener "change", (evt) =>
@@ -71,7 +71,24 @@ module.exports = class IPFSProcess extends Backbone.Model
 				else
 					for file in res
 						console.log "Added: ", file.Hash 
-						@api.pin.add( file.Hash )
+						#@api.pin.add( file.Hash )
+					callback?( err, res )
+		chooser.click()
+
+	addFolder: (callback)->
+		chooser = window.document.querySelector('#addFolder')
+		console.log "TODO: IPFS Add folder", chooser
+		chooser.addEventListener "change", (evt) =>
+			filePath = evt.target.value
+			console.log "TODO: IPFS add folder", filePath
+			@api.add filePath, (err,res) =>
+				if err or !res
+					console.log "Error:", err
+				else
+					for file in res
+						console.log "Added: ", file.Hash 
+						# @api.pin.add( file.Hash )
+					callback?( err, res )
 		chooser.click()
 
 	kill: ->

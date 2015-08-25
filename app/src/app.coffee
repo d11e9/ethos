@@ -2,9 +2,10 @@
 path = require 'path'
 web3 = require 'web3'
 
+
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		console.log "Error: Uncaught exexption: #{ msg }"
+		window.console.log "Error: Uncaught exexption: #{ msg }"
 
 	os = process.platform
 	ext = if os is 'win32' then '.exe' else ''
@@ -17,8 +18,13 @@ module.exports = (gui) ->
 	IPFSProcess = require './IPFSProcess.coffee'
 
 	console.log( "Ξthos initializing..." )
-	config = new Config()
+
+	ethosPackge = require( '../../package.json' )
+	config = new Config( ethosPackge )
 	config.load()
+
+	EthRpcProxy = require './EthRpcProxy.coffee'
+	EthRpcProxy(web3, config)
 
 	win.window.onload = ->
 		win.window.win = win
@@ -32,4 +38,4 @@ module.exports = (gui) ->
 
 		global.ethos = config
 		console.log( "Ξthos initialized: ok" )
-		menu.openWindow( 'about' ) if config.getBool( 'showAbout' )
+		menu.showAbout() if config.getBool( 'showAbout' )

@@ -1,6 +1,6 @@
 {
   "name": "Ethos",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "An Ethereum Browser",
   "main": "app/index.html",
   "single-instance": true,
@@ -28,9 +28,12 @@
   "dependencies": {
     "auto-launch": "^0.1.18",
     "backbone": "^1.2.1",
+    "body-parser": "^1.13.3",
     "coffee-script": "^1.9.3",
+    "express": "^4.13.3",
     "grunt": "^0.4.5",
     "ipfs-api": "^2.1.0",
+    "multer": "^1.0.3",
     "web3": "^0.9.2"
   },
   "devDependencies": {
