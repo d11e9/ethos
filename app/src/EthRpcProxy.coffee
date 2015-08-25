@@ -29,7 +29,7 @@ module.exports = (web3, config) ->
 		request.addListener 'end', ->
 			req =
 				host: 'localhost'
-				port: 9001
+				port: config.get('ethRpcPort')
 				method: request.method
 				headers:
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -53,5 +53,5 @@ module.exports = (web3, config) ->
 	server.use( bodyParser.json() )
 	server.use( multer )
 	server.use( bodyParser.urlencoded( extended: true ) )
-	server.listen 8545, ->
+	server.listen config.get('ethRpcProxyPort'), ->
 		console.log "Eth RPC Proxy: running.", server

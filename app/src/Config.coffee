@@ -11,7 +11,8 @@ module.exports = class Config extends Backbone.Model
 			showAbout: true
 			ethRpc: true
 			ethRpcAddr: 'localhost'
-			ethRpcPort: 8545
+			ethRpcPort: 9001
+			ethRpcProxyPort: 8545
 			ethRpcCorsDomain: "*"
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
