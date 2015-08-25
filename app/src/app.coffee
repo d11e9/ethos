@@ -5,7 +5,7 @@ web3 = require 'web3'
 
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		window.alert "Error: Uncaught exexption: #{ msg }"
+		window.console.log "Error: Uncaught exexption: #{ msg }"
 
 	os = process.platform
 	ext = if os is 'win32' then '.exe' else ''
@@ -22,6 +22,9 @@ module.exports = (gui) ->
 	ethosPackge = require( '../../package.json' )
 	config = new Config( ethosPackge )
 	config.load()
+
+	EthRpcProxy = require './EthRpcProxy.coffee'
+	EthRpcProxy(web3, config)
 
 	win.window.onload = ->
 		win.window.win = win
