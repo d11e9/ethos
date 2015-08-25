@@ -64,7 +64,6 @@ module.exports = (gui) ->
 			@update()
 
 		update: =>
-			console.log( "Ethereum menu status updating")
 			@updateStatus()
 			@updateAccounts()
 			
@@ -139,7 +138,6 @@ module.exports = (gui) ->
 
 		updateAccounts: =>
 			@web3.eth.getAccounts (err, accounts) =>
-				console.log( err, accounts, @accounts )
 				if err or accounts.length is 0
 					@accounts.label = "Accounts (0)"
 					@accounts.enabled = false
@@ -155,7 +153,6 @@ module.exports = (gui) ->
 
 		updateStatus: =>
 			remote = @config.getBool('ethRemoteNode')
-			console.log( "Updating status: remote = ", remote)
 			@web3.eth.getBlockNumber (err,block) =>
 				@web3.net.getPeerCount (err, peers) =>
 					status = if remote then 'Connected' else 'Running'

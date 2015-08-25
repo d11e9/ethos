@@ -21,8 +21,6 @@ module.exports = class EthProcess extends Backbone.Model
 				'\\\\.\\pipe\\geth.ipc'
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
-		
-
 		@listenTo @config, 'restartEth', =>
 			console.log( "RESTART ETH")
 			@kill() if @process
@@ -34,18 +32,14 @@ module.exports = class EthProcess extends Backbone.Model
 	checkStatus: (running) =>
 		return if running and @connected
 		@connected = false if !running
-		
-		console.log "ETH checking connection", @connected, running, @web3.currentProvider
 		@web3.eth.getBlockNumber (err, blockNumber) =>
-			console.log "Recieved data from web3.getBlockNumber", arguments
 			if err
-				console.log err
+				console.log err if @config.getBool('logging')
 				@connected = false
 			else
 				@connected = true
-				console.log( "ETH block ##{ blockNumber }" )
 			@trigger( 'connected', @connected )
-		@trigger( 'connected', @connected )
+		
 
 
 	start: ->
@@ -61,15 +55,17 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', true )
 			return
 
-		console.log "Connecting to Local Ethereum Node: ipc:#{ @rpcPath }"
+		console.log "Connecting to Local Ethereum Node: ipc:#{ @ipcPath }"
 		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
 
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--datadir', @datadir,'--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3']
+		args = [ '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
 		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
 
 		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
 		@process = spawn( @path, args )
+		@stderr = ''
+		@stdout = ''
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)
@@ -77,10 +73,12 @@ module.exports = class EthProcess extends Backbone.Model
 		
 		@process.stdout.on 'data', (data) =>
 			console.log('geth stdout: ' + data) if @config.getBool('logging')
+			@stderr += data
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
 			console.log('geth stderr: ' + data) if @config.getBool('logging')
+			@stdout += data
 			@trigger( 'status', !!@process )
 
 		
