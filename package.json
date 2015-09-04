@@ -23,7 +23,11 @@
     "max_width": 800,
     "max_height": 600
   },
-  "author": "",
+  "author": "Doug A. (d11e9)",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/projectdnet/ethos.git"
+  },
   "license": "ISC",
   "dependencies": {
     "auto-launch": "^0.1.18",
@@ -31,7 +35,6 @@
     "body-parser": "^1.13.3",
     "coffee-script": "^1.9.3",
     "express": "^4.13.3",
-    "grunt": "^0.4.5",
     "ipfs-api": "^2.1.0",
     "multer": "^1.0.3",
     "web3": "^0.9.2"
