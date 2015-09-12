@@ -14,9 +14,6 @@ module.exports = (gui) ->
 			@submenu.append new gui.MenuItem
 				label: "Unlock"
 				click: @handleUnlock
-			@submenu.append new gui.MenuItem
-				label: "Wallet"
-				click: @openWallet
 			acc = @address
 			@web3.eth.getBalance @address, (err, balance) =>
 				return if err
@@ -164,6 +161,10 @@ module.exports = (gui) ->
 						@import.enabled = false
 						@mining.enabled = false
 					else
+						notification = new window.Notification "Ethos",
+							body: "Ethereum Network Connected."
+						notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
+
 						toggle = if remote then 'Disconnect' else 'Stop'
 						@status.label = "Status: #{status} ##{block}"
 						@toggle.label = toggle

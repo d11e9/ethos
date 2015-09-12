@@ -4,14 +4,22 @@ bodyParser = require 'body-parser'
 multer = require 'multer'
 server = express()
 
-rpcDomainWhitelist = []
-rpcDomainBlacklist = []
 
-contains = (arr, val) ->
-	console.log( "Contains: ", arr, val)
-	arr.indexOf( val ) >= 0 
+
+contains = (arr, val) -> arr.indexOf( val ) >= 0
+
+
+requestRPCAccess = (path) ->
+	notification = new window.Notification "Ethos",
+		body: "The page at #{path} is requesting RPC access to your Ethereum Node. Allow?"
+	notification.onclick ->
+		notification.close()
+
 
 module.exports = (web3, config) ->
+
+	rpcDomainWhitelist = -> config.get('ethRpcProxyWhitelist')
+	rpcDomainBlacklist = -> config.get('ethRpcProxyBlacklist')
 
 	server.options '*', (request, response) ->
 		response.header('Access-Control-Allow-Origin', '*')
@@ -40,18 +48,20 @@ module.exports = (web3, config) ->
 				res.on 'end', (chunk) -> response.end()
 				response.writeHead(res.statusCode, res.headers)
 
-			if !contains( rpcDomainBlacklist, request.headers.origin ) and !contains( rpcDomainWhitelist, request.headers.origin )
-				console.log rpcDomainWhitelist, rpcDomainBlacklist, config
+			if !contains( rpcDomainBlacklist(), request.headers.origin ) and !contains( rpcDomainWhitelist(), request.headers.origin )
+				console.log request
 				if window.confirm("Would you like to allow Ethereum RPC calls from: #{request.headers.origin} in the future.")
-					rpcDomainWhitelist.push(request.headers.origin)
+					config.flags['ethRpcProxyWhitelist'].push( request.headers.origin )
+					config.saveFlag( 'ethRpcProxyWhitelist' )
 				else
-					rpcDomainBlacklist.push(request.headers.origin)
-
-			proxy_request.write( data ) if contains( rpcDomainWhitelist, request.headers.origin )
+					config.flags['ethRpcProxyBlacklist'].push( request.headers.origin )
+					config.saveFlag( 'ethRpcProxyBlacklist' )
+			console.log data
+			proxy_request.write( data ) if contains( rpcDomainWhitelist(), request.headers.origin )
 			proxy_request.end()
 
 	server.use( bodyParser.json() )
 	server.use( multer )
 	server.use( bodyParser.urlencoded( extended: true ) )
 	server.listen config.get('ethRpcProxyPort'), ->
-		console.log "Eth RPC Proxy: running.", server
+		console.log "Eth RPC Proxy: running."

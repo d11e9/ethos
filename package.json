@@ -1,6 +1,6 @@
 {
   "name": "Ethos",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "An Ethereum Browser",
   "main": "app/index.html",
   "single-instance": true,
@@ -14,7 +14,7 @@
     "toolbar": false,
     "frame": true,
     "show": false,
-    "show_in_taskbar": false,
+    "show_in_taskbar": true,
     "width": 800,
     "height": 500,
     "position": "center",

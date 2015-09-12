@@ -4,7 +4,7 @@ web3 = require 'web3'
 
 module.exports = class EthosMenu
 	openWindow: (name, width, height) ->
-		unless @[name]
+		if !@[name]
 			title = name
 			title[0] = title[0].toUpperCase()
 			newWindowOptions =
@@ -27,8 +27,9 @@ module.exports = class EthosMenu
 				this.close( true )
 				self[name] = null
 
-			setTimeout( ( => @[name].focus() ), 100 )
-		@[name].focus()
+			setTimeout( ( => self[name].focus() ), 500 )
+		else
+			@[name].focus()
 
 
 	showAbout: ->
@@ -73,6 +74,7 @@ module.exports = class EthosMenu
 			label: 'Debug'
 			click: ->
 				gui.Window.get().showDevTools()
+				setTimeout( (=> gui.Window.get().showDevTools()), 300 )
 
 
 		@menu.append( about )

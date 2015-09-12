@@ -24,14 +24,14 @@ module.exports = (gui) ->
 				enabled: false
 				click: =>
 					@process.addFile (err, resp) ->
-						window.alert( err?.message or "Added file: #{ resp[0]?.Hash }")
+						window.alert( err?.message or "Added file: #{ resp }")
 
 			@addFolder = new gui.MenuItem
 				label: 'Add Folder'
 				enabled: false
 				click: =>
 					@process.addFolder (err, resp) ->
-						window.alert(err?.message or "Added folder: #{ resp[0]?.hash }")
+						window.alert(err?.message or "Added folder: #{ resp }")
 
 			@info = new gui.MenuItem
 				label: 'Info'
@@ -65,5 +65,10 @@ module.exports = (gui) ->
 				@addFile.enabled = !err
 				@addFolder.enabled = !err
 				@info.enabled = !err
+
+				if !err
+					notification = new window.Notification "Ethos",
+						body: "IPFS Network Connected."
+					notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
 
 		get: -> @rootItem

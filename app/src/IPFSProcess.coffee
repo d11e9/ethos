@@ -2,16 +2,17 @@ path = require 'path'
 fs = require 'fs'
 cp = require 'child_process'
 spawn = cp.spawn
+exec = cp.exec
 Backbone = require 'backbone'
 ipfsApi = require 'ipfs-api'
 
 
 
 module.exports = class IPFSProcess extends Backbone.Model
-	constructor: ({@os, ext, @config}) ->
+	constructor: ({@os, ext, @config, @gui}) ->
 		@process = null
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
-		@api = new ipfsApi()
+		@api = new ipfsApi('localhost', 5001)
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@on 'status', (running) =>
 			if running
@@ -24,6 +25,8 @@ module.exports = class IPFSProcess extends Backbone.Model
 		console.log( @path )
 
 		@process =  spawn( @path, ['daemon', '--init'] )
+		@stderr = ''
+		@stdout = ''
 
 		@process.on 'close', (code) =>
 			console.log('IFPS Exited with code: ' + code)
@@ -31,10 +34,12 @@ module.exports = class IPFSProcess extends Backbone.Model
 		
 		@process.stdout.on 'data', (data) =>
 			console.log('IFPS stdout: ' + data) if @config.getBool('logging')
+			@stdout += data
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
 			console.log('IFPS stderr: ' + data) if @config.getBool('logging')
+			@stderr += data
 			@trigger( 'status', !!@process )
 
 	toggle: ->
@@ -62,36 +67,26 @@ module.exports = class IPFSProcess extends Backbone.Model
 	getAPI: ->
 		@ipfsConfig.Addresses.API.replace('/ip4/','').replace('/tcp/', ':')
 
-	addFile: (callback)->
+	addFile: (callback) ->
 		chooser = window.document.querySelector('#addFile')
-		console.log "TODO: IPFS Add file", chooser
 		chooser.addEventListener "change", (evt) =>
 			filePath = evt.target.value
-			console.log "TODO: IPFS add file", filePath
-			@api.add filePath, (err,res) =>
-				if err or !res
-					console.log "Error:", err
-				else
-					for file in res
-						console.log "Added: ", file.Hash 
-						#@api.pin.add( file.Hash )
-					callback?( err, res )
+			return if filePath is ''
+			evt.target.value = ""
+			@gui.Window.get().hide()
+			exec "#{@path} add -q #{filePath}", (err, stdout, stderr) ->
+				callback( err, stdout )
 		chooser.click()
 
-	addFolder: (callback)->
+	addFolder: (callback) ->
 		chooser = window.document.querySelector('#addFolder')
-		console.log "TODO: IPFS Add folder", chooser
 		chooser.addEventListener "change", (evt) =>
 			filePath = evt.target.value
-			console.log "TODO: IPFS add folder", filePath
-			@api.add filePath, (err,res) =>
-				if err or !res
-					console.log "Error:", err
-				else
-					for file in res
-						console.log "Added: ", file.Hash 
-						# @api.pin.add( file.Hash )
-					callback?( err, res )
+			return if filePath is ''
+			evt.target.value = ""
+			@gui.Window.get().hide()
+			exec "#{@path} add -r -q #{filePath}", (err, stdout, stderr) ->
+				callback( err, stdout.split("\n").reverse()[1] )
 		chooser.click()
 
 	kill: ->
