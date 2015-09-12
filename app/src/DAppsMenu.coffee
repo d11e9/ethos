@@ -31,7 +31,7 @@ module.exports = (gui) ->
 
 			@menu.append new gui.MenuItem
 				label: 'Psst'
-				click: => @openDApp('psst')
+				click: => @openDAppFromIPFSHash('QmdQgdt5yQTSCgAhiFBc3RfoxDCJ1ho2PpRDtf2tDb7HNY')
 
 		get: -> @rootItem
 		closeAll: -> w.close(true) for w in @dappWindows
@@ -50,6 +50,11 @@ module.exports = (gui) ->
 				"new-instance": true
 				"inject-js-start": "app/js/web3.js"
 				"inject-js-end": "app/js/web3-provider-setup.js"
+
+		openDAppFromIPFSHash: (hash) ->
+			url = "http://#{ @ipfs.getGateway() }/ipfs/#{ hash }"
+			console.log "Opening #DApp at #{url}", 
+			@dappWindows.push( gui.Window.open( url, @getWindowOptions() ))
 
 		openDApp: (name) ->
 			console.log "Opening #{name} DApp"
