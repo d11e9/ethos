@@ -38,9 +38,9 @@ module.exports = (gui) ->
 				enabled: false
 				click: =>
 					@process.info (err,res) =>
-						address = @process.getGateway()
-						console.log( "IPFS Gateway address: #{address}" )
-						gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID }") unless err
+						address = @process.getAPI()
+						console.log( "IPFS API address: #{address}" )
+						gui.Shell.openExternal("http://#{ address }/webui") unless err
 			
 			@menu.append( @status )
 			@menu.append( @toggle )
