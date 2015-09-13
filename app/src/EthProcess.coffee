@@ -38,6 +38,9 @@ module.exports = class EthProcess extends Backbone.Model
 				@connected = false
 			else
 				@connected = true
+				notification = new window.Notification "Ethos",
+					body: "Ethereum Network Connected."
+				notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
 			@trigger( 'connected', @connected )
 		
 

@@ -14,9 +14,6 @@ module.exports = (gui) ->
 			@submenu.append new gui.MenuItem
 				label: "Unlock"
 				click: @handleUnlock
-			@submenu.append new gui.MenuItem
-				label: "Wallet"
-				click: @openWallet
 			acc = @address
 			@web3.eth.getBalance @address, (err, balance) =>
 				return if err

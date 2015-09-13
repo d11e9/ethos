@@ -19,34 +19,20 @@ module.exports = (gui) ->
 				label: 'Start'
 				click: => @process.toggle()
 
-			@addFile = new gui.MenuItem
-				label: 'Add File'
+			@files = new gui.MenuItem
+				label: 'Manage Files'
 				enabled: false
-				click: =>
-					@process.addFile (err, resp) ->
-						window.alert( err?.message or "Added file: #{ resp[0]?.Hash }")
-
-			@addFolder = new gui.MenuItem
-				label: 'Add Folder'
-				enabled: false
-				click: =>
-					@process.addFolder (err, resp) ->
-						window.alert(err?.message or "Added folder: #{ resp[0]?.hash }")
+				click: => gui.Shell.openExternal("http://#{ @apiAddress }/webui/#/files")
 
 			@info = new gui.MenuItem
-				label: 'Info'
+				label: 'Open Web UI'
 				enabled: false
-				click: =>
-					@process.info (err,res) =>
-						address = @process.getGateway()
-						console.log( "IPFS Gateway address: #{address}" )
-						gui.Shell.openExternal("http://#{ address }/ipns/#{ res.info.ID }") unless err
+				click: => gui.Shell.openExternal("http://#{ @apiAddress }/webui")
 			
 			@menu.append( @status )
 			@menu.append( @toggle )
-			@menu.append( @addFile )
-			@menu.append( @addFolder )
 			@menu.append( @info )
+			@menu.append( @files )
 
 		updateStatus: (running) =>
 			@status.label = "Status: Connecting"
@@ -60,10 +46,15 @@ module.exports = (gui) ->
 
 		onConnected: =>
 			@process.api.id (err, info) =>
-				console.log( "IPFS connected: ", err, info)
-				@status.label = "Status: Connected" unless err
-				@addFile.enabled = !err
-				@addFolder.enabled = !err
+				unless err
+					console.log( "IPFS connected: ", err, info)
+					@apiAddress = @process.getAPI() 
+					console.log( "IPFS API address: #{ @apiAddress }" )
+					@status.label = "Status: Connected" unless err
+					notification = new window.Notification "Ethos",
+						body: "IPFS Network Connected."
+					notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
+				@files.enabled = !err
 				@info.enabled = !err
 
 		get: -> @rootItem

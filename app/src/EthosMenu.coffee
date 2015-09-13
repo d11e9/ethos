@@ -4,7 +4,7 @@ web3 = require 'web3'
 
 module.exports = class EthosMenu
 	openWindow: (name, width, height) ->
-		unless @[name]
+		if !@[name]
 			title = name
 			title[0] = title[0].toUpperCase()
 			newWindowOptions =
@@ -13,6 +13,7 @@ module.exports = class EthosMenu
 				toolbar: @config.getBool( 'debug' )
 				frame: true
 				show: true
+				focus: true
 				show_in_taskbar: true
 				width: width or 800
 				height: height or 500
@@ -27,8 +28,9 @@ module.exports = class EthosMenu
 				this.close( true )
 				self[name] = null
 
-			setTimeout( ( => @[name].focus() ), 100 )
-		@[name].focus()
+			setTimeout( ( => self[name].focus() ), 500 )
+		else
+			@[name].focus()
 
 
 	showAbout: ->
@@ -44,6 +46,10 @@ module.exports = class EthosMenu
 		@ipfsMenu = new IPFSMenu( process: @ipfsProcess, config: @config )
 		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
 		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config )
+
+		@ipfs = @ipfsMenu.get()
+		@eth = @ethMenu.get()
+		@dapps = @dappsMenu.get()
 
 		@tray = new gui.Tray
 			title: ''
@@ -65,6 +71,13 @@ module.exports = class EthosMenu
 			label: 'About \u039Ethos'
 			click: =>  @showAbout()
 
+		getSeparator = ->
+			new gui.MenuItem type :'separator'
+
+		dappsRunning = new gui.MenuItem
+			label: 'Running \u00D0Apps'
+			enabled: false
+
 		settings = new gui.MenuItem
 			label: 'Settings'
 			click: => @openWindow( 'settings' )				
@@ -73,13 +86,31 @@ module.exports = class EthosMenu
 			label: 'Debug'
 			click: ->
 				gui.Window.get().showDevTools()
+				setTimeout( (=> gui.Window.get().showDevTools()), 300 )
 
+		@dappsMenu.on 'dapp', ({name, dappwin}) =>
+			index = @menu.items.indexOf( @dapps )
+			dappItem = new gui.MenuItem
+				label: name
+				click: => dappwin.show()
+			@menu.insert( dappItem, index + 1 )
+			dappwin.on 'close', ->
+				console.log "DAPP window closing"
+				dappItem.remove()
+				dappwin.close(true)
+
+			dappwin.on 'closed', ->
+				console.log "DAPP window closed"
+				dappItem.remove()
 
 		@menu.append( about )
 		@menu.append( settings )
-		@menu.append( @ipfsMenu.get() )
-		@menu.append( @ethMenu.get() )
-		@menu.append( @dappsMenu.get() )
+		@menu.append( getSeparator() )
+		@menu.append( @ipfs )
+		@menu.append( @eth )
+		@menu.append( getSeparator() )
+		@menu.append( @dapps )
+		@menu.append( getSeparator() )
 		@menu.append( debug )
 		@menu.append( quit )
 

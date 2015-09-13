@@ -2,7 +2,6 @@
 path = require 'path'
 web3 = require 'web3'
 
-
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
 		window.console.log "Error: Uncaught exexption: #{ msg }"
@@ -11,6 +10,11 @@ module.exports = (gui) ->
 	ext = if os is 'win32' then '.exe' else ''
 
 	win = gui.Window.get()
+	
+	if os is 'darwin'
+		mb = new gui.Menu( type: 'menubar' )
+		mb.createMacBuiltin( 'Ξthos', hideEdit: false )
+		win.menu = mb
 
 	Config = require './Config.coffee'
 	EthosMenu = require './EthosMenu.coffee'
@@ -30,7 +34,7 @@ module.exports = (gui) ->
 		win.window.win = win
 		win.window.log = -> window.console.log arguments
 		win.window.eth = ethProcess = new EthProcess({os, ext, config})
-		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config})
+		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config, gui})
 		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess, config})
 
 		ethProcess.start() if config.getBool( 'ethStart' )
