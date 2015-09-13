@@ -13,6 +13,7 @@ module.exports = class EthosMenu
 				toolbar: @config.getBool( 'debug' )
 				frame: true
 				show: true
+				focus: true
 				show_in_taskbar: true
 				width: width or 800
 				height: height or 500
@@ -46,6 +47,10 @@ module.exports = class EthosMenu
 		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
 		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config )
 
+		@ipfs = @ipfsMenu.get()
+		@eth = @ethMenu.get()
+		@dapps = @dappsMenu.get()
+
 		@tray = new gui.Tray
 			title: ''
 			icon: "./app/images/icon-tray.png"
@@ -66,6 +71,13 @@ module.exports = class EthosMenu
 			label: 'About \u039Ethos'
 			click: =>  @showAbout()
 
+		getSeparator = ->
+			new gui.MenuItem type :'separator'
+
+		dappsRunning = new gui.MenuItem
+			label: 'Running \u00D0Apps'
+			enabled: false
+
 		settings = new gui.MenuItem
 			label: 'Settings'
 			click: => @openWindow( 'settings' )				
@@ -76,12 +88,29 @@ module.exports = class EthosMenu
 				gui.Window.get().showDevTools()
 				setTimeout( (=> gui.Window.get().showDevTools()), 300 )
 
+		@dappsMenu.on 'dapp', ({name, dappwin}) =>
+			index = @menu.items.indexOf( @dapps )
+			dappItem = new gui.MenuItem
+				label: name
+				click: => dappwin.show()
+			@menu.insert( dappItem, index + 1 )
+			dappwin.on 'close', ->
+				console.log "DAPP window closing"
+				dappItem.remove()
+				dappwin.close(true)
+
+			dappwin.on 'closed', ->
+				console.log "DAPP window closed"
+				dappItem.remove()
 
 		@menu.append( about )
 		@menu.append( settings )
-		@menu.append( @ipfsMenu.get() )
-		@menu.append( @ethMenu.get() )
-		@menu.append( @dappsMenu.get() )
+		@menu.append( getSeparator() )
+		@menu.append( @ipfs )
+		@menu.append( @eth )
+		@menu.append( getSeparator() )
+		@menu.append( @dapps )
+		@menu.append( getSeparator() )
 		@menu.append( debug )
 		@menu.append( quit )
 

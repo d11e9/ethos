@@ -1,8 +1,9 @@
 _ = require 'underscore'
+Backbone = require 'backbone'
 path = require 'path'
 
 module.exports = (gui) ->
-	class DAppsMenu
+	class DAppsMenu extends Backbone.Model
 		constructor: ({@eth, @ipfs, @config}) ->
 			@menu = new gui.Menu()
 			@dappWindows = []
@@ -38,7 +39,7 @@ module.exports = (gui) ->
 
 			@menu.append new gui.MenuItem
 				label: 'Basic Wallet'
-				click: => @openDApp('wallet')
+				click: => @openDApp('Basic Wallet', 'wallet')
 
 			for dapp in @config.get('ipfsDApps')
 				do (dapp) =>
@@ -58,7 +59,7 @@ module.exports = (gui) ->
 				submenu: menu
 			open = new gui.MenuItem
 				label: 'Open'
-				click: => @openDAppFromIPFSHash(hash)
+				click: => @openDAppFromIPFSHash(name, hash)
 			remove = new gui.MenuItem
 				label: 'Remove'
 				click: =>
@@ -76,7 +77,7 @@ module.exports = (gui) ->
 				submenu: menu
 			open = new gui.MenuItem
 				label: 'Open'
-				click: => @openDAppFromFolder(path)
+				click: => @openDAppFromFolder(name, path)
 			remove = new gui.MenuItem
 				label: 'Remove'
 				click: =>
@@ -91,7 +92,7 @@ module.exports = (gui) ->
 			@config.flags.ipfsDApps.push({name,hash})
 			@config.saveFlag( 'ipfsDApps' )
 			@menu.append @getIPFSDAppMenu( name, hash )
-			@openDAppFromIPFSHash(hash)
+			@openDAppFromIPFSHash(name, hash)
 
 		removeIFPSDApp: (name, hash) ->
 			@config.flags.ipfsDApps = _.without(@config.flags.ipfsDApps, _.findWhere(@config.flags.ipfsDApps, {name, hash}))
@@ -101,21 +102,22 @@ module.exports = (gui) ->
 			@config.flags.localDApps.push({name,path})
 			@config.saveFlag( 'localDApps' )
 			@menu.append @getLocalDAppMenu( name, path )
-			@openDAppFromFolder(path)
+			@openDAppFromFolder(nmae, path)
 
 		removeLocalDApp: (name, path) ->
 			@config.flags.localDApps = _.without(@config.flags.localDApps, _.findWhere(@config.flags.localDApps, {name, path}))
 			@config.saveFlag( 'localDApps' )
 
-		getWindowOptions: ->
+		getWindowOptions: (name)->
 			"inject-js-start": "app/js/web3.js"
 			"inject-js-end": "app/js/web3-provider-setup.js"
 			"new-instance": true
 			icon: "app/images/icon-tray.ico"
-			title: "Ethos"
+			title: name
 			toolbar: @config.getBool( 'debug' )
 			frame: true
 			show: true
+			focus: true
 			show_in_taskbar: true
 			width: 800
 			height: 500
@@ -123,16 +125,22 @@ module.exports = (gui) ->
 			min_width: 400
 			min_height: 200
 
-		openDAppFromIPFSHash: (hash) ->
+		openDAppFromIPFSHash: (name, hash) ->
 			url = "http://#{ @ipfs.getGateway() }/ipfs/#{ hash }"
 			console.log "Opening DApp at #{url}", 
-			@dappWindows.push( gui.Window.open( url, @getWindowOptions() ))
+			win = gui.Window.open( url, @getWindowOptions() )
+			@dappWindows.push( win)
+			@trigger('dapp', name: name, dappwin: win)
 
-		openDAppFromFolder: (path) ->
+		openDAppFromFolder: (name, path) ->
 			console.log "Opening DApp at #{ path }"
-			@dappWindows.push( gui.Window.open( path, @getWindowOptions() ) )
+			win = gui.Window.open( path, @getWindowOptions() )
+			@dappWindows.push( win )
+			@trigger('dapp', name: name, dappwin: win)
 
-		openDApp: (name) ->
+		openDApp: (name, path) ->
 			console.log "Opening #{name} DApp"
-			@dappWindows.push( gui.Window.open( "app://ethos/ipfs/#{name}/index.html", @getWindowOptions() ) )
+			win = gui.Window.open( "app://ethos/ipfs/#{path}/index.html", @getWindowOptions(name) )
+			@dappWindows.push( win )
+			@trigger('dapp', name:name, dappwin: win)			
 

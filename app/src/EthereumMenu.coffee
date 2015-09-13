@@ -161,10 +161,6 @@ module.exports = (gui) ->
 						@import.enabled = false
 						@mining.enabled = false
 					else
-						notification = new window.Notification "Ethos",
-							body: "Ethereum Network Connected."
-						notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
-
 						toggle = if remote then 'Disconnect' else 'Stop'
 						@status.label = "Status: #{status} ##{block}"
 						@toggle.label = toggle
