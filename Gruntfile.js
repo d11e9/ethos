@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         winIco: './app/images/logo.ico',
         platforms: ['win', 'osx'] // These are the platforms that we want to build
       },
-      src: ['**/**', '!**/dist/**', '!**/eth/**', '**/eth/.gitignore*','!**/cache/**', '!**/node_modules/grunt*/**', '!**/node_modules/nw*/**', '!**/Gruntfile.js']
+      src: ['**/**', '!**/dist/**', '!**/cache/**', '!**/installer/**', '!**/node_modules/grunt*/**', '!**/node_modules/nw*/**', '!**/Gruntfile.js']
     },
   });
 
