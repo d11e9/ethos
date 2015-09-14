@@ -17,13 +17,14 @@ module.exports = class IPFSProcess extends Backbone.Model
 		@on 'status', (running) =>
 			if running
 				@api.config.show (err, ipfsConfig) =>
-					if err
-						@connected = false
-					else
-						@connected = true
-						@ipfsConfig = ipfsConfig
-						@trigger( 'connected' )
-						console.log( "IPFS config: ", err, ipfsConfig)
+					@api.swarm.peers (err, peers) =>
+						if err or !peers.length
+							@connected = false
+						else
+							@connected = true
+							@ipfsConfig = ipfsConfig
+							@trigger( 'connected' )
+							console.log( "IPFS config: ", err, ipfsConfig)
 
 	start: ->
 		console.log( @path )

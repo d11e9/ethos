@@ -126,7 +126,7 @@ module.exports = (gui) ->
 			min_height: 200
 
 		openDAppFromIPFSHash: (name, hash) ->
-			url = "http://#{ @ipfs.getGateway() }/ipfs/#{ hash }"
+			url = "http://#{ if @ipfs.connected then @ipfs.getGateway() else 'gateway.ipfs.io' }/ipfs/#{ hash }"
 			console.log "Opening DApp at #{url}", 
 			win = gui.Window.open( url, @getWindowOptions(name) )
 			@handleOpenDApp( {name,url} )
