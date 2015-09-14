@@ -103,7 +103,7 @@ module.exports = (gui) ->
 			@config.flags.localDApps.push({name,path})
 			@config.saveFlag( 'localDApps' )
 			@menu.append @getLocalDAppMenu( name, path )
-			@openDAppFromFolder(nmae, path)
+			@openDAppFromFolder(name, path)
 
 		removeLocalDApp: (name, path) ->
 			@config.flags.localDApps = _.without(@config.flags.localDApps, _.findWhere(@config.flags.localDApps, {name, path}))

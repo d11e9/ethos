@@ -4,6 +4,7 @@ web3 = require 'web3'
 
 module.exports = class EthosMenu
 	openWindow: (name, width, height) ->
+		self = this
 		if !@[name]
 			title = name
 			title[0] = title[0].toUpperCase()
@@ -21,13 +22,15 @@ module.exports = class EthosMenu
 				min_width: 400
 				min_height: 200
 			
-			@[name] = @gui.Window.open( "app://ethos/app/#{name}.html", newWindowOptions )
+			win = @gui.Window.open( "app://ethos/app/#{name}.html", newWindowOptions )
 			
-			self = this
-			@[name].on 'close', ->
+			win.on 'loaded', ->
+				win.window.config = self.config
+				win.window.init()
+			win.on 'close', ->
 				this.close( true )
 				self[name] = null
-
+			@[name] = win
 			setTimeout( ( => self[name].focus() ), 500 )
 		else
 			@[name].focus()

@@ -68,21 +68,23 @@
 		</div>
 
 		<script>
-			var gui = require('nw.gui')
+			window.init = function(){
+				var gui = require('nw.gui')
 
-			var flag = 'showAbout'
-			var el = document.getElementById(flag)
-			el.checked = global.ethos.getBool(flag)
-			el.addEventListener( 'change', function(ev){
-				global.ethos.set( flag, ev.target.checked )
-			})
+				var flag = 'showAbout'
+				var el = document.getElementById(flag)
+				el.checked = window.config.getBool(flag)
+				el.addEventListener( 'change', function(ev){
+					window.config.set( flag, ev.target.checked )
+				})
 
-			var links = document.querySelectorAll('.external')
-			for (var l in links) {
-				links[l].onclick = function(ev){
-					ev.preventDefault()
-					gui.Shell.openExternal( ev.target.href)
-					return false
+				var links = document.querySelectorAll('.external')
+				for (var l in links) {
+					links[l].onclick = function(ev){
+						ev.preventDefault()
+						gui.Shell.openExternal( ev.target.href)
+						return false
+					}
 				}
 			}
 		</script>	

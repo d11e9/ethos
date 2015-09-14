@@ -4,9 +4,9 @@ path = require 'path'
 module.exports = (gui) ->
 	console.log( "Ξthos settings: loading" )
 	win = gui.Window.get()
-	config = global.ethos
 
-	win.window.onload = ->
+	win.window.init = ->
+		config = this.config
 
 		rootDir = process.cwd()
 		console.log "RootDir: #{ rootDir }"

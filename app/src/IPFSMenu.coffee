@@ -37,8 +37,7 @@ module.exports = (gui) ->
 		updateStatus: (running) =>
 			@status.label = "Status: Connecting"
 			@toggle.label = "Stop"
-			@addFile.enabled = false
-			@addFolder.enabled = false
+			@files.enabled = false
 			@info.enabled = false
 			if !running
 				@status.label = "Status: Not Running"
