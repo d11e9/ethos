@@ -40,7 +40,7 @@ This application is essentially a barebones GUI wrapper around the [Ethereum](ht
 
 To build from source or contribute you can do the following:
 
-    $ git clone https://githib.com/projectdnet/ethos
+    $ git clone https://github.com/projectdnet/ethos
     $ cd ethos
     $ npm install
 
