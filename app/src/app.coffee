@@ -40,6 +40,5 @@ module.exports = (gui) ->
 		ethProcess.start() if config.getBool( 'ethStart' )
 		ipfsProcess.start() if config.getBool( 'ipfsStart' )
 
-		global.ethos = config
 		console.log( "Ξthos initialized: ok" )
 		menu.showAbout() if config.getBool( 'showAbout' )

@@ -7,7 +7,6 @@ Backbone = require 'backbone'
 ipfsApi = require 'ipfs-api'
 
 
-
 module.exports = class IPFSProcess extends Backbone.Model
 	constructor: ({@os, ext, @config, @gui}) ->
 		@process = null

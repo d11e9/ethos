@@ -39,12 +39,13 @@ module.exports = (web3, config) ->
 				res.on 'end', (chunk) -> response.end()
 				response.writeHead(res.statusCode, res.headers)
 
-			if !contains( rpcDomainWhitelist(), request.headers.referer )
-				if window.confirm("Would you like to allow Ethereum RPC calls from: #{request.headers.referer} in the future.")
-					config.flags['ethRpcProxyWhitelist'].push( request.headers.referer )
+			source = request.headers.referer or request.headers.origin
+			if !contains( rpcDomainWhitelist(), source )
+				if window.confirm("Would you like to allow Ethereum RPC calls from: #{source} in the future.")
+					config.flags['ethRpcProxyWhitelist'].push( source )
 					config.saveFlag( 'ethRpcProxyWhitelist' )
 
-			proxy_request.write( data ) if contains( rpcDomainWhitelist(), request.headers.referer )
+			proxy_request.write( data ) if contains( rpcDomainWhitelist(), source )
 			proxy_request.end()
 
 	server.use( bodyParser.json() )

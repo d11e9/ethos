@@ -27,23 +27,6 @@ module.exports = (gui) ->
 		handleUnlock: =>
 			@process.unlock( @address )
 
-		openWallet: =>
-			newWindowOptions =
-				icon: "app/images/icon-tray.ico"
-				title: "Ethos"
-				toolbar: @config.getBool( 'debug' )
-				frame: true
-				show: true
-				show_in_taskbar: true
-				width: 800
-				height: 500
-				position: "center"
-				min_width: 400
-				min_height: 200
-				"new-instance": true
-				"inject-js-start": "app/js/web3.js"
-			gui.Window.open( 'app://ethos/ipfs/wallet/index.html', newWindowOptions )
-
 	class EthereumMenu
 		constructor: ({@process, @config}) ->
 			@menu = new gui.Menu()
