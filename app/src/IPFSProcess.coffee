@@ -18,7 +18,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 			if running
 				@api.config.show (err, ipfsConfig) =>
 					@api.swarm.peers (err, peers) =>
-						if err or !peers.length
+						if err
 							@connected = false
 						else
 							@connected = true
