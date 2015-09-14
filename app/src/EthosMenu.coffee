@@ -25,7 +25,6 @@ module.exports = class EthosMenu
 			
 			self = this
 			@[name].on 'close', ->
-				console.log "ETHOS WINDOW CLOSE EVENT"
 				this.close( true )
 				self[name] = null
 
@@ -94,10 +93,7 @@ module.exports = class EthosMenu
 		root = this
 
 		@dappsMenu.on 'dapp', =>
-			root.win.console.log "SELF on dapp eevnt", root
-			for item in root.dappItems
-				root.win.console.log "removing item:", item
-				root.menu.remove( item )
+			root.menu.remove( item ) for item in root.dappItems	
 			root.dappItems = []
 			index = root.menu.items.indexOf( root.dapps )
 			for dapp in root.dappsMenu.dappWindows
@@ -105,7 +101,8 @@ module.exports = class EthosMenu
 					label: dapp.name
 					click: => dapp.win.show()
 				root.dappItems.push( dappItem )
-				root.menu.insert( dappItem, index++ )
+				index++
+				root.menu.insert( dappItem, index )
 			
 
 		@menu.append( about )
