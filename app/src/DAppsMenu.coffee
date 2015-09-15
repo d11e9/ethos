@@ -114,7 +114,7 @@ module.exports = (gui) ->
 			"inject-js-end": "app/js/web3-provider-setup.js"
 			icon: "app/images/icon-tray.ico"
 			title: name
-			toolbar: @config.getBool( 'debug' )
+			toolbar: true
 			frame: true
 			show: true
 			focus: true
