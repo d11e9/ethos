@@ -15,37 +15,51 @@ module.exports = class IPFSProcess extends Backbone.Model
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@connected = false
 		@on 'status', (running) =>
-			if running
-				@api.config.show (err, ipfsConfig) =>
-					@api.swarm.peers (err, peers) =>
-						if err
-							@connected = false
-						else
-							@connected = true
-							@ipfsConfig = ipfsConfig
-							@trigger( 'connected' )
-							console.log( "IPFS config: ", err, ipfsConfig)
+			if running and !@conneted
+				exec "#{@path} config show", (err, stdout, stderr) =>
+					if !err
+						@ipfsConfig = JSON.parse( stdout )
+						console.log( 'IPFS Config:', @ipfsConfig )
+						@connected = true
+						@trigger( 'connected')
+					else
+						@connected = false
+						console.log "IPFS Error:", err
+
+				# @api.config.show (err, ipfsConfig) =>
+				# 	@api.swarm.peers (err, peers) =>
+				# 		if err
+				# 			@connected = false
+				# 		else
+				# 			@connected = true
+				# 			@ipfsConfig = ipfsConfig
+				# 			@trigger( 'connected' )
+				# 			console.log( "IPFS config: ", err, ipfsConfig)
 
 	start: ->
-		console.log( @path )
+		datastore = path.join( process.cwd(), './ipfs' )
+		args = ['daemon', '--config', datastore]
 
-		@process =  spawn( @path, ['daemon', '--init'] )
-		@stderr = ''
-		@stdout = ''
+		exec "#{@path} init -f --config #{datastore}", (err, stdout, stderr) =>
 
-		@process.on 'close', (code) =>
-			console.log('IFPS Exited with code: ' + code)
-			@kill()
-		
-		@process.stdout.on 'data', (data) =>
-			console.log('IFPS stdout: ' + data) if @config.getBool('logging')
-			@stdout += data
-			@trigger( 'status', !!@process )
+			console.log "IFPS Starting new daemon. args: #{ @path } #{ args.join(' ') }"
+			@process =  spawn( @path, args )
+			@stderr = ''
+			@stdout = ''
 
-		@process.stderr.on 'data', (data) =>
-			console.log('IFPS stderr: ' + data) if @config.getBool('logging')
-			@stderr += data
-			@trigger( 'status', !!@process )
+			@process.on 'close', (code) =>
+				console.log('IFPS Exited with code: ' + code)
+				@kill()
+			
+			@process.stdout.on 'data', (data) =>
+				console.log('IFPS stdout: ' + data) if @config.getBool('logging')
+				@stdout += data
+				@trigger( 'status', !!@process )
+
+			@process.stderr.on 'data', (data) =>
+				console.log('IFPS stderr: ' + data) if @config.getBool('logging')
+				@stderr += data
+				@trigger( 'status', !!@process )
 
 	toggle: ->
 		if @process

@@ -138,7 +138,7 @@ module.exports = (gui) ->
 
 		openDApp: (name, path) ->
 			console.log "Opening #{name} DApp"
-			url = "app://ethos/ipfs/#{path}/index.html"
+			url = "app://ethos/#{path}/index.html"
 			@handleOpenDApp( {name,url} )
 
 		handleOpenDApp: ({name,url}) ->
