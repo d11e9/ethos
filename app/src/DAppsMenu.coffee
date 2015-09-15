@@ -127,17 +127,15 @@ module.exports = (gui) ->
 
 		openDAppFromIPFSHash: (name, hash) ->
 			url = "http://#{ if @ipfs.connected then @ipfs.getGateway() else 'gateway.ipfs.io' }/ipfs/#{ hash }"
-			console.log "Opening DApp at #{url}", 
-			win = gui.Window.open( url, @getWindowOptions(name) )
+			console.log "Opening DApp at #{ url }", 
 			@handleOpenDApp( {name,url} )
 
 		openDAppFromFolder: (name, url) ->
 			console.log "Opening DApp at #{ path }"
-			win = gui.Window.open( url, @getWindowOptions(name) )
 			@handleOpenDApp( {name,url} )
 
 		openDApp: (name, path) ->
-			console.log "Opening #{name} DApp"
+			console.log "Opening #{ name } DApp"
 			url = "app://ethos/#{path}/index.html"
 			@handleOpenDApp( {name,url} )
 
