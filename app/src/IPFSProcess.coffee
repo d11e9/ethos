@@ -25,6 +25,8 @@ module.exports = class IPFSProcess extends Backbone.Model
 					else
 						@connected = false
 						console.log "IPFS Error:", err
+			else
+				@connected = false
 
 				# @api.config.show (err, ipfsConfig) =>
 				# 	@api.swarm.peers (err, peers) =>

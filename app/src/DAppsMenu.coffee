@@ -131,12 +131,12 @@ module.exports = (gui) ->
 			@handleOpenDApp( {name,url} )
 
 		openDAppFromFolder: (name, url) ->
-			console.log "Opening DApp at #{ path }"
+			console.log "Opening DApp at #{ url }"
 			@handleOpenDApp( {name,url} )
 
 		openDApp: (name, path) ->
 			console.log "Opening #{ name } DApp"
-			url = "app://ethos/#{path}/index.html"
+			url = "app://ethos/app/#{path}/index.html"
 			@handleOpenDApp( {name,url} )
 
 		handleOpenDApp: ({name,url}) ->
