@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>DApp List</title>
+		<style>
+
+			html, body {
+				font-family: monospace;
+			}
+
+			h1 {
+				float: left;
+				margin: 0 1em;
+			}
+
+			#list {
+				clear: both;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+
+			#list li {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+
+	<h1>DApp List</h1>
+	<p>A listing/registery contract on the Ethereum blockchain, which allows anyone to list DApps they create.</p>
+	<ul id="list"></ul>
+
+	<script type="template/html" id="listItemTemplate">
+		<span class="name">Name</span>
+		<span class="type">Type</span>
+		<span class="link">Link</span>
+	</script>
+
+	<script>
+		var template = document.getElementById('listItemTemplate').innerHTML;
+		var listEl = document.getElementById('list')
+		window.onload = function(){
+			var item = document.createElement('li')
+			item.innerHTML = template;
+			listEl.appendChild( item )
+		}
+	</script>
+	
+</html>
