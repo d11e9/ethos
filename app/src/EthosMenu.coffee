@@ -91,22 +91,7 @@ module.exports = class EthosMenu
 			label: 'Debug'
 			click: ->
 				gui.Window.get().showDevTools()
-				setTimeout( (=> gui.Window.get().showDevTools()), 300 )
-
-		root = this
-
-		@dappsMenu.on 'dapp', =>
-			root.menu.remove( item ) for item in root.dappItems	
-			root.dappItems = []
-			index = root.menu.items.indexOf( root.dapps )
-			for dapp in root.dappsMenu.dappWindows
-				dappItem = new gui.MenuItem
-					label: dapp.name
-					click: => dapp.win.show()
-				root.dappItems.push( dappItem )
-				index++
-				root.menu.insert( dappItem, index )
-			
+				setTimeout( (=> gui.Window.get().showDevTools()), 300 )		
 
 		@menu.append( about )
 		@menu.append( settings )

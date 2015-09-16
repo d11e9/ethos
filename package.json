@@ -2,7 +2,7 @@
   "name": "Ethos",
   "version": "0.1.8",
   "description": "An Ethereum Browser",
-  "main": "app/index.html",
+  "main": "app://ethos/app/index.html",
   "single-instance": true,
   "node-remote": "app://ethos",
   "scripts": {

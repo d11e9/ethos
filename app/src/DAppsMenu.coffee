@@ -126,27 +126,16 @@ module.exports = (gui) ->
 			min_height: 200
 
 		openDAppFromIPFSHash: (name, hash) ->
-			url = "http://#{ if @ipfs.connected then @ipfs.getGateway() else 'gateway.ipfs.io' }/ipfs/#{ hash }"
-			console.log "Opening DApp at #{ url }", 
-			@handleOpenDApp( {name,url} )
+			gui.Shell.openExternal "http://#{ if @ipfs.connected then @ipfs.getGateway() else 'gateway.ipfs.io' }/ipfs/#{ hash }"
 
-		openDAppFromFolder: (name, url) ->
-			console.log "Opening DApp at #{ url }"
-			@handleOpenDApp( {name,url} )
+		openDAppFromFolder: (name, url) -> gui.Shell.openExternal( url )
 
 		openDApp: (name, path) ->
-			console.log "Opening #{ name } DApp"
-			url = "app://ethos/app/#{path}/index.html"
-			@handleOpenDApp( {name,url} )
+			@handleOpenDApp
+				name: name
+				url: "app://ethos/app/#{path}/index.html"
 
 		handleOpenDApp: ({name,url}) ->
-			self = this
-			win = gui.Window.open( url, @getWindowOptions(name) )
-			win.on 'close', ->
-				self.dappWindows = _.without(self.dappWindows, _.findWhere(self.dappWindows, {name, win}))
-				self.win.console.log "DAPP WINDOW CLOSE EVENT"
-				self.trigger('dapp')
-				this.close(true)
-			@dappWindows.push( {name,win} )
-			@trigger('dapp')		
+			console.log "Opening DApp at #{ url }"
+			gui.Window.open( url, @getWindowOptions(name) )
 

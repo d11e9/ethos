@@ -4,8 +4,6 @@ bodyParser = require 'body-parser'
 multer = require 'multer'
 server = express()
 
-
-
 contains = (arr, val) -> arr.indexOf( val ) >= 0
 
 module.exports = (web3, config) ->
