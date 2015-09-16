@@ -42,6 +42,10 @@ module.exports = (gui) ->
 				label: 'Basic Wallet'
 				click: => @openDApp('Basic Wallet', 'wallet')
 
+			@menu.append new gui.MenuItem
+				label: 'DApp List'
+				click: => @openDApp('DApp List', 'dapplist')
+
 			for dapp in @config.get('ipfsDApps')
 				do (dapp) =>
 					@menu.append @getIPFSDAppMenu( dapp.name, dapp.hash )
@@ -114,7 +118,7 @@ module.exports = (gui) ->
 			"inject-js-end": "app/js/web3-provider-setup.js"
 			icon: "app/images/icon-tray.ico"
 			title: name
-			toolbar: true
+			toolbar: @config.getBool( 'debug' )
 			frame: true
 			show: true
 			focus: true

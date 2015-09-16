@@ -27,17 +27,6 @@ module.exports = class IPFSProcess extends Backbone.Model
 						console.log "IPFS Error:", err
 			else
 				@connected = false
-
-				# @api.config.show (err, ipfsConfig) =>
-				# 	@api.swarm.peers (err, peers) =>
-				# 		if err
-				# 			@connected = false
-				# 		else
-				# 			@connected = true
-				# 			@ipfsConfig = ipfsConfig
-				# 			@trigger( 'connected' )
-				# 			console.log( "IPFS config: ", err, ipfsConfig)
-
 	start: ->
 		datastore = path.join( process.cwd(), './ipfs' )
 		args = ['daemon', '--config', datastore]
