@@ -39,6 +39,7 @@ module.exports = (gui) ->
 			@createImportItem()
 			@createAccountsItem()
 			@createMiningItem()
+			@createConsoleItem()
 			@process.on( 'connected', @update )
 			@config.on( 'updated', @update )
 			@update()
@@ -102,6 +103,11 @@ module.exports = (gui) ->
 				submenu: new gui.Menu()
 			@menu.append( @accounts )
 
+		createConsoleItem: =>
+			@console = new gui.MenuItem
+				label: "Console"
+				click: => @process.console()
+			@menu.append( @console )
 
 		updateMining: =>
 			@web3.eth.getMining (err, mining) =>
@@ -143,6 +149,7 @@ module.exports = (gui) ->
 						@newAccount.enabled = false
 						@import.enabled = false
 						@mining.enabled = false
+						@console.enabled = false
 					else
 						toggle = if remote then 'Disconnect' else 'Stop'
 						@status.label = "Status: #{status} ##{block}"
@@ -150,6 +157,7 @@ module.exports = (gui) ->
 						@newAccount.enabled = !remote
 						@import.enabled = !remote
 						@mining.enabled = !remote
+						@console.enabled = !remote
 					@updateAccounts()
 					@updateMining()
 

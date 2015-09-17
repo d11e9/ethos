@@ -4,6 +4,7 @@ cp = require 'child_process'
 Backbone = require 'backbone'
 
 spawn = cp.spawn
+exec = cp.exec
 alert = window.alert
 prompt = window.prompt
 confirm = window.confirm
@@ -43,7 +44,12 @@ module.exports = class EthProcess extends Backbone.Model
 				notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
 			@trigger( 'connected', @connected )
 		
-
+	console: =>
+		if @os is 'darwin'
+			alert("TODO :)")
+		else
+			console.log "Launching ethereum console"
+			exec( "start cmd.exe /K \"#{@path} attach\"" )
 
 	start: ->
 		if @config.getBool( 'ethRemoteNode' )
