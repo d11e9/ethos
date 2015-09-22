@@ -28,29 +28,27 @@ module.exports = class IPFSProcess extends Backbone.Model
 			else
 				@connected = false
 	start: ->
-		datastore = path.join( process.cwd(), './ipfs' )
-		args = ['daemon', '--config', datastore]
+		
+		args = ['daemon', '--init']
 
-		exec "#{@path} init -f --config #{datastore}", (err, stdout, stderr) =>
+		console.log "IFPS Starting new daemon. args: #{ @path } #{ args.join(' ') }"
+		@process =  spawn( @path, args )
+		@stderr = ''
+		@stdout = ''
 
-			console.log "IFPS Starting new daemon. args: #{ @path } #{ args.join(' ') }"
-			@process =  spawn( @path, args )
-			@stderr = ''
-			@stdout = ''
+		@process.on 'close', (code) =>
+			console.log('IFPS Exited with code: ' + code)
+			@kill()
+		
+		@process.stdout.on 'data', (data) =>
+			console.log('IFPS stdout: ' + data) if @config.getBool('logging')
+			@stdout += data
+			@trigger( 'status', !!@process )
 
-			@process.on 'close', (code) =>
-				console.log('IFPS Exited with code: ' + code)
-				@kill()
-			
-			@process.stdout.on 'data', (data) =>
-				console.log('IFPS stdout: ' + data) if @config.getBool('logging')
-				@stdout += data
-				@trigger( 'status', !!@process )
-
-			@process.stderr.on 'data', (data) =>
-				console.log('IFPS stderr: ' + data) if @config.getBool('logging')
-				@stderr += data
-				@trigger( 'status', !!@process )
+		@process.stderr.on 'data', (data) =>
+			console.log('IFPS stderr: ' + data) if @config.getBool('logging')
+			@stderr += data
+			@trigger( 'status', !!@process )
 
 	toggle: ->
 		if @process
