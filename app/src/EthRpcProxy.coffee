@@ -6,7 +6,7 @@ server = express()
 
 contains = (arr, val) -> arr.indexOf( val ) >= 0
 
-module.exports = (web3, config) ->
+module.exports = (web3, config, dialogManager) ->
 
 	rpcDomainWhitelist = -> config.get('ethRpcProxyWhitelist')
 
@@ -39,12 +39,17 @@ module.exports = (web3, config) ->
 
 			source = request.headers.referer or request.headers.origin
 			if !contains( rpcDomainWhitelist(), source )
-				if window.confirm("Would you like to allow Ethereum RPC calls from: #{source} in the future.")
-					config.flags['ethRpcProxyWhitelist'].push( source )
-					config.saveFlag( 'ethRpcProxyWhitelist' )
+				dialogManager.newDialog
+					title: "Ethos: Ethereum RPC Proxy"
+					body: " Would you like to allow Ethereum RPC calls from: <pre>#{source}</pre> in the future."
+					options: [{title: 'No', value: 'no'}, {title: 'Yes', value: 'yes'}]
+					callback: (result) =>
+						if result.value is 'yes'
+							config.flags['ethRpcProxyWhitelist'].push( source )
+							config.saveFlag( 'ethRpcProxyWhitelist' )
 
-			proxy_request.write( data ) if contains( rpcDomainWhitelist(), source )
-			proxy_request.end()
+						proxy_request.write( data ) if contains( rpcDomainWhitelist(), source )
+						proxy_request.end()
 
 	server.use( bodyParser.json() )
 	server.use( multer )

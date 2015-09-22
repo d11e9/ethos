@@ -30,7 +30,7 @@ module.exports = (gui) ->
 					chooser.addEventListener "change", (evt) =>
 						filePath = evt.target.value
 						gui.Window.get().hide()
-						name = window.prompt("What name would you like to save that dapp as?")
+						name = window.prompt("What name would you like to save this DApp as?")
 						@addLocalDApp( name, filePath ) if name and filePath
 					chooser.click()
 

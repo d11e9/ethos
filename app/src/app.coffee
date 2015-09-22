@@ -27,8 +27,12 @@ module.exports = (gui) ->
 	config = new Config( ethosPackge )
 	config.load()
 
+
+	DialogManager = require('./EthosDialogManager.coffee')(gui, config)
+	dialogManager = new DialogManager()
+
 	EthRpcProxy = require './EthRpcProxy.coffee'
-	EthRpcProxy(web3, config)
+	EthRpcProxy(web3, config, dialogManager)
 
 	win.window.onload = ->
 		win.window.win = win

@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Ethos</title>
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				font-family: monospace;
+				background-color: transparent;
+			}
+
+			body {
+				padding: 1em;
+			}
+
+			#dialog {
+				background-color: white;
+				box-shadow: 0 0 1em #000;
+				box-sizing: border-box;
+				height: 100%;
+				border-radius: 3px;
+				border: 1px solid #7B7C90;
+			}
+			#title {
+				font-size: 1.2em;
+				padding: 0.6em;
+				border-bottom: 1px solid #BFC1E7;
+				-webkit-app-region: drag;
+				cursor: pointer;
+				margin: 0;
+				background-color: #DCD7FA;
+				border-radius: 3px 3px 0 0;
+				color: rgb(47, 47, 66);
+			}
+
+			#body {
+				margin: 0;
+				padding: 1em;
+			}
+
+			#options {
+				text-align: center;
+			}
+
+			#options button {
+				margin: 1em;
+				font-size: 1.2em;
+				cursor: pointer;
+			}
+
+			pre, em {
+				background-color: #E8E7F2;
+				display: inline;
+				padding: 0.1em 0.4em;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="dialog">
+			<h1 id="title"></h1>
+			<p id="body"></p>
+			<div id="options"></div>
+		</div>
+
+		<script>
+
+			var gui = require('nw.gui')
+			var win = gui.Window.get()
+
+			// force focus on dialogs
+			win.on('blur', function(){
+				win.focus()
+			})
+
+			var id = window.document.location.hash.substr(1)
+			var content = global.dialogContent( id )
+
+			var dialog = window.document.getElementById('dialog')
+			var title = window.document.getElementById('title')
+			var body = window.document.getElementById('body')
+			var options = window.document.getElementById('options')
+
+			document.title = content.title
+			title.innerHTML = content.title
+			body.innerHTML = content.body
+
+			for (var o in content.options) {
+				var option = content.options[o]
+				opt = window.document.createElement('button')
+				opt.innerHTML = option.title
+				opt.setAttribute('data-value', option.value )
+				opt.addEventListener( 'click', function(ev){
+					global.dialogResponse( id, { value: ev.target.getAttribute('data-value') })
+				})
+				options.appendChild( opt )
+			}
+
+			win.width = dialog.clientWidth
+			win.height = window.document.body.scrollHeight
+			//win.showDevTools()
+			win.setAlwaysOnTop( true )
+			win.requestAttention(1)
+			win.setPosition( 'center' )
+		</script>
+	</body>
+</html>

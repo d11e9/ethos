@@ -1,6 +1,6 @@
 web3 = require 'web3'
 
-
+root = this
 
 module.exports = class EthosMenu
 	openWindow: (name, width, height) ->
