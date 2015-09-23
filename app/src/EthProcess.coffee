@@ -9,6 +9,7 @@ alert = window.alert
 prompt = window.prompt
 confirm = window.confirm
 
+$HOME = process.env.HOME || process.env.USERPROFILE;
 
 module.exports = class EthProcess extends Backbone.Model
 	root = this
@@ -19,7 +20,7 @@ module.exports = class EthProcess extends Backbone.Model
 		@datadir = path.join( process.cwd(), './eth' )
 		@web3 = require 'web3'
 		@ipcPath = if @os is 'darwin'
-				path.join( @datadir, './geth.ipc' )
+				"#{$HOME}/Library/Ethereum/geth.ipc"
 			else
 				'\\\\.\\pipe\\geth.ipc'
 
@@ -51,7 +52,7 @@ module.exports = class EthProcess extends Backbone.Model
 		
 	console: =>
 		if @os is 'darwin'
-			alert("TODO :)")
+			exec( "bash #{ path.join( @path, '../console.sh' ) } \"#{ @path } attach\"")
 		else
 			console.log "Launching ethereum console"
 			exec( "start cmd.exe /K \"#{@path} attach\"" )

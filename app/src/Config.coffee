@@ -21,7 +21,7 @@ module.exports = class Config extends Backbone.Model
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
 			ipfsDApps: [
-				{name: 'Psst', hash: 'QmSHqkLeRhByrndfVqYLXfvPmAvQhxDsbKzAcxhUELGsAP'},
+				{name: 'Psst', hash: 'QmdLKS3FNYkkAckhbcmc8Fa7R1J68hcrb1itDD55BND4wi'},
 				{name: 'Mdown', hash: 'QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh'}
 			]
 			localDApps: []
