@@ -43,13 +43,19 @@ module.exports = (web3, config, dialogManager) ->
 				dialogManager.newDialog
 					title: "Ethos: Ethereum RPC Proxy"
 					body: " Would you like to allow Ethereum RPC calls from: <pre>#{source}</pre> in the future."
-					options: [{title: 'Not now', value: 'no'}, {title: 'Never', value: 'never'}, {title: 'Yes', value: 'yes'}]
+					form: """
+						<div class="center">
+							<input type="submit" name="allow" value="Never">
+							<input type="submit" name="allow" value="Not now">
+							<input type="submit" name="allow" value="Yes">
+						</div>
+					"""
 					callback: (result) =>
-						if result.value is 'yes'
+						if result.allow is 'Yes'
 							config.flags['ethRpcProxyWhitelist'].push( source )
 							config.saveFlag( 'ethRpcProxyWhitelist' )
 
-						if result.value is 'never'
+						if result.allow is 'Never'
 							config.flags['ethRpcProxyBlacklist'].push( source )
 							config.saveFlag( 'ethRpcProxyBlacklist' )
 
