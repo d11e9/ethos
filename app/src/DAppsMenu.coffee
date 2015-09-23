@@ -175,7 +175,8 @@ module.exports = (gui) ->
 		openDAppFromIPFSHash: (name, hash) ->
 			gui.Shell.openExternal "http://#{ if @ipfs.connected then @ipfs.getGateway() else 'gateway.ipfs.io' }/ipfs/#{ hash }"
 
-		openDAppFromFolder: (name, url) -> gui.Shell.openExternal( url )
+		openDAppFromFolder: (name, url) ->
+			gui.Shell.openExternal( "http://localhost:8080/dapp/#{name}" )
 
 		openDApp: (name, path) ->
 			@handleOpenDApp
