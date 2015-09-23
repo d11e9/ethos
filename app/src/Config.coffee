@@ -1,4 +1,5 @@
 Backbone = require 'backbone'
+_ = require 'underscore'
 
 module.exports = class Config extends Backbone.Model
 	constructor: (@package)->
@@ -53,6 +54,14 @@ module.exports = class Config extends Backbone.Model
 		@flags[flag] = value
 		window.localStorage.setItem( @key(flag), JSON.stringify( @flags[flag] ) )
 		@trigger( 'updated' )
+
+	removeItem: (item, flag) ->
+		@flags[flag] = _.without(@flags[flag], _.findWhere(@flags[flag], item))
+		@saveFlag( flag )
+
+	addItem: (item, flag) ->
+		@flags[flag].push( item )
+		@saveFlag( flag )
 
 	saveFlag: (flag) ->
 		@set( flag, @flags[flag] );

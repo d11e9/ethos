@@ -52,12 +52,10 @@ module.exports = (web3, config, dialogManager) ->
 					"""
 					callback: (result) =>
 						if result.allow is 'Yes'
-							config.flags['ethRpcProxyWhitelist'].push( source )
-							config.saveFlag( 'ethRpcProxyWhitelist' )
+							config.addItem( source, 'ethRpcProxyWhitelist' )
 
 						if result.allow is 'Never'
-							config.flags['ethRpcProxyBlacklist'].push( source )
-							config.saveFlag( 'ethRpcProxyBlacklist' )
+							config.addItem( source, 'ethRpcProxyBlacklist' )
 
 						proxy_request.write( data ) if contains( rpcDomainWhitelist(), source )
 						proxy_request.end()

@@ -8,6 +8,8 @@ module.exports = (gui) ->
 	win.window.init = ->
 		config = this.config
 
+		config.on 'updated', -> win.window.location.reload()
+
 		rootDir = process.cwd()
 		console.log "RootDir: #{ rootDir }"
 		win.window.document.getElementById('rootDir').innerHTML = rootDir
@@ -20,8 +22,10 @@ module.exports = (gui) ->
 		console.log "Version: #{ version }"
 		win.window.document.getElementById('version').innerHTML = version
 
-		clearBtn = win.window.document.getElementById('clearLocalstorage')
-		clearBtn.addEventListener 'click', -> win.window.localStorage.clear()
+		clearBtn = win.window.document.getElementById('reset')
+		clearBtn.addEventListener 'click', (ev) ->
+			ev.preventDefault()
+			config.saveDefaults( true )
 
 		for flag of config.flags
 			el = win.window.document.getElementById( flag )
@@ -39,14 +43,25 @@ module.exports = (gui) ->
 					config.set( ev.target.id, ev.target.value )
 
 			else if el.tagName is 'UL' or el.tagName is 'OL'
-				val = config.get(flag)
-				for i in val
-					item = win.window.document.createElement( 'li' )
-					if typeof i is 'object'
-						item.innerHTML = JSON.stringify(i)
-					else
-						item.innerHTML = i
-					el.appendChild( item )
+				do (flag) ->
+					val = config.get(flag)
+					for i in val
+						item = win.window.document.createElement( 'li' )
+						remove = win.window.document.createElement( 'a' )
+						remove.href = "#"
+						remove.className = 'remove'
+						remove.title = 'Remove item'
+						remove.innerHTML = 'x'
+						remove.addEventListener 'click', (ev) ->
+							ev.preventDefault()
+							config.removeItem( i, flag )
+
+						if typeof i is 'object'
+							item.innerHTML = JSON.stringify(i)
+						else
+							item.innerHTML = i
+						item.appendChild( remove )
+						el.appendChild( item )
 
 
 		console.log( "Ξthos settings initialized: ok" )

@@ -57,6 +57,20 @@
 				clear: both;
 			}
 
+			ul, ol {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				margin-bottom: 1em;
+			}
+
+			li a.remove {
+				color: red;
+				font-weight: bold;
+				text-decoration: none;
+				margin-left: 1em;
+			}
+
 		</style>
 		
 	</head>
@@ -97,7 +111,8 @@
 					<label for="debug">Show debug toolbar in windows</label>
 				</div>
 				<div class="form-group">
-					<button id="clearLocalstorage">Clear localStorage</button>
+					<button id="reset">Reset</button>
+					<label for="reset">Reset all settings to defaults</label>
 				</div>
 			</form>
 		</div>
@@ -127,14 +142,7 @@
 						<label for="ethRpcCorsDomain">RPC Cors Domains: </label>
 						<input type="text" id="ethRpcCorsDomain" value="">
 					</div>
-					<div class="form-group vert">
-						<h4>RPC Whitelist:</h4>
-						<ul id="ethRpcProxyWhitelist"></ul>
-					</div>
-					<div class="form-group vert">
-						<h4>RPC Blacklist:</h4>
-						<ul id="ethRpcProxyBlacklist"></ul>
-					</div>
+					
 				</div>
 				<div class="half-width">
 					<div class="form-group">
@@ -144,6 +152,14 @@
 					<div class="form-group vert">
 						<label for="ethRemoteNodeAddr">Remote Node Address: </label>
 						<input type="text" id="ethRemoteNodeAddr" value="">
+					</div>
+					<div class="form-group vert">
+						<h4>RPC Whitelist:</h4>
+						<ul id="ethRpcProxyWhitelist"></ul>
+					</div>
+					<div class="form-group vert">
+						<h4>RPC Blacklist:</h4>
+						<ul id="ethRpcProxyBlacklist"></ul>
 					</div>
 				</div>
 			</form>
