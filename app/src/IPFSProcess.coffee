@@ -82,9 +82,13 @@ module.exports = class IPFSProcess extends Backbone.Model
 			body: "Select the file you would like to add to IPFS."
 			form: """
 				<label><input type="file" name="file"></label>
-				<input type="submit" value="Add">
+				<div class="center">
+					<input type="submit" name="add" value="Cancel">
+					<input type="submit" name="add" value="Add">
+				</div>
 			"""
 			callback: (result) ->
+				return if result.add is 'Cancel'
 				return unless result.file
 				exec "#{self.path} add -q #{result.file}", (err, stdout, stderr) ->
 					callback( err, stdout )
@@ -96,9 +100,13 @@ module.exports = class IPFSProcess extends Backbone.Model
 			body: "Select the folder you would like to add to IPFS."
 			form: """
 				<label><input type="file" multiple webkitdirectory="" directory="" name="file"></label>
-				<input type="submit" value="Add">
+				<div class="center">
+					<input type="submit" name="add" value="Cancel">
+					<input type="submit" name="add" value="Add">
+				</div>
 			"""
 			callback: (result) ->
+				return if result.add is 'Cancel'
 				return unless result.file
 				exec "#{self.path} add -r -q #{result.file}", (err, stdout, stderr) ->
 					callback( err, stdout.split("\n").reverse()[1] )

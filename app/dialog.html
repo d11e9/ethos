@@ -75,6 +75,18 @@
                 display: inline;
                 padding: 0.1em 0.4em;
             }
+
+            label input {
+                width: 50%;
+            }
+
+            input[type="file"] {
+                margin-left: 1em;
+            }
+
+            .center {
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -101,7 +113,7 @@
 
             var gui = require('nw.gui')
             var win = gui.Window.get()
-            win.showDevTools()
+            //win.showDevTools()
 
             var id = window.document.location.hash.substr(1)
             var content = global.dialogContent( id )

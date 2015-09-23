@@ -34,6 +34,9 @@ module.exports = (gui) ->
 	EthRpcProxy = require './EthRpcProxy.coffee'
 	EthRpcProxy(web3, config, dialogManager)
 
+	DAppServer = require './DAppServer.coffee'
+	DAppServer({config})
+
 	win.window.onload = ->
 		win.window.win = win
 		win.window.log = -> window.console.log arguments

@@ -23,11 +23,15 @@ module.exports = (gui) ->
 						title: 'Ethos: Add \u00D0App'
 						body: "Please provide the IPFS content hash and a name for this \u00D0App."
 						form: """
-							<label>\u00D0App name: <input type="text" name="name"></label>
-							<label>\u00D0App hash: <input type="text" name="hash"></label>
-							<input type="submit" value="Add">
+							<input type="text" placeholder="Name" name="name">
+							<input type="text" placeholder="IPFS Hash" name="hash">
+							<div class="center">
+								<input type="submit" name="add" value="Cancel">
+								<input type="submit" name="add" value="Add">
+							</div>
 						"""
 						callback: (result) ->
+							return if result.add is 'Cancel'
 							return unless result.hash and result.name
 							self.addIPFSDApp( result.name, result.hash )
 
@@ -39,11 +43,14 @@ module.exports = (gui) ->
 						title: 'Ethos: Add \u00D0App'
 						body: "Select the <em>index.html</em> file for your local \u00D0App and a name."
 						form: """
-							<label>\u00D0App name: <input type="text" name="name"></label>
-							<label>\u00D0App index: <input type="file" name="file"></label>
-							<input type="submit" value="Add">
+							<input type="text" placeholder="Name" name="name"> <input type="file" name="file">
+							<div class="center">
+								<input type="submit" name="add" value="Cancel">
+								<input type="submit" name="add" value="Add">
+							</div>
 						"""
 						callback: (result) ->
+							return if result.add is 'Cancel'
 							return unless result.file and result.name
 							self.addLocalDApp( result.name, result.file )
 					
@@ -85,16 +92,17 @@ module.exports = (gui) ->
 				click: =>
 					@dialogManager.newDialog
 						title: 'Ethos: Remove \u00D0App'
-						body: "Are you sure you want to remove the \u00D0App: <em>#{ name }</em> from Ethos."
+						body: "Are you sure you want to remove the IPFS \u00D0App: <strong>#{ name }</strong> from Ethos? "
 						form: """
-							<input type="submit" name="are_you_sure" value="cancel">
-							<input type="submit" name="are_you_sure" value="yes">
+							<div class="center">
+								<input type="submit" name="remove" value="Cancel">
+								<input type="submit" name="remove" value="Yes">
+							</div>
 						"""
 						callback: (result) ->
-							root.window.console.log( result )
-							if result.are_you_sure is 'yes'
-								self.menu.remove( menuItem )
-								self.removeIFPSDApp(name, hash )
+							return if result.remove is 'Cancel'
+							self.menu.remove( menuItem )
+							self.removeIFPSDApp(name, hash )
 			menu.append( open )
 			menu.append( remove )
 			menuItem
@@ -113,16 +121,17 @@ module.exports = (gui) ->
 				click: =>
 					@dialogManager.newDialog
 						title: 'Ethos: Remove \u00D0App'
-						body: "Are you sure you want to remove the \u00D0App: <em>#{ name }</em> from Ethos."
+						body: "Are you sure you want to remove the local \u00D0App: <strong>#{ name }</strong> from Ethos?"
 						form: """
-							<input type="submit" name="are_you_sure" value="cancel">
-							<input type="submit" name="are_you_sure" value="yes">
+							<div class="center">
+								<input type="submit" name="remove" value="Cancel">
+								<input type="submit" name="remove" value="Yes">
+							</div>
 						"""
 						callback: (result) ->
-							root.window.console.log( result )
-							if result.are_you_sure is 'yes'
-								self.menu.remove( menuItem )
-								self.removeLocalDApp(name, path )
+							return if result.remove is 'Cancel'
+							self.menu.remove( menuItem )
+							self.removeLocalDApp(name, path )
 			menu.append( open )
 			menu.append( remove )
 			menuItem

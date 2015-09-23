@@ -9,7 +9,9 @@ alert = window.alert
 prompt = window.prompt
 confirm = window.confirm
 
+
 module.exports = class EthProcess extends Backbone.Model
+	root = this
 	constructor: ({@os, ext, @config, @dialogManager}) ->
 		@process = null
 		@connected = false
@@ -102,12 +104,16 @@ module.exports = class EthProcess extends Backbone.Model
 		self = this
 		@dialogManager.newDialog
 			title: 'Ethos: Account Unlock'
-			body: "Enter passphrase to unlock account: #{ acc }"
+			body: "Enter passphrase to unlock account: <em>#{ acc }</em>"
 			form: """
-				<input type="password" name="password"/>
-				<input type="submit" value="Unlock"/>
+				<label>Passphrase: <input type="password" name="password"/></label>
+				<div class="center">
+					<input type="submit" name="unlock" value="Cancel"/>
+					<input type="submit" name="unlock" value="Unlock"/>
+				</div>
 			"""
 			callback: (result) ->
+				return if result.unlock is 'Cancel'
 				jsonrpc =
 					jsonrpc: "2.0"
 					id: 1
@@ -119,20 +125,34 @@ module.exports = class EthProcess extends Backbone.Model
 					console.log( "Account Unlocked: ", res?.result is true )
 
 	newAccount: =>
-		pass1 = prompt( "Enter passphrase: ")
-		pass2 = prompt( "Repeat passphrase: ")
-		if pass1 is pass2
-			@web3.currentProvider.sendAsync({
-				jsonrpc: "2.0",
-				id: 1,
-				method: "personal_newAccount",
-				params: [pass1]
-				}, (err,res) -> console.log( "Account created: ", res.result ))
-		else
-			alert("Error: Passphrases do not match. New account not created.")
-
-		@web3.eth.getAccounts (err,accounts) ->
-			console.log("Accounts:", accounts)
+		self = this
+		@dialogManager.newDialog
+			title: 'Ethos: New Account'
+			body: "Choose a secure passphrase and dont forget it."
+			form: """
+				<input type="password" placeholder="Passphrase" name="password1"> <input type="password" placeholder="Re-type Passphrase"name="password2">
+				<div class="center">
+					<input type="submit" name="continue" value="Cancel">
+					<input type="submit" name="continue" value="Create">
+				</div>
+			"""
+			callback: (result) ->
+				return if result.continue is 'Cancel'
+				if result.password1 is result.password2
+					self.web3.currentProvider.sendAsync({
+						jsonrpc: "2.0",
+						id: 1,
+						method: "personal_newAccount",
+						params: [result.password1]
+					}, (err,res) ->
+						self.window.console.log( "Account created: ", res.result )
+						self.trigger( 'status', !!self.process )
+					)
+				else
+					self.dialogManager.newDialog
+						title: 'Ethos: New Account'
+						body: "Passphrases do not match. New account not created."
+						type: 'error'
 
 	toggleMining: =>
 		@web3.eth.getMining (err, mining) =>
@@ -148,18 +168,40 @@ module.exports = class EthProcess extends Backbone.Model
 			@web3.currentProvider.sendAsync( rpcjson, (err,res) -> console.log( "Mining toggled: ", res ))
 	
 	importWallet: (filePath, cb) ->
-		password = prompt("Enter passphrase to import wallet") + "\n"
-		process = spawn( @path, ["--datadir", @datadir, "wallet", "import", filePath])
-		process.stdout.on 'data', (data) ->
-			console.log "geth import stdout:", data.toString('utf8')
-			process.stdin.write(password)
+		self = this
+		@dialogManager.newDialog
+			title: 'Ethos: Wallet Import'
+			body: "Locate your <em>.json</em> wallet file to import."
+			form: """
+				<input type="password" placeholder="Passphrase" name="password"> <input type="file" name="file">
+				<div class="center">
+					<input type="submit" name="import" value="Cancel">
+					<input type="submit" name="import" value="Import">
+				</div>
+			"""
+			callback: (result) ->
+				return if result.import is 'Cancel'
+				return unless result.file
+				password = result.password + "\n"
+				process = spawn( self.path, ["--datadir", self.datadir, "wallet", "import", result.file])
+				process.stdout.on 'data', (data) ->
+					global.window.console.log "geth import stdout:", data.toString('utf8')
+					process.stdin.write("y\n")
+					process.stdin.write(password)
 
-		process.stderr.on 'data', (data) ->
-			alert "Import Error: #{ data.toString('utf8') }"
+				process.stderr.on 'data', (data) ->
+					self.dialogManager.newDialog
+						title: 'Ethos: Import Error'
+						body: data.toString('utf8')
+						type: 'error'
 
-		process.on 'close', (code) ->
-			console.log "geth import CLOSE: ", code
-			cb( code != 0 )
+				process.on 'close', (code) ->
+					global.window.console.log "geth import CLOSE: ", code
+					if code == 0
+						self.dialogManager.newDialog
+							title: 'Ethos: Wallet Import'
+							body: "Wallet successfully imported."
+
 
 	kill: ->
 		console.log("KILLING ETHEREUM PROCESS")

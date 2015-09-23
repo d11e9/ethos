@@ -4,7 +4,7 @@ path = require 'path'
 module.exports = (gui) ->
 
 	class Account
-		constructor: (@address, @process, @config) ->
+		constructor: (@address, @process, @config, @dialogManager) ->
 			@web3 = @process.web3
 			@submenu = new gui.Menu()
 			@balanceItem = new gui.MenuItem
@@ -73,18 +73,12 @@ module.exports = (gui) ->
 			@menu.append( @newAccount )
 
 		createImportItem: ->
+			self = this
 			@import = new gui.MenuItem
 				label: 'Import Wallet'
 				enabled: !@config.getBool('ethRemoteNode')
-				click: =>
-					chooser = window.document.querySelector('#addFile')
-					chooser.addEventListener "change", (ev) =>
-						filePath = ev.target.value
-						@process.importWallet filePath, (err) ->
-							window.alert( "Wallet imported successfully") unless err
-						gui.Window.get().hide()
-					gui.Window.get().show()
-					chooser.click()
+				click: => @process.importWallet()
+					
 			@menu.append( @import )
 
 		createMiningItem: ->
