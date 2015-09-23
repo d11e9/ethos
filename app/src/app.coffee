@@ -37,9 +37,9 @@ module.exports = (gui) ->
 	win.window.onload = ->
 		win.window.win = win
 		win.window.log = -> window.console.log arguments
-		win.window.eth = ethProcess = new EthProcess({os, ext, config})
-		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config, gui})
-		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess, config})
+		win.window.eth = ethProcess = new EthProcess({os, ext, config, dialogManager})
+		win.window.ipfs = ipfsProcess = new IPFSProcess({os, ext, config, gui, dialogManager})
+		win.window.ethos = menu = new EthosMenu({gui, ipfsProcess, ethProcess, config, dialogManager })
 
 		ethProcess.start() if config.getBool( 'ethStart' )
 		ipfsProcess.start() if config.getBool( 'ipfsStart' )

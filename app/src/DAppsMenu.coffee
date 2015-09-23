@@ -3,8 +3,10 @@ Backbone = require 'backbone'
 path = require 'path'
 
 module.exports = (gui) ->
+	root = this
 	class DAppsMenu extends Backbone.Model
-		constructor: ({@eth, @ipfs, @config}) ->
+		constructor: ({@eth, @ipfs, @config, @dialogManager}) ->
+			self = this
 			@win = window
 			@menu = new gui.Menu()
 			@dappWindows = []
@@ -17,22 +19,34 @@ module.exports = (gui) ->
 			@newDappMenu.append new gui.MenuItem
 				label: 'From IPFS hash'
 				click: =>
-					ipfsHash = window.prompt("Please enter the IPFS content hash of the \u00D0App to add.")
-					name = window.prompt("What name would you like to save that dapp as?")
-					return unless ipfsHash and name
-					@addIPFSDApp( name, ipfsHash )
+					@dialogManager.newDialog
+						title: 'Ethos: Add \u00D0App'
+						body: "Please provide the IPFS content hash and a name for this \u00D0App."
+						form: """
+							<label>\u00D0App name: <input type="text" name="name"></label>
+							<label>\u00D0App hash: <input type="text" name="hash"></label>
+							<input type="submit" value="Add">
+						"""
+						callback: (result) ->
+							return unless result.hash and result.name
+							self.addIPFSDApp( result.name, result.hash )
 
 
 			@newDappMenu.append new gui.MenuItem
 				label: 'Local File'
 				click: =>
-					chooser = window.document.querySelector('#addFile')
-					chooser.addEventListener "change", (evt) =>
-						filePath = evt.target.value
-						gui.Window.get().hide()
-						name = window.prompt("What name would you like to save this DApp as?")
-						@addLocalDApp( name, filePath ) if name and filePath
-					chooser.click()
+					@dialogManager.newDialog
+						title: 'Ethos: Add \u00D0App'
+						body: "Select the <em>index.html</em> file for your local \u00D0App and a name."
+						form: """
+							<label>\u00D0App name: <input type="text" name="name"></label>
+							<label>\u00D0App index: <input type="file" name="file"></label>
+							<input type="submit" value="Add">
+						"""
+						callback: (result) ->
+							return unless result.file and result.name
+							self.addLocalDApp( result.name, result.file )
+					
 
 			@menu.append new gui.MenuItem
 				label: 'Add \u00D0App'
@@ -44,7 +58,7 @@ module.exports = (gui) ->
 
 			@menu.append new gui.MenuItem
 				label: 'DApp List'
-				click: => @openDApp('DApp List', 'dapplist')
+				click: => @openDApp('\u00D0App List', 'dapplist')
 
 			for dapp in @config.get('ipfsDApps')
 				do (dapp) =>
@@ -58,6 +72,7 @@ module.exports = (gui) ->
 		closeAll: -> w.win.close(true) for w in @dappWindows
 
 		getIPFSDAppMenu: (name, hash) =>
+			self = this
 			menu = new gui.Menu()
 			menuItem = new gui.MenuItem
 				label: name
@@ -68,14 +83,24 @@ module.exports = (gui) ->
 			remove = new gui.MenuItem
 				label: 'Remove'
 				click: =>
-					if (window.confirm "Are you sure you want to delete the DApp: #{ name }")
-						@menu.remove( menuItem )
-						@removeIFPSDApp(name, hash )
+					@dialogManager.newDialog
+						title: 'Ethos: Remove \u00D0App'
+						body: "Are you sure you want to remove the \u00D0App: <em>#{ name }</em> from Ethos."
+						form: """
+							<input type="submit" name="are_you_sure" value="cancel">
+							<input type="submit" name="are_you_sure" value="yes">
+						"""
+						callback: (result) ->
+							root.window.console.log( result )
+							if result.are_you_sure is 'yes'
+								self.menu.remove( menuItem )
+								self.removeIFPSDApp(name, hash )
 			menu.append( open )
 			menu.append( remove )
 			menuItem
 
 		getLocalDAppMenu: (name, path) =>
+			self = this
 			menu = new gui.Menu()
 			menuItem = new gui.MenuItem
 				label: name
@@ -86,9 +111,18 @@ module.exports = (gui) ->
 			remove = new gui.MenuItem
 				label: 'Remove'
 				click: =>
-					#if (window.confirm "Are you sure you want to delete the DApp: #{ name }")
-					@menu.remove( menuItem )
-					@removeLocalDApp(name, path )
+					@dialogManager.newDialog
+						title: 'Ethos: Remove \u00D0App'
+						body: "Are you sure you want to remove the \u00D0App: <em>#{ name }</em> from Ethos."
+						form: """
+							<input type="submit" name="are_you_sure" value="cancel">
+							<input type="submit" name="are_you_sure" value="yes">
+						"""
+						callback: (result) ->
+							root.window.console.log( result )
+							if result.are_you_sure is 'yes'
+								self.menu.remove( menuItem )
+								self.removeLocalDApp(name, path )
 			menu.append( open )
 			menu.append( remove )
 			menuItem

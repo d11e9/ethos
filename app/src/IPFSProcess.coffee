@@ -8,7 +8,7 @@ ipfsApi = require 'ipfs-api'
 
 
 module.exports = class IPFSProcess extends Backbone.Model
-	constructor: ({@os, ext, @config, @gui}) ->
+	constructor: ({@os, ext, @config, @gui, @dialogManager}) ->
 		@process = null
 		@path = path.join( process.cwd(), "./bin/#{ @os }/ipfs/ipfs#{ ext }")
 		@api = new ipfsApi('localhost', 5001)
@@ -76,26 +76,32 @@ module.exports = class IPFSProcess extends Backbone.Model
 		@ipfsConfig.Addresses.API.replace('/ip4/','').replace('/tcp/', ':')
 
 	addFile: (callback) ->
-		chooser = window.document.querySelector('#addFile')
-		chooser.addEventListener "change", (evt) =>
-			filePath = evt.target.value
-			return if filePath is ''
-			evt.target.value = ""
-			@gui.Window.get().hide()
-			exec "#{@path} add -q #{filePath}", (err, stdout, stderr) ->
-				callback( err, stdout )
-		chooser.click()
+		self = this
+		@dialogManager.newDialog
+			title: 'Ethos: Add File'
+			body: "Select the file you would like to add to IPFS."
+			form: """
+				<label><input type="file" name="file"></label>
+				<input type="submit" value="Add">
+			"""
+			callback: (result) ->
+				return unless result.file
+				exec "#{self.path} add -q #{result.file}", (err, stdout, stderr) ->
+					callback( err, stdout )
 
 	addFolder: (callback) ->
-		chooser = window.document.querySelector('#addFolder')
-		chooser.addEventListener "change", (evt) =>
-			filePath = evt.target.value
-			return if filePath is ''
-			evt.target.value = ""
-			@gui.Window.get().hide()
-			exec "#{@path} add -r -q #{filePath}", (err, stdout, stderr) ->
-				callback( err, stdout.split("\n").reverse()[1] )
-		chooser.click()
+		self = this
+		@dialogManager.newDialog
+			title: 'Ethos: Add Folder'
+			body: "Select the folder you would like to add to IPFS."
+			form: """
+				<label><input type="file" multiple webkitdirectory="" directory="" name="file"></label>
+				<input type="submit" value="Add">
+			"""
+			callback: (result) ->
+				return unless result.file
+				exec "#{self.path} add -r -q #{result.file}", (err, stdout, stderr) ->
+					callback( err, stdout.split("\n").reverse()[1] )
 
 	kill: ->
 		@process?.stdin?.pause()

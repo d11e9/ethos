@@ -10,7 +10,7 @@ prompt = window.prompt
 confirm = window.confirm
 
 module.exports = class EthProcess extends Backbone.Model
-	constructor: ({@os, ext, @config}) ->
+	constructor: ({@os, ext, @config, @dialogManager}) ->
 		@process = null
 		@connected = false
 		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
@@ -82,12 +82,12 @@ module.exports = class EthProcess extends Backbone.Model
 		
 		@process.stdout.on 'data', (data) =>
 			console.log('geth stdout: ' + data) if @config.getBool('logging')
-			@stderr += data
+			@stdout += data
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
 			console.log('geth stderr: ' + data) if @config.getBool('logging')
-			@stdout += data
+			@stderr += data
 			@trigger( 'status', !!@process )
 
 		
@@ -99,16 +99,24 @@ module.exports = class EthProcess extends Backbone.Model
 			@start()
 
 	unlock: (acc) =>
-		passphrase = prompt("Enter passphrase to unlock account: #{ acc }")
-		jsonrpc =
-			jsonrpc: "2.0"
-			id: 1
-			method: "personal_unlockAccount"
-			params: [acc, passphrase]
-		@web3.currentProvider.sendAsync jsonrpc, (err,res) ->
-			if res.error
-				alert( res.error.message )
-			console.log( "Account Unlocked: ", res?.result is true )
+		self = this
+		@dialogManager.newDialog
+			title: 'Ethos: Account Unlock'
+			body: "Enter passphrase to unlock account: #{ acc }"
+			form: """
+				<input type="password" name="password"/>
+				<input type="submit" value="Unlock"/>
+			"""
+			callback: (result) ->
+				jsonrpc =
+					jsonrpc: "2.0"
+					id: 1
+					method: "personal_unlockAccount"
+					params: [acc, result.password]
+				self.web3.currentProvider.sendAsync jsonrpc, (err,res) ->
+					if res.error
+						alert( res.error.message )
+					console.log( "Account Unlocked: ", res?.result is true )
 
 	newAccount: =>
 		pass1 = prompt( "Enter passphrase: ")

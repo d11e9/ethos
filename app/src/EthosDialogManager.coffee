@@ -3,7 +3,6 @@ Backbone = require 'backbone'
 
 module.exports = (gui) ->
 	root = this
-	
 
 	class DialogWindow extends Backbone.Model
 		initialize: (options) ->
@@ -12,6 +11,8 @@ module.exports = (gui) ->
 			@body = options.body or 'Are you sure?'
 			@width = options.width or 500
 			@height = options.height or 200
+			@callback = options.callback or null
+			@form = options.form or null
 			@options = options.options or [{title: 'Ok', value: 1}]
 			@set( 'dialogID', global.randomString() )
 			@win = gui.Window.open "app://ethos/app/dialog.html##{ @get('dialogID') }",
@@ -38,13 +39,16 @@ module.exports = (gui) ->
 			self = this
 			@dialogs = new Backbone.Collection([])
 			@listenTo( @dialogs, 'dialog:closed', @_handleDialogClosed )
+
 			global.dialogContent = (id) ->
 				dialog = self.dialogs.findWhere({dialogID: id})
 				title: dialog.title
 				body: dialog.body
 				options: dialog.options
-			global.dialogResponse = (id, data) ->
-				dialog = self.dialogs.findWhere({dialogID: id})
+				form: dialog.form
+
+			global.dialogResponse = (data) ->
+				dialog = self.dialogs.findWhere({dialogID: data.id})
 				if dialog?
 					dialog.win.close()
 					dialog.callback?( data )

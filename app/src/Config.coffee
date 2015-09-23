@@ -16,6 +16,7 @@ module.exports = class Config extends Backbone.Model
 			ethRpcProxyPort: 8545
 			ethRpcCorsDomain: "*"
 			ethRpcProxyWhitelist: []
+			ethRpcProxyBlacklist: []
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
 			ipfsDApps: [

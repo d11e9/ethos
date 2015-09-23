@@ -39,7 +39,7 @@ module.exports = class EthosMenu
 	showAbout: ->
 		@openWindow( 'about', 986, 385 )
 
-	constructor: ({@gui, @ethProcess, @ipfsProcess, @config})->
+	constructor: ({@gui, @ethProcess, @ipfsProcess, @config, @dialogManager})->
 		gui = @gui
 		@win = window
 		EthereumMenu = require( './EthereumMenu.coffee')(gui)
@@ -49,7 +49,7 @@ module.exports = class EthosMenu
 		@menu = new gui.Menu()
 		@ipfsMenu = new IPFSMenu( process: @ipfsProcess, config: @config )
 		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
-		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config )
+		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config, dialogManager: @dialogManager )
 
 		@ipfs = @ipfsMenu.get()
 		@eth = @ethMenu.get()

@@ -20,6 +20,9 @@ module.exports = (gui) ->
 		console.log "Version: #{ version }"
 		win.window.document.getElementById('version').innerHTML = version
 
+		clearBtn = win.window.document.getElementById('clearLocalstorage')
+		clearBtn.addEventListener 'click', -> win.window.localStorage.clear()
+
 		for flag of config.flags
 			el = win.window.document.getElementById( flag )
 			continue unless el
@@ -34,5 +37,16 @@ module.exports = (gui) ->
 				el.value = config.get(flag)
 				el.addEventListener 'change', (ev) ->
 					config.set( ev.target.id, ev.target.value )
+
+			else if el.tagName is 'UL' or el.tagName is 'OL'
+				val = config.get(flag)
+				for i in val
+					item = win.window.document.createElement( 'li' )
+					if typeof i is 'object'
+						item.innerHTML = JSON.stringify(i)
+					else
+						item.innerHTML = i
+					el.appendChild( item )
+
 
 		console.log( "Ξthos settings initialized: ok" )

@@ -19,6 +19,16 @@ module.exports = (gui) ->
 				label: 'Start'
 				click: => @process.toggle()
 
+			@addFile = new gui.MenuItem
+				label: 'Add File'
+				click: => @process.addFile (err, hash) ->
+					window.alert( "File added: #{hash}")
+
+			@addFolder = new gui.MenuItem
+				label: 'Add Folder'
+				click: => @process.addFolder (err, hash) ->
+					window.alert( "Folder added: #{hash}")
+
 			@files = new gui.MenuItem
 				label: 'Manage Files'
 				enabled: false
@@ -33,11 +43,16 @@ module.exports = (gui) ->
 			@menu.append( @toggle )
 			@menu.append( @info )
 			@menu.append( @files )
+			@menu.append( @addFile )
+			@menu.append( @addFolder )
+
 
 		updateStatus: (running) =>
 			@status.label = "Status: Connecting"
 			@toggle.label = "Stop"
 			@files.enabled = false
+			@addFile.enabled = false
+			@addFolder.enabled = false
 			@info.enabled = false
 			if !running
 				@status.label = "Status: Not Running"
@@ -54,5 +69,7 @@ module.exports = (gui) ->
 					notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
 				@files.enabled = !err
 				@info.enabled = !err
+				@addFile.enabled = !err
+				@addFolder.enabled = !err
 
 		get: -> @rootItem

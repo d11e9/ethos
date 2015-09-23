@@ -96,6 +96,9 @@
 					<input type="checkbox" id="debug">
 					<label for="debug">Show debug toolbar in windows</label>
 				</div>
+				<div class="form-group">
+					<button id="clearLocalstorage">Clear localStorage</button>
+				</div>
 			</form>
 		</div>
 
@@ -123,6 +126,14 @@
 					<div class="form-group vert">
 						<label for="ethRpcCorsDomain">RPC Cors Domains: </label>
 						<input type="text" id="ethRpcCorsDomain" value="">
+					</div>
+					<div class="form-group vert">
+						<h4>RPC Whitelist:</h4>
+						<ul id="ethRpcProxyWhitelist"></ul>
+					</div>
+					<div class="form-group vert">
+						<h4>RPC Blacklist:</h4>
+						<ul id="ethRpcProxyBlacklist"></ul>
 					</div>
 				</div>
 				<div class="half-width">

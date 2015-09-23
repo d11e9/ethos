@@ -1,108 +1,147 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Ethos</title>
-		<style>
-			html, body {
-				margin: 0;
-				padding: 0;
-				font-family: monospace;
-				background-color: transparent;
-			}
+    <head>
+        <title>Ethos</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                font-family: monospace;
+                background-color: transparent;
+            }
 
-			body {
-				padding: 1em;
-			}
+            body {
+                padding: 1em;
+            }
 
-			#dialog {
-				background-color: white;
-				box-shadow: 0 0 1em #000;
-				box-sizing: border-box;
-				height: 100%;
-				border-radius: 3px;
-				border: 1px solid #7B7C90;
-			}
-			#title {
-				font-size: 1.2em;
-				padding: 0.6em;
-				border-bottom: 1px solid #BFC1E7;
-				-webkit-app-region: drag;
-				cursor: pointer;
-				margin: 0;
-				background-color: #DCD7FA;
-				border-radius: 3px 3px 0 0;
-				color: rgb(47, 47, 66);
-			}
+            #dialog {
+                background-color: white;
+                box-shadow: 0 0 1em #000;
+                box-sizing: border-box;
+                height: 100%;
+                border-radius: 3px;
+                border: 1px solid #7B7C90;
+            }
+            #title {
+                font-size: 1.2em;
+                padding: 0.6em;
+                border-bottom: 1px solid #BFC1E7;
+                -webkit-app-region: drag;
+                cursor: pointer;
+                margin: 0;
+                background-color: #DCD7FA;
+                border-radius: 3px 3px 0 0;
+                color: rgb(47, 47, 66);
+            }
 
-			#body {
-				margin: 0;
-				padding: 1em;
-			}
+            #body, #dialogForm {
+                margin: 0;
+                padding: 1em;
+            }
 
-			#options {
-				text-align: center;
-			}
+            #options {
+                text-align: center;
+            }
 
-			#options button {
-				margin: 1em;
-				font-size: 1.2em;
-				cursor: pointer;
-			}
+            input[type="text"],
+            input[type="password"],
+            textarea {
+                padding: 0.4em;
+            }
 
-			pre, em {
-				background-color: #E8E7F2;
-				display: inline;
-				padding: 0.1em 0.4em;
-			}
-		</style>
-	</head>
-	<body>
+            button, input[type="submit"] {
+                margin: 1em;
+                font-size: 1.2em;
+                cursor: pointer;
+            }
 
-		<div id="dialog">
-			<h1 id="title"></h1>
-			<p id="body"></p>
-			<div id="options"></div>
-		</div>
+            label {
+                display: block;
+                margin-bottom: 0.5em;
+            }
 
-		<script>
+            pre, em {
+                background-color: #E8E7F2;
+                display: inline;
+                padding: 0.1em 0.4em;
+            }
+        </style>
+    </head>
+    <body>
 
-			var gui = require('nw.gui')
-			var win = gui.Window.get()
+        <div id="dialog">
+            <h1 id="title"></h1>
+            <p id="body"></p>
+            <form id="dialogForm" action="#">
+                <div id="options"></div>
+            </form>
+        </div>
 
-			// force focus on dialogs
-			win.on('blur', function(){
-				win.focus()
-			})
+        <script>
 
-			var id = window.document.location.hash.substr(1)
-			var content = global.dialogContent( id )
+            function serializeForm(el) {
+                var data = {}
+                for (var i in el.elements) {
+                    if (el.elements[i].name && !el.elements[i].disabled) {
+                        data[el.elements[i].name] = el.elements[i].value;
+                    }
+                }
+                return data;
+            }
 
-			var dialog = window.document.getElementById('dialog')
-			var title = window.document.getElementById('title')
-			var body = window.document.getElementById('body')
-			var options = window.document.getElementById('options')
+            var gui = require('nw.gui')
+            var win = gui.Window.get()
+            win.showDevTools()
 
-			document.title = content.title
-			title.innerHTML = content.title
-			body.innerHTML = content.body
+            var id = window.document.location.hash.substr(1)
+            var content = global.dialogContent( id )
 
-			for (var o in content.options) {
-				var option = content.options[o]
-				opt = window.document.createElement('button')
-				opt.innerHTML = option.title
-				opt.setAttribute('data-value', option.value )
-				opt.addEventListener( 'click', function(ev){
-					global.dialogResponse( id, { value: ev.target.getAttribute('data-value') })
-				})
-				options.appendChild( opt )
-			}
+            var dialog = window.document.getElementById('dialog')
+            var title = window.document.getElementById('title')
+            var body = window.document.getElementById('body')
+            var options = window.document.getElementById('options')
+            var form = window.document.getElementById('dialogForm')
 
-			win.width = dialog.clientWidth
-			win.height = window.document.body.scrollHeight
-			//win.showDevTools()
-			win.setAlwaysOnTop( true )
-			win.requestAttention(1)
-			win.setPosition( 'center' )
-		</script>
-	</body>
+            document.title = content.title
+            title.innerHTML = content.title
+            body.innerHTML = content.body
+
+            if (content.form) {
+                form.innerHTML = content.form;
+            } else {
+                var opt = window.document.createElement('input')
+                opt.value = 'Ok'
+                opt.type = 'submit'
+                options.appendChild( opt )
+            }
+
+            for (var i in form.elements) {
+                if (form.elements[i].type == 'submit') {
+                    var button = form.elements[i];
+                    form.elements[i].addEventListener( 'click', function(ev){
+                        ev.preventDefault()
+                        for (var x = form.elements.length - 1; x > 0; x--) {
+                            if (form.elements[x].type == 'submit' && form.elements[x] !== ev.target) {
+                                form.elements[x].parentNode.removeChild( form.elements[x] )
+                            }
+                        }
+                        global.dialogResponse( serializeForm( form ) )
+                        return false;
+                    })
+                }
+            }
+
+            idField = window.document.createElement('input')
+            idField.hidden = true
+            idField.value = id
+            idField.name = 'id'
+            form.appendChild( idField )
+
+            win.width = dialog.clientWidth
+            win.height = window.document.body.scrollHeight
+            win.setAlwaysOnTop( true )
+            win.requestAttention(1)
+            win.setPosition( 'center' )
+        </script>
+    </body>
 </html>
