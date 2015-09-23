@@ -11,6 +11,7 @@ module.exports = (gui) ->
 			@body = options.body or 'Are you sure?'
 			@width = options.width or 500
 			@height = options.height or 200
+			@type = options.type or ''
 			@callback = options.callback or null
 			@form = options.form or null
 			@options = options.options or [{title: 'Ok', value: 1}]
@@ -46,6 +47,7 @@ module.exports = (gui) ->
 				body: dialog.body
 				options: dialog.options
 				form: dialog.form
+				type: dialog.type
 
 			global.dialogResponse = (data) ->
 				dialog = self.dialogs.findWhere({dialogID: data.id})

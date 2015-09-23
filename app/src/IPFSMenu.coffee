@@ -1,6 +1,6 @@
 module.exports = (gui) ->
 	class IPFSMenu
-		constructor: ({@process, @config}) ->
+		constructor: ({@process, @config, @dialogManager}) ->
 			@menu = new gui.Menu()
 			@rootItem = new gui.MenuItem
 				label: 'IPFS'
@@ -9,6 +9,18 @@ module.exports = (gui) ->
 			@createItems()
 			@process.on( 'status', @updateStatus )
 			@process.on( 'connected', @onConnected )
+
+
+		showHash: (err, hash) =>
+			if err
+				@dialogManager.newDialog
+					title: "Ethos: IPFS Error"
+					body: "<p>#{ err.message }</p>"
+					type: 'error'
+			else
+				@dialogManager.newDialog
+					title: "Ethos: IPFS"
+					body: "<p>Added to IPFS: <em>#{hash}</em></p>"
 
 		createItems: ->
 			@status = new gui.MenuItem
@@ -21,13 +33,12 @@ module.exports = (gui) ->
 
 			@addFile = new gui.MenuItem
 				label: 'Add File'
-				click: => @process.addFile (err, hash) ->
-					window.alert( "File added: #{hash}")
+				click: => @process.addFile( @showHash )
+						
 
 			@addFolder = new gui.MenuItem
 				label: 'Add Folder'
-				click: => @process.addFolder (err, hash) ->
-					window.alert( "Folder added: #{hash}")
+				click: => @process.addFolder( @showHash )
 
 			@files = new gui.MenuItem
 				label: 'Manage Files'

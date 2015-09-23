@@ -47,8 +47,8 @@ module.exports = class EthosMenu
 		IPFSMenu = require('./IPFSMenu.coffee')(gui)
 
 		@menu = new gui.Menu()
-		@ipfsMenu = new IPFSMenu( process: @ipfsProcess, config: @config )
-		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config )
+		@ipfsMenu = new IPFSMenu( process: @ipfsProcess, config: @config, dialogManager: @dialogManager )
+		@ethMenu = new EthereumMenu( process: @ethProcess, config: @config, dialogManager: @dialogManager )
 		@dappsMenu = new DAppsMenu( eth: @ethProcess, ipfs: @ipfsProcess, config: @config, dialogManager: @dialogManager )
 
 		@ipfs = @ipfsMenu.get()

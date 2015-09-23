@@ -22,6 +22,12 @@
                 border-radius: 3px;
                 border: 1px solid #7B7C90;
             }
+
+            #dialog .error {
+                border: 1px solid #5E3136;
+            }
+
+
             #title {
                 font-size: 1.2em;
                 padding: 0.6em;
@@ -34,6 +40,10 @@
                 color: rgb(47, 47, 66);
             }
 
+            .error #title{
+                background-color: rgb(234, 71, 71);
+                color: white;
+            }
             #body, #dialogForm {
                 margin: 0;
                 padding: 1em;
@@ -105,6 +115,8 @@
             document.title = content.title
             title.innerHTML = content.title
             body.innerHTML = content.body
+
+            dialog.className += ' ' + content.type
 
             if (content.form) {
                 form.innerHTML = content.form;
