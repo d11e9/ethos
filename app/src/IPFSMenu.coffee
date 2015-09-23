@@ -49,6 +49,12 @@ module.exports = (gui) ->
 				label: 'Open Web UI'
 				enabled: false
 				click: => gui.Shell.openExternal("http://#{ @apiAddress }/webui")
+
+			@log = new gui.MenuItem
+				label: "Log"
+				click: =>
+					gui.Window.open('app://ethos/app/ipfsLog.html', toolbar: @config.getBool( 'debug' ))
+
 			
 			@menu.append( @status )
 			@menu.append( @toggle )
@@ -56,6 +62,7 @@ module.exports = (gui) ->
 			@menu.append( @files )
 			@menu.append( @addFile )
 			@menu.append( @addFolder )
+			@menu.append( @log )
 
 
 		updateStatus: (running) =>

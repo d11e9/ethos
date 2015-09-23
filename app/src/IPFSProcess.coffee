@@ -19,7 +19,6 @@ module.exports = class IPFSProcess extends Backbone.Model
 				exec "#{@path} config show", (err, stdout, stderr) =>
 					if !err
 						@ipfsConfig = JSON.parse( stdout )
-						console.log( 'IPFS Config:', @ipfsConfig )
 						@connected = true
 						@trigger( 'connected')
 					else
@@ -27,6 +26,10 @@ module.exports = class IPFSProcess extends Backbone.Model
 						console.log "IPFS Error:", err
 			else
 				@connected = false
+
+		global.ipfsLogRaw = ''
+		global.ipfsLog = new Backbone.Model()
+
 	start: ->
 		
 		args = ['daemon', '--init']
@@ -41,12 +44,14 @@ module.exports = class IPFSProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('IFPS stdout: ' + data) if @config.getBool('logging')
+			global.ipfsLogRaw += "<div class='line'>#{data}</div>"
+			global.ipfsLog.trigger( 'change' )
 			@stdout += data
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('IFPS stderr: ' + data) if @config.getBool('logging')
+			global.ipfsLogRaw += "<div class='line'>#{data}</div>"
+			global.ipfsLog.trigger( 'change' )
 			@stderr += data
 			@trigger( 'status', !!@process )
 
@@ -110,6 +115,7 @@ module.exports = class IPFSProcess extends Backbone.Model
 				return unless result.file
 				exec "#{self.path} add -r -q #{result.file}", (err, stdout, stderr) ->
 					callback( err, stdout.split("\n").reverse()[1] )
+				
 
 	kill: ->
 		@process?.stdin?.pause()
