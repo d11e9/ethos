@@ -13,37 +13,34 @@
 				margin: 0 1em;
 			}
 
-			#list {
-				clear: both;
-				list-style: none;
-				margin: 0;
-				padding: 0;
-			}
-
-			#list li {
-				margin: 0;
-				padding: 0;
-			}
 		</style>
 	</head>
 
 	<h1>DApp List</h1>
 	<p>A listing/registery contract on the Ethereum blockchain, which allows anyone to list DApps they create.</p>
-	<ul id="list"></ul>
+	<table id="list">
+		
+	</table>
 
 	<script type="template/html" id="listItemTemplate">
-		<span class="name">Name</span>
-		<span class="type">Type</span>
-		<span class="link">Link</span>
+		<td class="name">Name</td>
+		<td class="type">Type</td>
+		<td class="link">Link</td>
 	</script>
 
 	<script>
 		var template = document.getElementById('listItemTemplate').innerHTML;
 		var listEl = document.getElementById('list')
+		var dappList;
+
+		var dapplistABI = [{"constant":true,"inputs":[],"name":"tail","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"type":"function"},{"constant":true,"inputs":[],"name":"length","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"remove","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"isOwner","outputs":[{"name":"","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"removeListing","outputs":[{"name":"success","type":"bool"}],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"},{"name":"value","type":"address"}],"name":"add","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"head","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"registerExistingListing","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"items","outputs":[{"name":"prev","type":"address"},{"name":"next","type":"address"},{"name":"value","type":"address"}],"type":"function"},{"constant":false,"inputs":[],"name":"createListing","outputs":[{"name":"contractAddress","type":"address"}],"type":"function"}]
+		
 		window.onload = function(){
-			var item = document.createElement('li')
+			var item = document.createElement('th')
 			item.innerHTML = template;
 			listEl.appendChild( item )
+
+			dappList = web3.eth.contract( dapplistABI ).at( dappListAddress )
 		}
 	</script>
 	

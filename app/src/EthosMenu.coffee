@@ -17,7 +17,7 @@ module.exports = class EthosMenu
 				focus: true
 				show_in_taskbar: true
 				width: width or 800
-				height: height or 500
+				height: height or 600
 				position: "center"
 				min_width: 400
 				min_height: 200

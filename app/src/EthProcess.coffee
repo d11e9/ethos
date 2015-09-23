@@ -31,6 +31,9 @@ module.exports = class EthProcess extends Backbone.Model
 
 		@listenTo( @, 'status', @checkStatus )
 
+		global.ethLogRaw = ''
+		global.ethLog = new Backbone.Model()
+
 
 	checkStatus: (running) =>
 		return if running and @connected
@@ -70,7 +73,7 @@ module.exports = class EthProcess extends Backbone.Model
 		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
 
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
+		args = [ '--shh', '--verbosity', '4', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
 		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
 
 		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
@@ -83,13 +86,17 @@ module.exports = class EthProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			console.log('geth stdout: ' + data) if @config.getBool('logging')
+			# console.log('geth stdout: ' + data) if @config.getBool('logging')
 			@stdout += data
+			global.ethLogRaw += "<div class='line'>#{data}</div>"
+			global.ethLog.trigger( 'change' )
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			console.log('geth stderr: ' + data) if @config.getBool('logging')
+			# console.log('geth stderr: ' + data) if @config.getBool('logging')
 			@stderr += data
+			global.ethLogRaw += "<div class='line'>#{data}</div>"
+			global.ethLog.trigger( 'change' )
 			@trigger( 'status', !!@process )
 
 		

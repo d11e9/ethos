@@ -40,6 +40,7 @@ module.exports = (gui) ->
 			@createAccountsItem()
 			@createMiningItem()
 			@createConsoleItem()
+			@createLogItem()
 			@process.on( 'connected', @update )
 			@config.on( 'updated', @update )
 			@update()
@@ -102,6 +103,13 @@ module.exports = (gui) ->
 				label: "Console"
 				click: => @process.console()
 			@menu.append( @console )
+
+		createLogItem: =>
+			@log = new gui.MenuItem
+				label: "Log"
+				click: =>
+					gui.Window.open('app://ethos/app/ethLog.html', toolbar: @config.getBool( 'debug' ))
+			@menu.append( @log )
 
 		updateMining: =>
 			@web3.eth.getMining (err, mining) =>

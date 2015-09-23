@@ -16,7 +16,7 @@ module.exports = class Config extends Backbone.Model
 			ethRpcPort: 9001
 			ethRpcProxyPort: 8545
 			ethRpcCorsDomain: "*"
-			ethRpcProxyWhitelist: []
+			ethRpcProxyWhitelist: ['app://ethos']
 			ethRpcProxyBlacklist: []
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
