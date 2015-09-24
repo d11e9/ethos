@@ -1,5 +1,5 @@
-Backbone = require 'backbone'
-_ = require 'underscore'
+Backbone = require global.execPath 'backbone'
+_ = require global.execPath 'underscore'
 
 module.exports = class Config extends Backbone.Model
 	constructor: (@package)->

@@ -1,7 +1,7 @@
 http = require 'http'
-express = require 'express'
-bodyParser = require 'body-parser'
-multer = require 'multer'
+express = require global.execPath 'express'
+bodyParser = require global.execPath 'body-parser'
+multer = require global.execPath 'multer'
 server = express()
 
 contains = (arr, val) -> arr.indexOf( val ) >= 0

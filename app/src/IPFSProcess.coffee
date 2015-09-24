@@ -3,8 +3,8 @@ fs = require 'fs'
 cp = require 'child_process'
 spawn = cp.spawn
 exec = cp.exec
-Backbone = require 'backbone'
-ipfsApi = require 'ipfs-api'
+Backbone = require global.execPath 'backbone'
+ipfsApi = require global.execPath 'ipfs-api'
 
 
 module.exports = class IPFSProcess extends Backbone.Model

@@ -1,8 +1,10 @@
 
-path = require 'path'
-web3 = require 'web3'
 
-module.exports = (gui) ->
+module.exports = (gui, execPath) ->
+
+	web3 = require execPath 'web3'
+	global.execPath = execPath
+
 	process.on 'uncaughtException', (msg)->
 		window.console.log "Error: Uncaught Exception: ", msg
 

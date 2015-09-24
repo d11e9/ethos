@@ -1,8 +1,9 @@
 path = require 'path'
 fs = require 'fs'
 cp = require 'child_process'
-Backbone = require 'backbone'
 net = require 'net'
+
+Backbone = require global.execPath 'backbone'
 
 spawn = cp.spawn
 exec = cp.exec

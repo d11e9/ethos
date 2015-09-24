@@ -1,5 +1,5 @@
-_ = require 'underscore'
-Backbone = require 'backbone'
+_ = require global.execPath 'underscore'
+Backbone = require global.execPath 'backbone'
 path = require 'path'
 
 module.exports = (gui) ->

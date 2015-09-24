@@ -1,5 +1,5 @@
 
-Backbone = require 'backbone'
+Backbone = require global.execPath 'backbone'
 
 module.exports = (gui) ->
 	root = this

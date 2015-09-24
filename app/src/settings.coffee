@@ -15,7 +15,7 @@ module.exports = (gui) ->
 		win.window.document.getElementById('rootDir').innerHTML = rootDir
 
 		execDir = path.join( process.execPath, '../' )
-		console.log "RootDir: #{ execDir }"
+		console.log "execDir: #{ execDir }"
 		win.window.document.getElementById('execDir').innerHTML = execDir
 
 		version = config.package.version

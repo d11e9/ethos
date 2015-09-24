@@ -1,4 +1,4 @@
-web3 = require 'web3'
+web3 = require global.execPath 'web3'
 
 root = this
 

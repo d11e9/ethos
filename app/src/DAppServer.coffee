@@ -1,8 +1,8 @@
-express = require 'express'
-bodyParser = require 'body-parser'
-multer = require 'multer'
 path = require 'path'
-_ = require 'underscore'
+express = require global.execPath 'express'
+bodyParser = require global.execPath 'body-parser'
+multer = require global.execPath 'multer'
+_ = require global.execPath 'underscore'
 
 
 module.exports = ({config}) ->
