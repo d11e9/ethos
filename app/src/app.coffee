@@ -4,7 +4,7 @@ web3 = require 'web3'
 
 module.exports = (gui) ->
 	process.on 'uncaughtException', (msg)->
-		window.console.log "Error: Uncaught exexption: #{ msg }"
+		window.console.log "Error: Uncaught Exception: ", msg
 
 	os = process.platform
 	ext = if os is 'win32' then '.exe' else ''

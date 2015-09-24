@@ -2,5 +2,6 @@ node_modules
 *.log
 cache
 ipfs
+eth
 dist
-app/js/web3-provider-setup.js
+app/js/web3rpc.js

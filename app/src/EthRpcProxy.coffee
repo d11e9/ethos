@@ -25,9 +25,21 @@ module.exports = (web3, config, dialogManager) ->
 		response.header('Access-Control-Allow-Headers', 'Content-Type')
 		request.addListener 'data', (chunk) -> data += chunk
 		request.addListener 'end', ->
+
+			host = null
+			port = null
+
+			if config.get('ethRemoteNode')
+				host = config.get('ethRemoteNodeAddr')
+				port = config.get('ethRemoteNodePort')
+			else
+				host = config.get('ethRpcAddr')
+				port = config.get('ethRpcPort')
+
 			req =
-				host: 'localhost'
-				port: config.get('ethRpcPort')
+				host: host
+				port: port
+				path: '/'
 				method: request.method
 				headers:
 					'Content-Type': 'application/x-www-form-urlencoded'

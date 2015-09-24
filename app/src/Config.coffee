@@ -16,14 +16,12 @@ module.exports = class Config extends Backbone.Model
 			ethRpcPort: 9001
 			ethRpcProxyPort: 8545
 			ethRpcCorsDomain: "*"
-			ethRpcProxyWhitelist: ['app://ethos']
+			ethRpcProxyWhitelist: []
 			ethRpcProxyBlacklist: []
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
-			ipfsDApps: [
-				{name: 'Psst', hash: 'QmdLKS3FNYkkAckhbcmc8Fa7R1J68hcrb1itDD55BND4wi'},
-				{name: 'Mdown', hash: 'QmSrCRJmzE4zE1nAfWPbzVfanKQNBhp7ZWmMnEdbiLvYNh'}
-			]
+			ethRemoteNodePort: 8545
+			ipfsDApps: []
 			localDApps: []
 
 		@saveDefaults()
