@@ -2,6 +2,7 @@ path = require 'path'
 fs = require 'fs'
 cp = require 'child_process'
 Backbone = require 'backbone'
+net = require 'net'
 
 spawn = cp.spawn
 exec = cp.exec
@@ -101,7 +102,7 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', !!@process )
 
 		console.log "Connecting to local Ethereum node: ipc:#{ @ipcPath }"
-		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath, net ) )
 
 
 	toggle: ->
