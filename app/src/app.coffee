@@ -1,8 +1,12 @@
 
+fs = require 'fs'
 
 module.exports = (gui, execPath) ->
 
 	web3 = require execPath 'web3'
+	browserify = require execPath 'browserify'
+	coffeeify = require execPath 'coffeeify'
+
 	global.execPath = execPath
 
 	process.on 'uncaughtException', (msg)->
@@ -23,12 +27,18 @@ module.exports = (gui, execPath) ->
 	EthProcess = require './EthProcess.coffee'
 	IPFSProcess = require './IPFSProcess.coffee'
 
+	# Build wallet files
+	walletFile = fs.createWriteStream("./app/wallet/wallet.js");
+	b = browserify
+		transform: coffeeify
+	b.add('./app/wallet/wallet.coffee')
+	b.bundle().pipe(walletFile)
+
 	console.log( "Ξthos initializing..." )
 
 	ethosPackge = require( '../../package.json' )
 	config = new Config( ethosPackge )
 	config.load()
-
 
 	DialogManager = require('./EthosDialogManager.coffee')(gui, config)
 	dialogManager = new DialogManager()

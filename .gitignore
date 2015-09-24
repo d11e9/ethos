@@ -5,3 +5,4 @@ ipfs
 eth
 dist
 app/js/web3rpc.js
+app/wallet/wallet.js

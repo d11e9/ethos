@@ -157,7 +157,6 @@ module.exports = (gui) ->
 			@config.saveFlag( 'localDApps' )
 
 		getWindowOptions: (name)->
-			"inject-js-start": "node_modules/web3/dist/web3.js"
 			"inject-js-end": "app/js/web3rpc.js"
 			icon: "app/images/icon-tray.ico"
 			title: name
