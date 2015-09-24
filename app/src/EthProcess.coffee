@@ -41,20 +41,21 @@ module.exports = class EthProcess extends Backbone.Model
 		@connected = false if !running
 		@web3.eth.getBlockNumber (err, blockNumber) =>
 			if err
-				console.log err if @config.getBool('logging')
+				# console.error JSON.parse( err ).error.message
 				@connected = false
 			else
 				@connected = true
+				console.log "Ethereum connected."
 				notification = new window.Notification "Ethos",
 					body: "Ethereum Network Connected."
 				notification.onshow = -> setTimeout( ( -> notification.close() ), 3000)
 			@trigger( 'connected', @connected )
 		
 	console: =>
+		console.log "Launching Ethereum console" 
 		if @os is 'darwin'
 			exec( "bash #{ path.join( @path, '../console.sh' ) } \"#{ @path } attach\"")
 		else
-			console.log "Launching ethereum console"
 			exec( "start cmd.exe /K \"#{@path} attach\"" )
 
 	start: ->
@@ -70,14 +71,11 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', true )
 			return
 
-		console.log "Connecting to Local Ethereum Node: ipc:#{ @ipcPath }"
-		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
-
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
 		args = [ '--shh', '--verbosity', '4', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
 		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
 
-		console.log( "STARTING ETH: #{ @path } #{ args.join(' ') }")
+		console.log( "Running Ethereum node: #{ @path } #{ args.join(' ') }")
 		@process = spawn( @path, args )
 		@stderr = ''
 		@stdout = ''
@@ -102,7 +100,9 @@ module.exports = class EthProcess extends Backbone.Model
 				global.ethLog.trigger( 'data', line )
 			@trigger( 'status', !!@process )
 
-		
+		console.log "Connecting to local Ethereum node: ipc:#{ @ipcPath }"
+		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath ) )
+
 
 	toggle: ->
 		if @connected
@@ -214,7 +214,7 @@ module.exports = class EthProcess extends Backbone.Model
 
 
 	kill: ->
-		console.log("KILLING ETHEREUM PROCESS")
+		console.log("Stopping Ethereum node.")
 		@process?.stdin?.pause()
 		spawn("taskkill", ["/pid", @process?.pid, '/f', '/t']) unless @os is 'darwin'
 		@process?.kill?('SIGINT')

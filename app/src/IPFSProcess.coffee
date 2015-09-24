@@ -20,10 +20,11 @@ module.exports = class IPFSProcess extends Backbone.Model
 					if !err
 						@ipfsConfig = JSON.parse( stdout )
 						@connected = true
+						console.log "IPFS connected."
 						@trigger( 'connected')
 					else
 						@connected = false
-						console.log "IPFS Error:", err
+						# console.log "IPFS Error:", err
 			else
 				@connected = false
 
@@ -34,13 +35,14 @@ module.exports = class IPFSProcess extends Backbone.Model
 		
 		args = ['daemon', '--init']
 
-		console.log "IFPS Starting new daemon. args: #{ @path } #{ args.join(' ') }"
+		console.log "Running IFPS node: #{ @path } #{ args.join(' ') }"
 		@process =  spawn( @path, args )
 		@stderr = ''
 		@stdout = ''
 
 		@process.on 'close', (code) =>
-			console.log('IFPS Exited with code: ' + code)
+			msg = "IPFS process exited with code: #{code}"
+			if code == 1 then console.error( msg ) else console.log ( msg)
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>

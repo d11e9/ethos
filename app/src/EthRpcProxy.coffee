@@ -67,4 +67,4 @@ module.exports = (web3, config, dialogManager) ->
 	server.use( multer )
 	server.use( bodyParser.urlencoded( extended: true ) )
 	server.listen config.get('ethRpcProxyPort'), ->
-		console.log "Eth RPC Proxy: running."
+		console.log "Ethos Eth RPC Proxy: running."

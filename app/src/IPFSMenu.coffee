@@ -79,7 +79,6 @@ module.exports = (gui) ->
 		onConnected: =>
 			@process.api.id (err, info) =>
 				unless err
-					console.log( "IPFS connected: ", info)
 					@apiAddress = @process.getAPI() 
 					@status.label = "Status: Connected"
 					notification = new window.Notification "Ethos",

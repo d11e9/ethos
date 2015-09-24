@@ -8,7 +8,7 @@ _ = require 'underscore'
 module.exports = ({config}) ->
 	server = express()
 	server.listen 8080, ->
-		console.log "Ethos DApp server running."
+		console.log "Ethos DApp server: running."
 
 	server.get '/dapp/:dappName', (req,res,next) ->
 		dapp = _.findWhere( config.get('localDApps'), {name: req.params.dappName} )
