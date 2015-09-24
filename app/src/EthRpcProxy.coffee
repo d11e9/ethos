@@ -26,20 +26,19 @@ module.exports = (web3, config, dialogManager) ->
 		request.addListener 'data', (chunk) -> data += chunk
 		request.addListener 'end', ->
 
-			host = null
-			port = null
+			# host = null
+			# port = null
+			# if config.get('ethRemoteNode')
+			# 	host = config.get('ethRemoteNodeAddr')
+			# 	port = config.get('ethRemoteNodePort')
+			# else
 
-			if config.get('ethRemoteNode')
-				host = config.get('ethRemoteNodeAddr')
-				port = config.get('ethRemoteNodePort')
-			else
-				host = config.get('ethRpcAddr')
-				port = config.get('ethRpcPort')
+			host = config.get('ethRpcAddr')
+			port = config.get('ethRpcPort')
 
 			req =
 				host: host
 				port: port
-				path: '/'
 				method: request.method
 				headers:
 					'Content-Type': 'application/x-www-form-urlencoded'

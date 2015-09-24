@@ -69,7 +69,10 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', true )
 			return
 
-		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.flags.ethRpcAddr, '--rpcport', @config.flags.ethRpcPort, '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
+		rpcProviderJs = "web3.setProvider( new web3.providers.HttpProvider( 'http://#{ @config.get('ethRpcAddr') }:#{ @config.get('ethRpcPort') }' ) );"
+		fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), '', (err) -> console.log( err ) if err
+
+		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.get('ethRpcAddr'), '--rpcport', @config.get('ethRpcPort'), '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
 		args = [ '--shh', '--verbosity', '4', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
 		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
 

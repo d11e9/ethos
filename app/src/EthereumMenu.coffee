@@ -160,6 +160,7 @@ module.exports = (gui) ->
 						@import.enabled = !remote
 						@mining.enabled = !remote
 						@console.enabled = !remote
+					@log.enabled = !remote
 					@updateAccounts()
 					@updateMining()
 
