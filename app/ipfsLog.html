@@ -5,17 +5,53 @@
 		<style>
 			html, body {
 				font-family: monospace;
+				margin: 0;
+				padding: 0;
+			}
+			#output {
+				white-space: pre-wrap;
+				word-break: break-all;
+				padding: 0.5em;
+				padding-top: 3em;
+			}
+
+			.line:hover {
+				background-color: #ccc;
+			}
+
+			#header {
+				width: 100%;
+				box-sizing: border-box;
+				position: fixed;
+				background-color: white;
+				border-bottom: 1px solid black;
+				padding: 0.5em;
 			}
 		</style>
 	</head>
 	<body>
+		<div id="header">
+			<strong>Ethos:</strong> IPFS process logs. <label for="tail"><input id="tail" type="checkbox" /> Tail output</label>
+		</div>
 		<div id="output"></div>
 		<script>
-			var output = window.document.getElementById('output')
+			var win = this;
+			var output = win.document.getElementById('output')
+			var tail = win.document.getElementById('tail')
+
 			output.innerHTML = global.ipfsLogRaw;
 			global.ipfsLog.on( 'data', function(data){
 				output.innerHTML += data
+				if (tail.checked) tailLogs()
 			})
+
+			tail.addEventListener('click', function(ev){
+				if (tail.checked) tailLogs()
+			})
+
+			function tailLogs () {
+				win.scrollTo( 0, win.document.body.scrollHeight )
+			}
 		</script>
 	</body>
 </html>

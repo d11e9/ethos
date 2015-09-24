@@ -87,17 +87,19 @@ module.exports = class EthProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			# console.log('geth stdout: ' + data) if @config.getBool('logging')
 			@stdout += data
-			global.ethLogRaw += "<div class='line'>#{data}</div>"
-			global.ethLog.trigger( 'change' )
+			for l in data.toString().split('\n') 
+				line = "<div class='line'>#{l}</div>"
+				global.ethLogRaw += line 
+				global.ethLog.trigger( 'data', line )
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			# console.log('geth stderr: ' + data) if @config.getBool('logging')
 			@stderr += data
-			global.ethLogRaw += "<div class='line'>#{data}</div>"
-			global.ethLog.trigger( 'change' )
+			for l in data.toString().split('\n')
+				line = "<div class='line'>#{l}</div>"
+				global.ethLogRaw += line 
+				global.ethLog.trigger( 'data', line )
 			@trigger( 'status', !!@process )
 
 		

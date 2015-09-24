@@ -44,16 +44,18 @@ module.exports = class IPFSProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
-			logline = "<div class='line'>#{data}</div>"
-			global.ipfsLogRaw += logline
-			global.ipfsLog.trigger( 'data', logline )
+			for l in data.toString().split('\n')
+				line = "<div class='line'>#{l}</div>"
+				global.ipfsLogRaw += line
+				global.ipfsLog.trigger( 'data', line )
 			@stdout += data
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
-			logline = "<div class='line'>#{data}</div>"
-			global.ipfsLogRaw += logline
-			global.ipfsLog.trigger( 'data', logline )
+			for l in data.toString().split('\n')
+				line = "<div class='line'>#{l}</div>"
+				global.ipfsLogRaw += line
+				global.ipfsLog.trigger( 'data', line )
 			@stderr += data
 			@trigger( 'status', !!@process )
 
