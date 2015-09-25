@@ -84,8 +84,8 @@ module.exports = class EthProcess extends Backbone.Model
 		fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), rpcProviderJs, (err) -> console.log( err ) if err
 
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.get('ethRpcAddr'), '--rpcport', @config.get('ethRpcPort'), '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--datadir', @datadir, '--shh', '--verbosity', '6', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
-		priv = ['--maxpeers', 0, '--networkid', 1337, '--genesis', path.join(@datadir, 'genesis.json'), '--nodiscover', '--nat', 'none' ]
+		args = [ '--datadir', @datadir, '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
+		priv = ['--maxpeers', 0, '--networkid', 1337, '--genesis', path.join(@datadir, 'test_genesis.json'), '--nodiscover', '--nat', 'none' ]
 		
 		args = args.concat( rpc ) if @config.get( 'ethRpc' )
 		args = args.concat( priv ) if @config.get( 'ethPrivateTestNet' )

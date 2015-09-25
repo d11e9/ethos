@@ -22,6 +22,7 @@ module.exports = class Config extends Backbone.Model
 			ethRemoteNodeAddr: ""
 			ethRemoteNodePort: 8545
 			ethPrivateTestNet: false
+			ethMinePending: false
 			ipfsDApps: []
 			localDApps: []
 

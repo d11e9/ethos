@@ -3,6 +3,7 @@ node_modules
 cache
 ipfs
 eth
+!eth/test_genesis.json
 dist
 app/js/web3rpc.js
 app/wallet/wallet.js

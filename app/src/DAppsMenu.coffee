@@ -184,5 +184,6 @@ module.exports = (gui) ->
 
 		handleOpenDApp: ({name,url}) ->
 			console.log "Opening DApp at #{ url }"
-			gui.Window.open( url, @getWindowOptions(name) )
+			win = gui.Window.open( url, @getWindowOptions(name) )
+			setTimeout( ( => win.focus() ), 500 )
 
