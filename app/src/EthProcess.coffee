@@ -20,12 +20,7 @@ module.exports = class EthProcess extends Backbone.Model
 		@process = null
 		@connected = false
 		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
-		@datadir = path.join( process.cwd(), './eth' )
-		@web3 = require 'web3'
-		@ipcPath = if @os is 'darwin'
-				"#{$HOME}/Library/Ethereum/geth.ipc"
-			else
-				'\\\\.\\pipe\\geth.ipc'
+		@web3 = require global.execPath 'web3'
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@listenTo @config, 'restartEth', =>
@@ -71,12 +66,29 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', true )
 			return
 
+
+		@datadir = if @config.get('ethPrivateTestNet')
+			path.join( process.cwd(), './eth' )
+		else
+			if @os is 'darwin'
+				path.join( $HOME, "Library/Ethereum" )
+			else
+				path.join( $HOME, ".ethereum" )
+
+		@ipcPath = if @os is 'darwin'
+				path.join( @datadir, "geth.ipc" )
+			else
+				'\\\\.\\pipe\\geth.ipc'
+
 		rpcProviderJs = "web3.setProvider( new web3.providers.HttpProvider( 'http://#{ @config.get('ethRpcAddr') }:#{ @config.get('ethRpcPort') }' ) );"
 		fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), rpcProviderJs, (err) -> console.log( err ) if err
 
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.get('ethRpcAddr'), '--rpcport', @config.get('ethRpcPort'), '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--shh', '--verbosity', '4', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
-		args = args.concat( rpc ) if @config.getBool( 'ethRpc' )
+		args = [ '--datadir', @datadir, '--shh', '--verbosity', '6', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
+		priv = ['--maxpeers', 0, '--networkid', 1337, '--genesis', path.join(@datadir, 'genesis.json'), '--nodiscover', '--nat', 'none' ]
+		
+		args = args.concat( rpc ) if @config.get( 'ethRpc' )
+		args = args.concat( priv ) if @config.get( 'ethPrivateTestNet' )
 
 		console.log( "Running Ethereum node: #{ @path } #{ args.join(' ') }")
 		@process = spawn( @path, args )
@@ -102,6 +114,10 @@ module.exports = class EthProcess extends Backbone.Model
 				global.ethLogRaw += line 
 				global.ethLog.trigger( 'data', line )
 			@trigger( 'status', !!@process )
+
+		logStream = fs.createWriteStream( path.join( @datadir, 'geth.log'), { flags: 'a' } )
+		@process.stderr.pipe( logStream )
+		@process.stdout.pipe( logStream )
 
 		console.log "Connecting to local Ethereum node: ipc:#{ @ipcPath }"
 		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath, net ) )
@@ -169,6 +185,7 @@ module.exports = class EthProcess extends Backbone.Model
 
 	toggleMining: =>
 		@web3.eth.getMining (err, mining) =>
+			console.log( "Ethereum mining: ", !mining)
 			if err
 				console.log err
 				return
@@ -178,7 +195,7 @@ module.exports = class EthProcess extends Backbone.Model
 				id: 1
 				method: method
 				params: []
-			@web3.currentProvider.sendAsync( rpcjson, (err,res) -> console.log( "Mining toggled: ", res ))
+			@web3.currentProvider.sendAsync( rpcjson, (err,res) -> console.error( err) if err )
 	
 	importWallet: (filePath, cb) ->
 		self = this
@@ -196,7 +213,7 @@ module.exports = class EthProcess extends Backbone.Model
 				return if result.import is 'Cancel'
 				return unless result.file
 				password = result.password + "\n"
-				process = spawn( self.path, ["--datadir", self.datadir, "wallet", "import", result.file])
+				process = spawn( self.path, [ "wallet", "import", result.file])
 				process.stdout.on 'data', (data) ->
 					global.window.console.log "geth import stdout:", data.toString('utf8')
 					process.stdin.write("y\n")

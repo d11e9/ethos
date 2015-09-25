@@ -45,6 +45,8 @@ module.exports = (gui) ->
 			@config.on( 'updated', @update )
 			@update()
 
+			setInterval( @update, 10000)
+
 		update: =>
 			@updateStatus()
 			@updateAccounts()

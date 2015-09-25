@@ -37,7 +37,7 @@ module.exports = (gui, execPath) ->
 
 	watcher = chokidar.watch('./app/wallet/wallet.coffee')
 	watcher.add( './app/wallet/wallet.less')
-	watcher.on 'change', ->
+	buildBundle = ->
 		b = browserify
 			transform: [coffeeify, lessify]
 			cache: {}
@@ -45,6 +45,9 @@ module.exports = (gui, execPath) ->
 			entries: ['./app/wallet/wallet.coffee']
 
 		b.bundle( writeWallet )
+
+	watcher.on 'change', buildBundle
+	buildBundle()
 
 
 	console.log( "Ξthos initializing..." )
