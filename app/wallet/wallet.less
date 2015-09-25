@@ -1,0 +1,68 @@
+@std-divider: 1px solid #efefef;
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+
+	.wallet-app-view {
+		height: 100%;
+
+		.overlay {
+			position: absolute;
+			background-color: rgba(0,0,0,0.8);
+			height: 100%;
+			width: 100%;
+
+			&:empty { display: none; }
+
+			.status-overlay {
+				width: 200px;
+				background-color: white;
+				text-align: center;
+				margin: 5em auto;
+				padding: 2em;
+				border-radius: 0.5em;
+			}
+		}
+
+		.accounts {
+			width: 200px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			border-right: @std-divider;
+
+			.account {
+				clear: both;
+				overflow: auto;
+				padding: 0.4em;
+				border-bottom: @std-divider;
+				font-family: monospace;
+				cursor: pointer;
+
+				.image {
+					float: left;
+				}
+
+				.address {
+					overflow: hidden;
+					text-overflow: ellipsis;
+  					
+				}
+
+				.balance {
+					line-height: 2.5em;
+
+					.eth:before {
+						font-size: 1.1em;
+						font-family: sans-serif;
+						content: "\039E";
+					}
+					.amount { font-size: 1.6em; }
+				}
+			}
+		}
+	}
+}

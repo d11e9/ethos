@@ -4,8 +4,10 @@ fs = require 'fs'
 module.exports = (gui, execPath) ->
 
 	web3 = require execPath 'web3'
+	chokidar = require execPath 'chokidar'
 	browserify = require execPath 'browserify'
 	coffeeify = require execPath 'coffeeify'
+	lessify = require execPath 'lessify'
 
 	global.execPath = execPath
 
@@ -28,11 +30,22 @@ module.exports = (gui, execPath) ->
 	IPFSProcess = require './IPFSProcess.coffee'
 
 	# Build wallet files
-	walletFile = fs.createWriteStream("./app/wallet/wallet.js");
-	b = browserify
-		transform: coffeeify
-	b.add('./app/wallet/wallet.coffee')
-	b.bundle().pipe(walletFile)
+	writeWallet = (err,src) ->
+		console.error( err ) if err
+		fs.writeFile( "./app/wallet/wallet.js", src )
+		console.log "Writing new wallet file"
+
+	watcher = chokidar.watch('./app/wallet/wallet.coffee')
+	watcher.add( './app/wallet/wallet.less')
+	watcher.on 'change', ->
+		b = browserify
+			transform: [coffeeify, lessify]
+			cache: {}
+			packageCache: {}
+			entries: ['./app/wallet/wallet.coffee']
+
+		b.bundle( writeWallet )
+
 
 	console.log( "Ξthos initializing..." )
 
