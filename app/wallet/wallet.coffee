@@ -33,7 +33,7 @@ class AccountView extends Marionette.ItemView
 	serializeData: ->
 		address: @model.get('address')
 		image: @model.get('image')
-		balance: @model.web3.fromWei( @model.get('balance'), 'ether' )
+		balance: web3.fromWei( @model.get('balance'), 'ether' )
 
 	triggers:
 		'click': 'select'
@@ -51,7 +51,7 @@ class AccountsView extends Marionette.CollectionView
 	
 
 class Account extends Backbone.Model
-	initialize: ({@address,@web3}) ->
+	initialize: ({@address}) ->
 		@set 'balance', 0
 		@set 'image', identicon.toSvg( md5( @address ), 50 )
 		@_updateBalance()
@@ -60,7 +60,7 @@ class Account extends Backbone.Model
 		@trigger('select', @)
 
 	_updateBalance: ->
-		@web3.eth.getBalance @address, (err, balance) =>
+		web3.eth.getBalance @address, (err, balance) =>
 			@set( 'balance', balance ) unless err
 
 class Accounts extends Backbone.Collection
@@ -74,7 +74,7 @@ class SendView extends Marionette.ItemView
 		<h2 class="title">Send Transaction</h2>
 		<div class="to-from">
 			<label class="from">From: <%= from_img %><input type="text" disabled value="<%- from %>"></label>
-			<label class="to">To: <input type="text"></label>
+			<label class="to">To: <%= to_img %><input type="text" value="<%- to %>"></label>
 		</div>
 		<div class="costs">
 			<label class="amount">Amount: <input type="number"></label>
@@ -87,23 +87,40 @@ class SendView extends Marionette.ItemView
 			from: null
 			to: null
 			amount: null
+	events:
+		'change .to input': '_changeTo'
+
+	ui:
+		toInput: '.to input'
+
+	onShow: ->
+		@listenTo( @model, 'change', @render )
+		@_changeTo()
 			
 	serializeData: ->
 		from: @model?.get('from') or '<none>'
-		from_img: @model?.get('from_img') or ''
+		from_img: identicon.toSvg( md5( @model?.get('from') or '' ), 50 ) 
+		to: @model?.get('to') or '<none>'
+		to_img:identicon.toSvg( md5( @model?.get('to') or '' ), 50 )
 
 	updateSender: (account) ->
 		@model.set( 'from', account.get('address'))
-		@model.set( 'from_img', account.get('image'))
-		@render()
+
+	updateTo: (address) ->
+		@model.set( 'to', address)
+		@ui.toInput.toggleClass( 'error', !web3.isAddress(address) )
+
+	_changeTo: (ev) ->
+		@updateTo( @ui.toInput.val() )
+
 
 
 class TransactionView extends Marionette.ItemView
 	className: 'transaction'
 	template: _.template """
-		<label class="from"><%= from_img %><span class="address"><%- from %></span></label>
+		<label class="from"><%= from_img %><span class="address" title="<%- from %>"><%- from %></span></label>
 		<label class="separator"><span class="value"><span class="symbol eth"> </span><%- value %></span></label>
-		<label class="to"><%= to_img %><span class="address"><%- to %></span></label>
+		<label class="to"><%= to_img %><span class="address" title="<%- to %>"><%- to %></span></label>
 		<div class="details">
 			<pre><%- txProperties %></pre>
 		</div>
@@ -112,6 +129,7 @@ class TransactionView extends Marionette.ItemView
 		details: '.details'
 
 	events:
+		'click .address': '_handleAddressClick'
 		'click': '_toggleDetails'
 		'click .details': (ev) ->
 			ev.preventDefault()
@@ -131,6 +149,13 @@ class TransactionView extends Marionette.ItemView
 	_toggleDetails: ->
 		@$el.toggleClass('expanded')
 
+	_handleAddressClick: (ev) =>
+		ev.preventDefault()
+		address = ev.target.innerHTML
+		window.console.log "handle click addr:", address
+		@trigger( 'select:address', address )
+		false
+
 class Transaction extends Backbone.Model
 	initialize: (txProperties) ->
 		web3.eth.getTransactionReceipt txProperties.hash, (err, resp) =>
@@ -142,6 +167,8 @@ class Transaction extends Backbone.Model
 class TransactionsView extends Marionette.CollectionView
 	childView: TransactionView
 	className: 'transactions-view'
+	childEvents:
+		'select:address': '_handleSelectAddress'
 	initialize: ->
 		@collection = new Backbone.Collection([])
 
@@ -160,6 +187,10 @@ class TransactionsView extends Marionette.CollectionView
 	_handleTransaction: (err, tx) =>
 		@collection.add( new Transaction(tx) ) if tx?.to is @address or tx?.from is @address
 
+	_handleSelectAddress: (childView, address) ->
+		window.console.log "handle select address:", address, arguments
+		@trigger( 'select:address', address)  
+
 
 class AppView extends Marionette.LayoutView
 	className: 'wallet-app-view'
@@ -175,12 +206,11 @@ class AppView extends Marionette.LayoutView
 		send: '.send'
 		transactions: '.transactions'
 
-	initialize: ({@web3})->
+	initialize: ->
 		@accountsCollection = new Accounts([])
 		@accountsView = new AccountsView( collection: @accountsCollection )
 		@sendView = new SendView()
 		@transactionsView = new TransactionsView()
-		@listenTo( @accountsView, 'select:account', @_handleSelectAccount )
 
 	onShow: ->
 		setTimeout( @_statusCheck, 1000 )
@@ -188,22 +218,28 @@ class AppView extends Marionette.LayoutView
 		@accounts.show( @accountsView )
 		@send.show( @sendView )
 		@transactions.show( @transactionsView )
-		@_fetchAccounts() if @web3.isConnected()
+		@_fetchAccounts() if web3.isConnected()
+		@listenTo( @accountsView, 'select:account', @_handleSelectAccount )
+		@listenTo( @transactionsView, 'select:address', @_handleSelectAddress )
 
 	_handleSelectAccount: (model)->
 		@sendView.updateSender(model)
 		@transactionsView.forAccount(model)
 
+	_handleSelectAddress: (address) ->
+		window.console.log "app view select address:", address
+		@sendView.updateTo(address)
+
 	_fetchAccounts: ->
-		@web3.eth.getAccounts (err, accounts) =>
+		web3.eth.getAccounts (err, accounts) =>
 			if err
 				window.console.log err
 			else
-				@accountsCollection.add new Account( address: acc, web3: @web3 ) for acc in accounts
+				@accountsCollection.add new Account( address: acc) for acc in accounts
 				@accountsCollection.at(0).select()
 
 	_statusCheck: =>
-		if @web3.isConnected()
+		if web3.isConnected()
 			@overlay.empty()
 		else
 			@overlay.show( new Web3StatusOverlay() )
@@ -218,6 +254,6 @@ class Web3StatusOverlay extends Marionette.ItemView
 
 $ ->
 	appRegion = new Marionette.Region( el: window.document.body )
-	appView = new AppView({web3})
+	appView = new AppView()
 	global.wallet = appView
 	appRegion.show( appView )

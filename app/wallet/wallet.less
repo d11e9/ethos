@@ -96,6 +96,15 @@ html, body {
 
 			.to-from {
 				margin-bottom: 0.5em;
+
+				input {
+					width: 21em;
+				}
+
+				.to input.error {
+					background-color: red;
+					color: white;
+				}
 			}
 			.costs {
 				input { width: 4em;}
@@ -125,6 +134,10 @@ html, body {
 					}
 
 					.address {
+						display: inline-block;
+						max-width: 16em;
+						overflow: hidden;
+						text-overflow: ellipsis;
 						padding: 0.15em;
   						background-color: #efefef;
 					}
