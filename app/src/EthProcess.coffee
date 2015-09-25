@@ -13,8 +13,9 @@ confirm = window.confirm
 
 $HOME = process.env.HOME || process.env.USERPROFILE;
 
+root = this
+
 module.exports = class EthProcess extends Backbone.Model
-	root = this
 	constructor: ({@os, ext, @config, @dialogManager}) ->
 		@process = null
 		@connected = false
@@ -157,7 +158,7 @@ module.exports = class EthProcess extends Backbone.Model
 						method: "personal_newAccount",
 						params: [result.password1]
 					}, (err,res) ->
-						self.window.console.log( "Account created: ", res.result )
+						root.window.console.log( "Account created: ", res.result )
 						self.trigger( 'status', !!self.process )
 					)
 				else

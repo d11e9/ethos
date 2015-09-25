@@ -1,4 +1,8 @@
+
+@cta-color: blue;
 @std-divider: 1px solid #efefef;
+@left-col-width: 200px;
+@top-panel-height: 100px;
 
 html, body {
 	height: 100%;
@@ -7,6 +11,12 @@ html, body {
 
 	.wallet-app-view {
 		height: 100%;
+		font-family: monospace;
+
+		.eth:before {
+			font-family: sans-serif;
+			content: "\039E";
+		}
 
 		.overlay {
 			position: absolute;
@@ -27,7 +37,9 @@ html, body {
 		}
 
 		.accounts {
-			width: 200px;
+			width: @left-col-width;
+			box-sizing: border-box;
+			overflow: auto;
 			position: absolute;
 			left: 0;
 			top: 0;
@@ -39,7 +51,6 @@ html, body {
 				overflow: auto;
 				padding: 0.4em;
 				border-bottom: @std-divider;
-				font-family: monospace;
 				cursor: pointer;
 
 				.image {
@@ -55,12 +66,109 @@ html, body {
 				.balance {
 					line-height: 2.5em;
 
-					.eth:before {
-						font-size: 1.1em;
-						font-family: sans-serif;
-						content: "\039E";
-					}
+					
 					.amount { font-size: 1.6em; }
+				}
+			}
+		}
+
+		.send {
+			position: absolute;
+			box-sizing: border-box;
+			padding: 1em;
+			left: @left-col-width;
+			height: @top-panel-height;
+			border-bottom: @std-divider;
+			right: 0;
+			top: 0;
+			
+			.title {
+				margin: 0 0 1em;
+				font-size: 1.2em;
+			}
+
+			svg {
+				width: 1.6em;
+				height: 1.6em;
+				display: inline-block;
+				vertical-align: bottom;
+			}
+
+			.to-from {
+				margin-bottom: 0.5em;
+			}
+			.costs {
+				input { width: 4em;}
+			}
+		}
+
+		.transactions {
+			position: absolute;
+			box-sizing: border-box;
+			bottom: 0;
+			top: @top-panel-height;
+			left: @left-col-width;
+			right: 0;
+			padding: 1em;
+			overflow: auto;
+
+			.transaction {
+				padding: 0.5em;
+				border-bottom: @std-divider;
+
+				.from, .to {
+					svg {
+						width: 1.6em;
+						height: 1.6em;
+						display: inline-block;
+						vertical-align: bottom;
+					}
+
+					.address {
+						padding: 0.15em;
+  						background-color: #efefef;
+					}
+				}
+
+				.separator {
+					padding: 0 1em;
+					&:before, &:after {
+						content: "=>";
+						font-weight: bold;
+					}
+					.value {
+						display: inline-block;
+						padding: 0 1em;
+						min-width: 4em;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+				}
+
+				.details {
+					.toggle-details:before {
+						color: @cta-color;
+						text-decoration: underline;
+						content: "Show details";
+					}
+
+					pre { display: none; }
+				}
+
+				&.expanded {
+					background-color: #efefef;
+					.details {
+						.toggle-details:before {
+							content: "Hide details"
+						}
+						pre {
+							display: block;
+							overflow: auto;
+							word-break: break-word;
+							background-color: #333;
+							color: white;
+						}
+					}
 				}
 			}
 		}
