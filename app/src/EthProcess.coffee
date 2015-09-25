@@ -13,9 +13,10 @@ confirm = window.confirm
 
 $HOME = process.env.HOME || process.env.USERPROFILE;
 
-root = this
+
 
 module.exports = class EthProcess extends Backbone.Model
+	root = this
 	constructor: ({@os, ext, @config, @dialogManager}) ->
 		@process = null
 		@connected = false
@@ -165,7 +166,7 @@ module.exports = class EthProcess extends Backbone.Model
 					<input type="submit" name="continue" value="Create">
 				</div>
 			"""
-			callback: (result) ->
+			callback: (result) =>
 				return if result.continue is 'Cancel'
 				if result.password1 is result.password2
 					self.web3.currentProvider.sendAsync({
@@ -174,7 +175,7 @@ module.exports = class EthProcess extends Backbone.Model
 						method: "personal_newAccount",
 						params: [result.password1]
 					}, (err,res) ->
-						root.window.console.log( "Account created: ", res.result )
+						window.console.log( "Account created: ", res.result )
 						self.trigger( 'status', !!self.process )
 					)
 				else

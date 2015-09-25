@@ -78,7 +78,6 @@ html, body {
 			box-sizing: border-box;
 			padding: 1em;
 			left: @left-col-width;
-			height: @top-panel-height;
 			border-bottom: @std-divider;
 			right: 0;
 			top: 0;
@@ -87,32 +86,42 @@ html, body {
 				margin: 0 0 1em;
 				font-size: 1.2em;
 			}
-			input {
-				font-family: monospace;
-				padding: 0.4em;
-			}
-			input.error {
-				background-color: red;
-				color: white;
-			}
+			
 
-			span.label {
+			label {
 				display: inline-block;
-				width: 5em;
+				display: block;
+				line-height: 2.5em;
+				vertical-align: middle;
+				position: relative;
+				margin-bottom: 1em;
+
+				input {
+					font-family: monospace;
+					padding: 0.4em;
+				}
+				input.error {
+					background-color: red;
+					color: white;
+				}
+
+				span.label {
+					display: inline-block;
+					width: 8em;
+				}
+
+				textarea {
+					display: inline-block;
+					width: 27.5em;
+					height: 4em;
+					vertical-align: top;
+					border: 1px solid #ccc;
+				}
 			}
 
 			.to-from {
-				margin-bottom: 0.5em;
-				overflow: auto;
-				display: inline-table;
 
 				label {
-					display: inline-block;
-					display: block;
-					line-height: 2.5em;
-					vertical-align: middle;
-					position: relative;
-
 					input {
 						width: 23em;
 						max-width: 100%;
@@ -127,83 +136,7 @@ html, body {
 				}
 			}
 			.detail {
-				display: inline-table;
-				input { width: 6em;}
-			}
-		}
-
-		.transactions {
-			position: absolute;
-			box-sizing: border-box;
-			bottom: 0;
-			top: @top-panel-height;
-			left: @left-col-width;
-			right: 0;
-			padding: 1em;
-			overflow: auto;
-
-			.transaction {
-				padding: 0.5em;
-				border-bottom: @std-divider;
-
-				.from, .to {
-					svg {
-						width: 1.6em;
-						height: 1.6em;
-						display: inline-block;
-						vertical-align: bottom;
-					}
-
-					.address {
-						display: inline-block;
-						max-width: 16em;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						padding: 0.15em;
-  						background-color: #efefef;
-					}
-				}
-
-				.separator {
-					padding: 0 1em;
-					&:before, &:after {
-						content: "=>";
-						font-weight: bold;
-					}
-					.value {
-						display: inline-block;
-						padding: 0 1em;
-						min-width: 4em;
-						overflow: hidden;
-						text-overflow: ellipsis;
-					}
-				}
-
-				.details {
-					.toggle-details:before {
-						color: @cta-color;
-						text-decoration: underline;
-						content: "Show details";
-					}
-
-					pre { display: none; }
-				}
-
-				&.expanded {
-					background-color: #efefef;
-					.details {
-						.toggle-details:before {
-							content: "Hide details"
-						}
-						pre {
-							display: block;
-							overflow: auto;
-							word-break: break-word;
-							background-color: #333;
-							color: white;
-						}
-					}
-				}
+				input { width: 12em;}
 			}
 		}
 	}

@@ -72,132 +72,113 @@ class SendView extends Marionette.ItemView
 	tagName: 'form'
 	template: _.template """
 		<div class="to-from">
-			<label class="from"><span class="label">From: </span><%= from_img %><input type="text" disabled value="<%- from %>"></label>
-			<label class="to"><span class="label">To: </span><%= to_img %><input type="text" value="<%- to %>"></label>
+			<label class="from">
+				<span class="label">From: </span>
+				<%= from_img %>
+				<input type="text" disabled value="<%- from %>">
+			</label>
+			<label class="to">
+				<span class="label">To: </span>
+				<%= to_img %>
+				<input type="text" value="<%- to %>">
+			</label>
 		</div>
 		<div class="detail">
-			<label class="amount"><span class="label">Amount: </span><input type="number"></label>
+			<label class="value">
+				<span class="label">Value: </span>
+				<input type="number" value="<%- value %>">
+			</label>
 			<div class="gases">
-				<label class="gas"><span class="label">Gas: </span><input type="number"></label>
-				<label class="gas-price"><span class="label">Gas price: </span><input type="number"></label>
+				<label class="gas">
+					<span class="label">Gas: </span>
+					<input type="number" value="<%- gas %>">
+					<a href="#">Estimate gas cost</a>
+				</label>
+				<label class="gasPrice">
+					<span class="label">Gas price: </span>
+					<input type="number" value="<%- gasPrice %>">
+					<a href="#">Reccomend gas price</a>
+				</label>
+			</div>
+			<div class="other">
+				<label class="data">
+					<span class="label">Data: </span>
+					<textarea><%- data %></textarea>
+				</label>
 			</div>
 		</div>
 		<div class="actions">
-			<button>Send</button>
+			<button>Get Raw transaction</button>
+			<button>Send transaction</button>
 		</div>
 		
 	"""
-	initialize: ({model})->
-		@model = model or new NewTransaction
-			from: null
-			to: null
-			amount: null
-			gas: null
-			gasPrice: null
-			data: null
+
 	events:
 		'change .to input': '_changeTo'
+		'change .value input': '_changeValue'
+		'change .gas input': '_changeGas'
+		'change .gasPrice input': '_changeGasPrice'
+		'change .data textarea': '_changeData'
+		'click .gas a': '_getGasEstimate'
+		'click .gasPrice a': '_getGasPrice'
 
 	ui:
 		toInput: '.to input'
+		valueInput: '.amount input'
+		gasInput: '.gas input'
+		gasPriceInput: '.gasPrice input'
+		dataInput: '.data textarea'
 
-	onShow: ->
-		@listenTo( @model, 'change', @render )
-		@_changeTo()
+	modelEvents:
+		'change': 'render'
 			
 	serializeData: ->
-		from: @model?.get('from') or '<none>'
-		from_img: identicon.toSvg( md5( @model?.get('from') or '' ), 50 ) 
-		to: @model?.get('to') or '<none>'
-		to_img:identicon.toSvg( md5( @model?.get('to') or '' ), 50 )
+		from: @model.get('from')
+		from_img: identicon.toSvg( md5( @model.get('from') or '' ), 50 ) 
+		to: @model.get('to') or ''
+		to_img: identicon.toSvg( md5( @model.get('to') or '' ), 50 )
+		value: @model.get('value') or 0
+		gas: @model.get('gas') or 0
+		gasPrice: @model.get('gasPrice') or 0
+		data: @model.get('data') or ''
 
 	updateSender: (account) ->
 		@model.set( 'from', account.get('address'))
 
-	updateTo: (address) ->
-		@model.set( 'to', address)
-		@ui.toInput.toggleClass( 'error', !web3.isAddress(address) )
+	_changeTo: (ev)->
+		@model.set( 'to', ev.target.value )
+		@ui.toInput.toggleClass( 'error', !web3.isAddress(@ui.toInput.val()) )
 
-	_changeTo: (ev) ->
-		@updateTo( @ui.toInput.val() )
+	_changeValue: (ev)->
+		@model.set( 'value', ev.target.value )
+		#@ui.toInput.toggleClass( 'error', !web3.isAddress(@ui.amountInput.val()) )
 
+	_changeGas: (ev)->
+		@model.set( 'gas', ev.target.value )
 
+	_changeGasPrice: (ev)->
+		@model.set( 'gasPrice', ev.target.value )
 
-class TransactionView extends Marionette.ItemView
-	className: 'transaction'
-	template: _.template """
-		<label class="from"><%= from_img %><span class="address" title="<%- from %>"><%- from %></span></label>
-		<label class="separator"><span class="value"><span class="symbol eth"> </span><%- value %></span></label>
-		<label class="to"><%= to_img %><span class="address" title="<%- to %>"><%- to %></span></label>
-		<div class="details">
-			<pre><%- txProperties %></pre>
-		</div>
-	"""
-	ui:
-		details: '.details'
+	_changeData: (ev)->
+		@model.set( 'data', ev.target.value )
 
-	events:
-		'click .address': '_handleAddressClick'
-		'click': '_toggleDetails'
-		'click .details': (ev) ->
-			ev.preventDefault()
-			false
+	_getGasPrice: ->
+		web3.eth.getGasPrice (err, gasPrice) =>
+			@model.set( 'gasPrice', gasPrice ) unless err
 
-	onShow: ->
-		@listenTo( @model, 'updated', @render )
+	_getGasEstimate: ->
+		tx =
+			to: @model.get('to')
+			from: @model.get('from')
+			value: @model.get('value')
+			data: @model.get('data')
 
-	serializeData: ->
-		from: @model.get('from') or null
-		from_img: identicon.toSvg( md5( @model.get('from') ), 50 )
-		to: @model.get('to') or null
-		to_img: identicon.toSvg( md5( @model.get('to') ), 50 ) or null
-		value: web3.fromWei( @model.get('value'), 'ether' ) or null
-		txProperties: JSON.stringify( @model.toJSON(), null,  2 )
-
-	_toggleDetails: ->
-		@$el.toggleClass('expanded')
-
-	_handleAddressClick: (ev) =>
-		ev.preventDefault()
-		address = ev.target.innerHTML
-		window.console.log "handle click addr:", address
-		@trigger( 'select:address', address )
-		false
-
-class Transaction extends Backbone.Model
-	initialize: (txProperties) ->
-		web3.eth.getTransactionReceipt txProperties.hash, (err, resp) =>
-			@set('contractAddress', resp.contractAddress )
-			@trigger('updated')
+		web3.eth.estimateGas tx, (err, gas) =>
+			window.console.log "gas for: ", tx, ' is: ', gas
+			@model.set('gas', gas ) unless err
 
 
-
-class TransactionsView extends Marionette.CollectionView
-	childView: TransactionView
-	className: 'transactions-view'
-	childEvents:
-		'select:address': '_handleSelectAddress'
-	initialize: ->
-		@collection = new Backbone.Collection([])
-
-	forAccount: (account) ->
-		@collection.reset()
-		@address = account.get('address')
-		@_trawlBlocks( web3.eth.blockNumber )
-
-	_trawlBlocks: (blockNumber) =>
-		@_getTransactions( null, web3.eth.getBlock( blockNumber ) )
-		setTimeout( (=> @_trawlBlocks( blockNumber - 1) ), 100) unless blockNumber is 1
-
-	_getTransactions: (err, block) ->
-		web3.eth.getTransaction( txHash, @_handleTransaction ) for txHash in block?.transactions
-
-	_handleTransaction: (err, tx) =>
-		@collection.add( new Transaction(tx) ) if tx?.to is @address or tx?.from is @address
-
-	_handleSelectAddress: (childView, address) ->
-		window.console.log "handle select address:", address, arguments
-		@trigger( 'select:address', address)  
 
 
 class AppView extends Marionette.LayoutView
@@ -217,26 +198,25 @@ class AppView extends Marionette.LayoutView
 	initialize: ->
 		@accountsCollection = new Accounts([])
 		@accountsView = new AccountsView( collection: @accountsCollection )
-		@sendView = new SendView()
-		@transactionsView = new TransactionsView()
+		@sendView = new SendView
+			model: new NewTransaction
+				from: null
+				to: null
+				value: null
+				gas: null
+				gasPrice: null
+				data: null
 
 	onShow: ->
 		setTimeout( @_statusCheck, 1000 )
 		@_statusCheck()
 		@accounts.show( @accountsView )
 		@send.show( @sendView )
-		@transactions.show( @transactionsView )
 		@_fetchAccounts() if web3.isConnected()
 		@listenTo( @accountsView, 'select:account', @_handleSelectAccount )
-		@listenTo( @transactionsView, 'select:address', @_handleSelectAddress )
 
 	_handleSelectAccount: (model)->
 		@sendView.updateSender(model)
-		@transactionsView.forAccount(model)
-
-	_handleSelectAddress: (address) ->
-		window.console.log "app view select address:", address
-		@sendView.updateTo(address)
 
 	_fetchAccounts: ->
 		web3.eth.getAccounts (err, accounts) =>
