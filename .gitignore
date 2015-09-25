@@ -2,7 +2,7 @@ node_modules
 *.log
 cache
 ipfs
-eth
+eth/*
 !eth/test_genesis.json
 dist
 app/js/web3rpc.js
