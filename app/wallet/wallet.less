@@ -2,7 +2,7 @@
 @cta-color: blue;
 @std-divider: 1px solid #efefef;
 @left-col-width: 200px;
-@top-panel-height: 100px;
+@top-panel-height: 150px;
 
 html, body {
 	height: 100%;
@@ -86,28 +86,48 @@ html, body {
 				margin: 0 0 1em;
 				font-size: 1.2em;
 			}
+			input {
+				font-family: monospace;
+				padding: 0.4em;
+			}
+			input.error {
+				background-color: red;
+				color: white;
+			}
 
-			svg {
-				width: 1.6em;
-				height: 1.6em;
+			span.label {
 				display: inline-block;
-				vertical-align: bottom;
+				width: 5em;
 			}
 
 			.to-from {
 				margin-bottom: 0.5em;
+				overflow: auto;
+				display: inline-table;
 
-				input {
-					width: 21em;
-				}
+				label {
+					display: inline-block;
+					display: block;
+					line-height: 2.5em;
+					vertical-align: middle;
+					position: relative;
 
-				.to input.error {
-					background-color: red;
-					color: white;
+					input {
+						width: 23em;
+						max-width: 100%;
+					}
+
+					svg {
+						display: inline-block;
+						vertical-align: middle;
+						height: 2.5em;
+						width: 2.5em;
+					}
 				}
 			}
-			.costs {
-				input { width: 4em;}
+			.detail {
+				display: inline-table;
+				input { width: 6em;}
 			}
 		}
 

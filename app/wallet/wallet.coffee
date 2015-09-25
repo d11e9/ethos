@@ -71,22 +71,30 @@ class SendView extends Marionette.ItemView
 	classname: "send-view"
 	tagName: 'form'
 	template: _.template """
-		<h2 class="title">Send Transaction</h2>
 		<div class="to-from">
-			<label class="from">From: <%= from_img %><input type="text" disabled value="<%- from %>"></label>
-			<label class="to">To: <%= to_img %><input type="text" value="<%- to %>"></label>
+			<label class="from"><span class="label">From: </span><%= from_img %><input type="text" disabled value="<%- from %>"></label>
+			<label class="to"><span class="label">To: </span><%= to_img %><input type="text" value="<%- to %>"></label>
 		</div>
-		<div class="costs">
-			<label class="amount">Amount: <input type="number"></label>
-			<label class="gas">Gas: <input type="number"></label>
-			<label class="gas-price">Gas price: <input type="number"></label>
+		<div class="detail">
+			<label class="amount"><span class="label">Amount: </span><input type="number"></label>
+			<div class="gases">
+				<label class="gas"><span class="label">Gas: </span><input type="number"></label>
+				<label class="gas-price"><span class="label">Gas price: </span><input type="number"></label>
+			</div>
 		</div>
+		<div class="actions">
+			<button>Send</button>
+		</div>
+		
 	"""
 	initialize: ({model})->
 		@model = model or new NewTransaction
 			from: null
 			to: null
 			amount: null
+			gas: null
+			gasPrice: null
+			data: null
 	events:
 		'change .to input': '_changeTo'
 
