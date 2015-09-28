@@ -7,8 +7,8 @@ module.exports = class Config extends Backbone.Model
 		@defaults =
 			debug: false
 			startup: true
-			ethStart: true
-			ipfsStart: true
+			ethStart: false
+			ipfsStart: false
 			logging: true
 			showAbout: true
 			ethRpc: true
@@ -21,7 +21,7 @@ module.exports = class Config extends Backbone.Model
 			ethRemoteNode: false
 			ethRemoteNodeAddr: ""
 			ethRemoteNodePort: 8545
-			ethPrivateTestNet: false
+			ethPrivateTestNet: true
 			ethMinePending: false
 			ipfsDApps: []
 			localDApps: []

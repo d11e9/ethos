@@ -101,6 +101,9 @@ module.exports = class EthProcess extends Backbone.Model
 			@kill()
 		
 		@process.stdout.on 'data', (data) =>
+			unless @logStream
+				@process.stdin.write("y\n")
+			
 			@stdout += data
 			for l in data.toString().split('\n') 
 				line = "<div class='line'>#{l}</div>"
@@ -109,19 +112,21 @@ module.exports = class EthProcess extends Backbone.Model
 			@trigger( 'status', !!@process )
 
 		@process.stderr.on 'data', (data) =>
+			if !@logStream and fs.existsSync(@datadir)
+				@logStream = fs.createWriteStream( path.join( @datadir, 'geth.log'), { flags: 'w' } )
+				@process.stderr.pipe( @logStream )
+				@process.stdout.pipe( @logStream )
+
+			unless @connected
+				console.log "Connecting to local Ethereum node: ipc:#{ @ipcPath }"
+				@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath, net ) )
+
 			@stderr += data
 			for l in data.toString().split('\n')
 				line = "<div class='line'>#{l}</div>"
 				global.ethLogRaw += line 
 				global.ethLog.trigger( 'data', line )
 			@trigger( 'status', !!@process )
-
-		logStream = fs.createWriteStream( path.join( @datadir, 'geth.log'), { flags: 'a' } )
-		@process.stderr.pipe( logStream )
-		@process.stdout.pipe( logStream )
-
-		console.log "Connecting to local Ethereum node: ipc:#{ @ipcPath }"
-		@web3.setProvider( new @web3.providers.IpcProvider( @ipcPath, net ) )
 
 
 	toggle: ->
