@@ -22,6 +22,14 @@ module.exports = (gui) ->
 		console.log "Version: #{ version }"
 		win.window.document.getElementById('version').innerHTML = version
 
+		ethDataDir = global.ethConfig.datadir;
+		console.log "ethDataDir: #{ ethDataDir }"
+		win.window.document.getElementById('ethDataDir').innerHTML = ethDataDir
+
+		ethExecutable = global.ethConfig.executable;
+		console.log "ethExecutable: #{ ethExecutable }"
+		win.window.document.getElementById('ethExecutable').innerHTML = ethExecutable
+
 		clearBtn = win.window.document.getElementById('reset')
 		clearBtn.addEventListener 'click', (ev) ->
 			ev.preventDefault()

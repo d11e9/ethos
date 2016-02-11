@@ -20,8 +20,9 @@ module.exports = class EthProcess extends Backbone.Model
 	constructor: ({@os, ext, @config, @dialogManager}) ->
 		@process = null
 		@connected = false
-		@path = path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
+		@path = @checkPath() or path.join( process.cwd(), "./bin/#{ @os }/geth/geth#{ ext }" )
 		@web3 = require global.execPath 'web3'
+		console.log("Ethereum executable: " + @path)
 
 		fs.chmodSync( @path, '755') if @os is 'darwin'
 		@listenTo @config, 'restartEth', =>
@@ -31,9 +32,23 @@ module.exports = class EthProcess extends Backbone.Model
 
 		@listenTo( @, 'status', @checkStatus )
 
+		global.ethConfig =
+			executable: @path
+
 		global.ethLogRaw = ''
 		global.ethLog = new Backbone.Model()
 
+	checkPath: =>
+		existingBin = false
+		try
+			if @os is 'darwin'
+				existingBin = cp.execSync( "which geth")
+			else
+				existingBin = cp.execSync( "where geth" )
+			return existingBin.toString().replace('\n','')
+		catch err
+			console.log( "Error getting existing geth binary: " + err.toString())
+			return false
 
 	checkStatus: (running) =>
 		return if running and @connected
@@ -85,7 +100,7 @@ module.exports = class EthProcess extends Backbone.Model
 		fs.writeFile path.join( process.cwd(), './app/js/web3rpc.js' ), rpcProviderJs, (err) -> console.log( err ) if err
 
 		rpc = ['--rpc', '--rpcapi', 'db,eth,net,shh,web3', '--rpcaddr', @config.get('ethRpcAddr'), '--rpcport', @config.get('ethRpcPort'), '--rpccorsdomain', @config.flags.ethRpcCorsDomain]
-		args = [ '--datadir', @datadir, '--shh', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
+		args = [ '--datadir', @datadir, '--shh', '--fast', '--ipcapi', 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3', '--ipcpath', @ipcPath]
 		priv = ['--maxpeers', 0, '--networkid', 1337, '--genesis', path.join(@datadir, 'test_genesis.json'), '--nodiscover', '--nat', 'none' ]
 		
 		args = args.concat( rpc ) if @config.get( 'ethRpc' )
@@ -95,6 +110,8 @@ module.exports = class EthProcess extends Backbone.Model
 		@process = spawn( @path, args )
 		@stderr = ''
 		@stdout = ''
+
+		global.ethConfig.datadir = @datadir
 
 		@process.on 'close', (code) =>
 			console.log('Geth Exited with code: ' + code)
