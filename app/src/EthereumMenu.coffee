@@ -143,28 +143,34 @@ module.exports = (gui) ->
 
 		updateStatus: =>
 			remote = @config.getBool('ethRemoteNode')
-			@web3.eth.getBlockNumber (err,block) =>
-				@web3.net.getPeerCount (err, peers) =>
-					status = if remote then 'Connected' else 'Running'
-					status += " (#{peers or 0})"
-					if err
-						@status.label = "Status: Not #{status}"
-						@toggle.label = if remote then 'Connect' else 'Start'
-						@newAccount.enabled = false
-						@import.enabled = false
-						@mining.enabled = false
-						@console.enabled = false
-					else
-						toggle = if remote then 'Disconnect' else 'Stop'
-						@status.label = "Status: #{status} ##{block}"
-						@toggle.label = toggle
-						@newAccount.enabled = !remote
-						@import.enabled = !remote
-						@mining.enabled = !remote
-						@console.enabled = !remote
-					@log.enabled = !remote
-					@updateAccounts()
-					@updateMining()
+			@web3.eth.getSyncing (err,syncing) =>
+				@web3.eth.getBlockNumber (err,block) =>
+					@web3.net.getPeerCount (err, peers) =>
+						status = if remote then 'Connected' else 'Running'
+						status += " (#{peers or 0})"
+						if err
+							@status.label = "Status: Not #{status}"
+							@toggle.label = if remote then 'Connect' else 'Start'
+							@newAccount.enabled = false
+							@import.enabled = false
+							@mining.enabled = false
+							@console.enabled = false
+						else
+
+							if syncing
+								progress = (syncing.currentBlock / syncing.highestBlock * 100).toFixed(0)
+								@status.label = "Syncing: #{progress}%"
+							else
+								@status.label = "Status: #{status} ##{block}"
+							toggle = if remote then 'Disconnect' else 'Stop'
+							@toggle.label = toggle
+							@newAccount.enabled = !remote
+							@import.enabled = !remote
+							@mining.enabled = !remote
+							@console.enabled = !remote
+						@log.enabled = !remote
+						@updateAccounts()
+						@updateMining()
 
 
 
